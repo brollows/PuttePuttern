@@ -1,0 +1,35 @@
+.info-page {
+  padding: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+  color: #f0f0f0;
+}
+
+.title {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #d4edb4;
+}
+
+h2 {
+  margin-top: 1.5rem;
+  color: #aed581;
+}
+
+h3 {
+  margin-top: 1rem;
+  color: #c8e6c9;
+}
+
+ul {
+  padding-left: 1.2rem;
+}
+
+ul li {
+  margin-bottom: 0.5rem;
+}
+
+p {
+  margin: 0.5rem 0;
+}

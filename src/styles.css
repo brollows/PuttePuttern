@@ -1,1 +1,78 @@
-/* You can add global styles to this file, and also import other style files */
+/* Bakgrunn og helhet */
+body {
+  margin: 0;
+  background-color: #1b2b1f; /* mørk skoggrønn */
+  color: #f0f0f0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Link resets */
+a {
+  color: inherit;
+}
+
+/* Main content padding */
+main {
+  padding: 1.5rem;
+  min-height: 100vh;
+}
+
+/* Hovedmeny på forsiden */
+.home-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.home-menu h1 {
+  font-size: 2rem;
+  color: #d4edb4;
+}
+
+.menu-button {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  padding: 1rem;
+  font-size: 1.2rem;
+  background-color: #345c35;
+  color: #fff !important;
+  border-radius: 12px;
+  text-decoration: none !important;
+  font-weight: bold;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.menu-button:hover,
+.menu-button:focus,
+.menu-button:visited,
+.menu-button:active {
+  background-color: #4c784e;
+  color: #fff !important;
+  text-decoration: none;
+  outline: none;
+}
+
+
+/* Top navbar med home-ikon */
+.navbar {
+  background-color: #0f1f14;
+  padding: 0.75rem 0;
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid #2f4f32;
+}
+
+.home-icon {
+  font-size: 1.8rem;
+  color: #d4edb4;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.home-icon:hover {
+  transform: scale(1.15);
+}

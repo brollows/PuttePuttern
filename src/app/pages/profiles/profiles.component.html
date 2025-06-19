@@ -1,0 +1,55 @@
+<section class="profiles-page">
+    <div class="profiles-header">
+        <h1>👤 Profiler</h1>
+        <button (click)="openModal()" class="add-icon-button" aria-label="Legg til bruker">➕</button>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal" *ngIf="showModal">
+        <div class="modal-content">
+            <h2>Ny bruker</h2>
+            <form (submit)="addProfile($event)">
+                <label>Profilbilde:
+                    <!-- Forhåndsvisning vises så fort bildet er lastet -->
+                    <br>
+                    <img *ngIf="newProfile.bilde" [src]="newProfile.bilde" alt="Forhåndsvisning"
+                        class="preview-image" />
+                    <input type="file" (change)="onImageUpload($event)" />
+                </label>
+
+                <input type="text" placeholder="Fornavn" [(ngModel)]="newProfile.fornavn" name="fornavn" required />
+                <input type="text" placeholder="Etternavn" [(ngModel)]="newProfile.etternavn" name="etternavn"
+                    required />
+                <input type="number" placeholder="Metrix rangering" [(ngModel)]="newProfile.rangering" name="rangering"
+                    inputmode="numeric" pattern="[0-9]*" class="numeric-input" />
+                <input type="number" placeholder="Personlig beste - Lisleherad" [(ngModel)]="newProfile.personalBest"
+                    name="personalBest" inputmode="numeric" pattern="[0-9]*" class="numeric-input" />
+                <input type="text" placeholder="Sitat" [(ngModel)]="newProfile.sitat" name="sitat" />
+
+                <div class="modal-actions">
+                    <button type="submit">✅ Lagre</button>
+                    <button type="button" (click)="closeModal()">Avbryt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Liste med profiler -->
+    <div class="profile-list">
+        <div class="profile-card" *ngFor="let profile of profiles">
+            <h3 class="profile-name">{{ profile.fornavn }} {{ profile.etternavn }}</h3>
+
+            <div class="profile-body">
+                <img [src]="profile.bilde" alt="Profilbilde" *ngIf="profile.bilde" class="preview-image" />
+
+                <div class="profile-stats">
+                    <p>🎯 {{ profile.rangering }}</p>
+                    <p>🏆 PB Lisleherad: {{ profile.personalBest }}</p>
+                </div>
+            </div>
+
+            <q *ngIf="profile.sitat" class="profile-quote">"{{ profile.sitat }}"</q>
+        </div>
+    </div>
+</section>
