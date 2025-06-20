@@ -1,1 +1,3 @@
-https://docs.google.com/document/d/1nkhEhk5QCf9EJ7LOi9Pl7szLzVAzi_DTMstmCTjjLEk/edit?tab=t.0
+Google doc om turen: https://docs.google.com/document/d/1nkhEhk5QCf9EJ7LOi9Pl7szLzVAzi_DTMstmCTjjLEk/edit?tab=t.0
+
+database: https://console.firebase.google.com
