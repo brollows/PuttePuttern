@@ -34,7 +34,12 @@
             "outputMode": "server",
             "ssr": {
               "entry": "src/server.ts"
-            }
+            },
+            "allowedCommonJsDependencies": [
+              "whatwg-url",
+              "@supabase/realtime-js",
+              "@supabase/node-fetch"
+            ]
           },
           "configurations": {
             "production": {

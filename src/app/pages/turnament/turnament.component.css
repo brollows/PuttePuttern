@@ -1,0 +1,120 @@
+.table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
+}
+
+.tournament-table {
+    width: 100%;
+    min-width: 520px;
+    border-collapse: collapse;
+    font-family: sans-serif;
+    font-size: 14px;
+}
+
+.tournament-table th,
+.tournament-table td {
+    padding: 0.5rem 0.7rem;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.tournament-table tbody tr {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.tournament-table tbody tr:hover {
+    background-color: #f7f7f7;
+}
+
+.player-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: flex-start;
+}
+
+.avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: #d33;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    color: #a00;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.modal-content {
+    background: white;
+    width: 100%;
+    max-width: 350px;
+    border-radius: 10px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0.8rem 0;
+}
+
+.edit-field {
+    margin: 0.8rem 0;
+    font-size: 16px;
+}
+
+.edit-field button {
+    margin: 0 0.5rem;
+    font-size: 18px;
+    padding: 2px 6px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 1.2rem;
+}
+
+.modal-actions button {
+    flex: 1;
+    margin: 0 5px;
+    padding: 0.6rem;
+    font-size: 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.modal-actions button:first-child {
+    background-color: #28a745;
+    color: white;
+}
+
+.modal-actions button:last-child {
+    background-color: #eee;
+}

@@ -23,8 +23,8 @@
                     required />
                 <input type="number" placeholder="Metrix rangering" [(ngModel)]="newProfile.rangering" name="rangering"
                     inputmode="numeric" pattern="[0-9]*" class="numeric-input" />
-                <input type="number" placeholder="Personlig beste - Lisleherad" [(ngModel)]="newProfile.personalBest"
-                    name="personalBest" inputmode="numeric" pattern="[0-9]*" class="numeric-input" />
+                <input type="number" placeholder="Personlig beste - Lisleherad" [(ngModel)]="newProfile.personalbest"
+                    name="personalbest" inputmode="numeric" pattern="[0-9]*" class="numeric-input" />
                 <input type="text" placeholder="Sitat" [(ngModel)]="newProfile.sitat" name="sitat" />
 
                 <div class="modal-actions">
@@ -46,7 +46,7 @@
 
                 <div class="profile-stats">
                     <p>🎯 {{ profile.rangering }}</p>
-                    <p>🏆 PB Lisleherad: {{ profile.personalBest }}</p>
+                    <p>🏆 PB Lisleherad: {{ profile.personalbest }}</p>
                 </div>
             </div>
 

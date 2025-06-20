@@ -1,1 +1,53 @@
-<p>turnament works!</p>
+<!-- Pakk inn tabellen i en wrapper for horisontal scroll -->
+<div class="table-wrapper">
+    <table class="tournament-table">
+        <thead>
+            <tr>
+                <th>Spiller</th>
+                <th>Score</th>
+                <th>Birdies</th>
+                <th>Par</th>
+                <th>Bogeys</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let row of rows" (click)="openEditModal(row)">
+                <td class="player-cell">
+                    <img *ngIf="getProfile(row['profile$id'])?.bilde" [src]="getProfile(row['profile$id'])?.bilde"
+                        class="avatar" />
+                    {{ getProfile(row['profile$id'])?.fornavn || 'Ukjent' }}
+                </td>
+                <td>{{ row.total_score }}</td>
+                <td>{{ row.total_birdies }}</td>
+                <td>{{ row.total_par }}</td>
+                <td>{{ row.total_bogeys }}</td>
+                <td>
+                    <button class="delete-btn" (click)="removeRow(row); $event.stopPropagation()">❌</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal er uendret i struktur -->
+<div class="modal" *ngIf="selectedRow">
+    <div class="modal-content">
+        <h2>{{ selectedProfile?.fornavn }}</h2>
+        <img *ngIf="selectedProfile?.bilde" [src]="selectedProfile.bilde" class="modal-avatar" />
+
+        <div *ngFor="let field of editableFields" class="edit-field">
+            <label>
+                {{ field.replace('total_', '').toUpperCase() }}:
+                <button (click)="adjust(field, -1)">➖</button>
+                {{ selectedRow[field] }}
+                <button (click)="adjust(field, 1)">➕</button>
+            </label>
+        </div>
+
+        <div class="modal-actions">
+            <button (click)="saveEdits()">✅ Ferdig</button>
+            <button (click)="closeEditModal()">Avbryt</button>
+        </div>
+    </div>
+</div>
