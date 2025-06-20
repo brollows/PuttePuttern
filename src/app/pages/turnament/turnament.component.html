@@ -3,6 +3,7 @@
     <table class="tournament-table">
         <thead>
             <tr>
+                <th style="width: 1rem;">🏆</th>
                 <th>Spiller</th>
                 <th>Score</th>
                 <th>Birdies</th>
@@ -12,7 +13,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let row of rows" (click)="openEditModal(row)">
+            <tr *ngFor="let row of rows; let i = index" (click)="openEditModal(row)">
+                <td style="width: 1rem;" class="placement">{{ getPlacement(i) }}</td>
                 <td class="player-cell">
                     <img *ngIf="getProfile(row['profile$id'])?.bilde" [src]="getProfile(row['profile$id'])?.bilde"
                         class="avatar" />
@@ -22,9 +24,6 @@
                 <td>{{ row.total_birdies }}</td>
                 <td>{{ row.total_par }}</td>
                 <td>{{ row.total_bogeys }}</td>
-                <td>
-                    <button class="delete-btn" (click)="removeRow(row); $event.stopPropagation()">❌</button>
-                </td>
             </tr>
         </tbody>
     </table>
@@ -37,17 +36,20 @@
         <img *ngIf="selectedProfile?.bilde" [src]="selectedProfile.bilde" class="modal-avatar" />
 
         <div *ngFor="let field of editableFields" class="edit-field">
-            <label>
-                {{ field.replace('total_', '').toUpperCase() }}:
+            <div class="edit-label">
+                {{ field.replace('total_', '').toUpperCase() }}
+            </div>
+            <div class="edit-controls">
                 <button (click)="adjust(field, -1)">➖</button>
-                {{ selectedRow[field] }}
+                <span class="edit-value">{{ selectedRow[field] }}</span>
                 <button (click)="adjust(field, 1)">➕</button>
-            </label>
+            </div>
         </div>
 
         <div class="modal-actions">
-            <button (click)="saveEdits()">✅ Ferdig</button>
-            <button (click)="closeEditModal()">Avbryt</button>
+            <button class="primary" (click)="saveEdits()">✅ Ferdig</button>
+            <button class="danger" (click)="removeRow(selectedRow); $event.stopPropagation()">🗑️ Slett</button>
+            <button class="cancel" (click)="closeEditModal()">Avbryt</button>
         </div>
     </div>
 </div>

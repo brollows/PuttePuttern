@@ -6,7 +6,6 @@
 
 .tournament-table {
     width: 100%;
-    min-width: 520px;
     border-collapse: collapse;
     font-family: sans-serif;
     font-size: 14px;
@@ -16,105 +15,169 @@
 .tournament-table td {
     padding: 0.5rem 0.7rem;
     text-align: center;
-    border-bottom: 1px solid #ddd;
+    height: 1rem;
 }
 
-.tournament-table tbody tr {
-    cursor: pointer;
+.tournament-table tr {
+    border-bottom: 1px solid #ddd;
     transition: background-color 0.2s ease;
 }
 
 .tournament-table tbody tr:hover {
     background-color: #f7f7f7;
+    cursor: pointer;
 }
 
 .player-cell {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
     justify-content: flex-start;
+    gap: 0.5rem;
+}
+
+/* ------------------------
+   Avatar / Profile Images
+------------------------- */
+.avatar,
+.modal-avatar {
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .avatar {
     width: 24px;
     height: 24px;
-    border-radius: 50%;
-    object-fit: cover;
+}
+
+.modal-avatar {
+    width: 72px;
+    height: 72px;
+    margin: 1rem auto;
+}
+
+/* ------------------------
+   Buttons
+------------------------- */
+button {
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+button:hover {
+    opacity: 0.9;
 }
 
 .delete-btn {
     background: none;
-    border: none;
     font-size: 1rem;
     color: #d33;
-    cursor: pointer;
 }
 
 .delete-btn:hover {
     color: #a00;
 }
 
+/* ------------------------
+   Modal Styling
+------------------------- */
 .modal {
     position: fixed;
     inset: 0;
-    background-color: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.45);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 9999;
     padding: 1rem;
 }
 
 .modal-content {
-    background: white;
+    background-color: #345c35;
     width: 100%;
-    max-width: 350px;
-    border-radius: 10px;
-    padding: 1.5rem 1rem;
+    max-width: 360px;
+    border-radius: 12px;
+    padding: 1.5rem 1.2rem;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
     text-align: center;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    font-family: system-ui, sans-serif;
 }
 
-.modal-avatar {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin: 0.8rem 0;
-}
-
-.edit-field {
-    margin: 0.8rem 0;
-    font-size: 16px;
-}
-
-.edit-field button {
-    margin: 0 0.5rem;
-    font-size: 18px;
-    padding: 2px 6px;
+.modal-content h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    color: black;
 }
 
 .modal-actions {
     display: flex;
-    justify-content: space-around;
-    margin-top: 1.2rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
 }
 
 .modal-actions button {
-    flex: 1;
-    margin: 0 5px;
-    padding: 0.6rem;
-    font-size: 15px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    border-radius: 8px;
 }
 
-.modal-actions button:first-child {
+.modal-actions .primary {
     background-color: #28a745;
     color: white;
 }
 
-.modal-actions button:last-child {
-    background-color: #eee;
+.modal-actions .danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.modal-actions .cancel {
+    background-color: #f3f3f3;
+    color: #333;
+}
+
+/* ------------------------
+   Edit Score Fields
+------------------------- */
+.edit-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.6rem 0;
+    font-size: 1rem;
+    color: white;
+    background-color: #022309;
+    padding: 0.4rem;
+    border-radius: 0.45rem;
+}
+
+.edit-label {
+    flex: 1;
+    text-align: left;
+    font-weight: 500;
+}
+
+.edit-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.edit-controls button {
+    font-size: 1.1rem;
+    padding: 0.3rem 0.6rem;
+    background-color: #f1f1f1;
+    border-radius: 6px;
+}
+
+.edit-controls button:hover {
+    background-color: #e0e0e0;
+}
+
+.edit-value {
+    width: 2rem;
+    text-align: center;
+    font-weight: bold;
+    display: inline-block;
 }

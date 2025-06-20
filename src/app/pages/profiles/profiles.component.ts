@@ -27,6 +27,9 @@ export class ProfilesComponent implements OnInit {
     bilde: ''
   };
 
+  personalbestValid: boolean = true;
+
+
   ngOnInit() {
     this.loadProfiles();
   }
@@ -55,6 +58,11 @@ export class ProfilesComponent implements OnInit {
 
   async addProfile(event: Event) {
     event.preventDefault();
+    this.validatePersonalbest();
+    if (!this.personalbestValid) {
+      alert('Personlig beste må være et tall');
+      return;
+    }
 
     const capitalize = (text: string) =>
       text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
@@ -227,5 +235,10 @@ export class ProfilesComponent implements OnInit {
       this.profiles = data || [];
       console.log(`📥 Lastet inn ${this.profiles.length} profiler`);
     }
+  }
+
+  validatePersonalbest() {
+    const value = this.newProfile.personalbest;
+    this.personalbestValid = /^-?\d+(\.\d+)?$/.test(value.trim());
   }
 }

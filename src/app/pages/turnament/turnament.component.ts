@@ -75,6 +75,7 @@ export class TurnamentComponent implements OnInit {
 
     if (!error) {
       this.rows = this.rows.filter(r => r.id !== row.id);
+      this.closeEditModal()
     } else {
       console.error('Feil ved sletting:', error);
     }
@@ -129,6 +130,29 @@ export class TurnamentComponent implements OnInit {
     } else {
       console.error('❌ Feil ved oppdatering:', error);
       alert('Kunne ikke lagre endringer.');
+    }
+  }
+
+  getPlacement(index: number): string | number {
+    const current = this.rows[index];
+    const currentScore = current.total_score;
+
+    let placement = 1;
+    for (let i = 0; i < index; i++) {
+      const prevScore = this.rows[i].total_score;
+      if (prevScore < currentScore) {
+        placement++;
+      } else if (prevScore === currentScore) {
+        // Hvis samme score finnes tidligere, bruk samme plassering som den forrige
+        return this.getPlacement(i);
+      }
+    }
+
+    switch (placement) {
+      case 1: return '🥇';
+      case 2: return '🥈';
+      case 3: return '🥉';
+      default: return placement;
     }
   }
 }

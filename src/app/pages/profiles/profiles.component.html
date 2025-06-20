@@ -23,8 +23,13 @@
                     required />
                 <input type="number" placeholder="Metrix rangering" [(ngModel)]="newProfile.rangering" name="rangering"
                     inputmode="numeric" pattern="[0-9]*" class="numeric-input" />
-                <input type="number" placeholder="Personlig beste - Lisleherad" [(ngModel)]="newProfile.personalbest"
-                    name="personalbest" inputmode="numeric" pattern="[0-9]*" class="numeric-input" />
+                <input type="text" placeholder="Personlig beste - Lisleherad" [(ngModel)]="newProfile.personalbest"
+                    name="personalbest" (ngModelChange)="validatePersonalbest()"
+                    [class.invalid-input]="!personalbestValid" />
+
+                <span *ngIf="!personalbestValid" class="error-text">
+                    Dette feltet må inneholde tall
+                </span>
                 <input type="text" placeholder="Sitat" [(ngModel)]="newProfile.sitat" name="sitat" />
 
                 <div class="modal-actions">

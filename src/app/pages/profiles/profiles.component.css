@@ -175,3 +175,14 @@
 .modal-create-user {
     z-index: 2;
 }
+
+.invalid-input {
+    border: 1px solid red;
+}
+
+.error-text {
+    color: red;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+    display: block;
+}
