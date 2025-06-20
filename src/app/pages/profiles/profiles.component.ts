@@ -14,6 +14,8 @@ export class ProfilesComponent {
 
   profiles: any[] = [];
 
+  removeIndex: number | null = null;
+
   newProfile = {
     fornavn: '',
     etternavn: '',
@@ -62,4 +64,14 @@ export class ProfilesComponent {
     this.closeModal();
   }
 
+  confirmRemove(index: number) {
+    this.removeIndex = index;
+  }
+
+  removeProfile() {
+    if (this.removeIndex !== null) {
+      this.profiles.splice(this.removeIndex, 1);
+      this.removeIndex = null;
+    }
+  }
 }

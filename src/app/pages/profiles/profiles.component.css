@@ -86,6 +86,7 @@
 
 /* Profilvisning */
 .profile-card {
+    position: relative;
     background: #2e4032;
     padding: 0.75rem;
     border-radius: 10px;
@@ -152,4 +153,21 @@
     /* Firefox */
     -webkit-appearance: none;
     /* Chrome/Safari */
+}
+
+.remove-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: #ff8888;
+    cursor: pointer;
+    padding: 0;
+}
+
+.remove-button:hover {
+    color: #ff4d4d;
+    transform: scale(1.1);
 }

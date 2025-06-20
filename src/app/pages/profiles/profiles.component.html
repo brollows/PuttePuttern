@@ -37,7 +37,8 @@
 
     <!-- Liste med profiler -->
     <div class="profile-list">
-        <div class="profile-card" *ngFor="let profile of profiles">
+        <div class="profile-card" *ngFor="let profile of profiles; let i = index">
+            <button class="remove-button" (click)="confirmRemove(i)">❌</button>
             <h3 class="profile-name">{{ profile.fornavn }} {{ profile.etternavn }}</h3>
 
             <div class="profile-body">
@@ -50,6 +51,18 @@
             </div>
 
             <q *ngIf="profile.sitat" class="profile-quote">"{{ profile.sitat }}"</q>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" *ngIf="removeIndex !== null">
+        <div class="modal-content">
+            <h2>Bekreft sletting</h2>
+            <p>Er du sikker på at du vil fjerne denne brukeren?</p>
+            <div class="modal-actions">
+                <button (click)="removeProfile()">🗑️ Ja, fjern</button>
+                <button (click)="removeIndex = null">Avbryt</button>
+            </div>
         </div>
     </div>
 </section>
