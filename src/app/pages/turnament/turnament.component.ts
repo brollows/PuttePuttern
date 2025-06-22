@@ -105,7 +105,7 @@ export class TurnamentComponent implements OnInit {
       this.selectedRow &&
       ['total_score', 'total_birdies', 'total_par', 'total_bogeys'].includes(field)
     ) {
-      this.selectedRow[field] = Math.max(0, (this.selectedRow[field] || 0) + delta);
+      this.selectedRow[field] += delta;
     }
   }
 

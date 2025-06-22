@@ -186,3 +186,21 @@
     margin-top: 0.3rem;
     display: block;
 }
+
+.edit-button {
+    position: absolute;
+    top: 8px;
+    right: 36px;
+    /* Flytt til venstre for å ikke overlappe ❌ */
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: #aad2ff;
+    cursor: pointer;
+    padding: 0;
+}
+
+.edit-button:hover {
+    color: #77bbff;
+    transform: scale(1.1);
+}

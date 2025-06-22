@@ -8,15 +8,18 @@
     <!-- Modal -->
     <div class="modal modal-create-user" *ngIf="showModal">
         <div class="modal-content">
-            <h2>Ny bruker</h2>
-            <form (submit)="addProfile($event)">
-                <label>Profilbilde:
-                    <!-- Forhåndsvisning vises så fort bildet er lastet -->
-                    <br>
-                    <img *ngIf="newProfile.bilde" [src]="newProfile.bilde" alt="Forhåndsvisning"
-                        class="preview-image" />
-                    <input type="file" (change)="onImageUpload($event)" />
-                </label>
+            <h2>{{ editingIndex >= 0 ? 'Rediger bruker' : 'Ny bruker' }}</h2>
+            <form (submit)="editingIndex >= 0 ? saveEditedProfile($event) : addProfile($event)">
+                <ng-container *ngIf="editingIndex < 0">
+                    <label>Profilbilde:
+                        <!-- Forhåndsvisning vises så fort bildet er lastet -->
+                        <br>
+                        <img *ngIf="newProfile.bilde" [src]="newProfile.bilde" alt="Forhåndsvisning"
+                            class="preview-image" />
+                        <input type="file" (change)="onImageUpload($event)" />
+                    </label>
+                </ng-container>
+
 
                 <input type="text" placeholder="Fornavn" [(ngModel)]="newProfile.fornavn" name="fornavn" required />
                 <input type="text" placeholder="Etternavn" [(ngModel)]="newProfile.etternavn" name="etternavn"
@@ -43,6 +46,7 @@
     <!-- Liste med profiler -->
     <div class="profile-list">
         <div class="profile-card" *ngFor="let profile of profiles; let i = index">
+            <button class="edit-button" (click)="editProfile(i)">✏️</button>
             <button class="remove-button" (click)="confirmRemove(i)">❌</button>
             <h3 class="profile-name">{{ profile.fornavn }} {{ profile.etternavn }}</h3>
 

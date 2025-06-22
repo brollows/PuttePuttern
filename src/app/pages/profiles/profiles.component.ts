@@ -29,6 +29,8 @@ export class ProfilesComponent implements OnInit {
 
   personalbestValid: boolean = true;
 
+  editingIndex: number = -1;
+
 
   ngOnInit() {
     this.loadProfiles();
@@ -40,6 +42,7 @@ export class ProfilesComponent implements OnInit {
   }
 
   closeModal() {
+    this.editingIndex = -1;
     this.showModal = false;
   }
 
@@ -241,4 +244,85 @@ export class ProfilesComponent implements OnInit {
     const value = this.newProfile.personalbest;
     this.personalbestValid = /^-?\d+(\.\d+)?$/.test(value.trim());
   }
+
+  editProfile(index: number) {
+    const profile = this.profiles[index];
+
+    // Lag en kopi for å unngå at endringer påvirker originalen direkte
+    this.newProfile = {
+      fornavn: profile.fornavn,
+      etternavn: profile.etternavn,
+      rangering: profile.rangering?.toString() || '',
+      personalbest: profile.personalbest?.toString() || '',
+      sitat: profile.sitat || '',
+      bilde: profile.bilde || ''
+    };
+
+    this.editingIndex = index;
+    this.showModal = true;
+  }
+
+  async saveEditedProfile(event: Event) {
+    event.preventDefault();
+    this.validatePersonalbest();
+
+    if (!this.personalbestValid) {
+      alert('Personlig beste må være et tall');
+      return;
+    }
+
+    const profileId = this.profiles[this.editingIndex].id;
+    const originalProfile = this.profiles[this.editingIndex];
+    const updatedProfile: any = {
+      fornavn: this.newProfile.fornavn,
+      etternavn: this.newProfile.etternavn,
+      rangering: parseInt(this.newProfile.rangering, 10),
+      personalbest: parseInt(this.newProfile.personalbest, 10),
+      sitat: this.newProfile.sitat || ''
+    };
+
+    let imageUrl = originalProfile.bilde; // behold eksisterende som default
+
+    if (this.newProfile.bilde?.startsWith('data:image')) {
+      console.log("🆕 Nytt bilde oppdaget, overskriver eksisterende fil");
+
+      const blob = await fetch(this.newProfile.bilde).then(res => res.blob());
+      const file = new File([blob], `profile-${profileId}.png`, { type: blob.type });
+
+      imageUrl = await this.uploadImage(file, file.name) || '';
+      console.log("📸 Oppdatert bilde-URL:", imageUrl);
+    }
+
+    // Sørg for at bilde-URL alltid blir med
+    updatedProfile.bilde = imageUrl;
+
+
+    // 🔄 Oppdater i databasen (ingen UPDATE-policy trengs hvis ikke bilde-URL endres)
+    const { error } = await this.supabase
+      .from('profiles')
+      .update(updatedProfile)
+      .eq('id', profileId);
+
+    console.log(profileId)
+
+    if (error) {
+      console.error('❌ Feil ved oppdatering:', error);
+      alert('Kunne ikke oppdatere profilen.');
+      return;
+    } else {
+      console.log('✅ Oppdatering fullført i databasen');
+    }
+
+    // ✅ Oppdater lokal liste
+    this.profiles[this.editingIndex] = {
+      ...originalProfile,
+      ...updatedProfile,
+      bilde: imageUrl
+    };
+
+    this.editingIndex = -1;
+    this.closeModal();
+  }
+
+
 }

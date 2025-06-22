@@ -1,0 +1,30 @@
+.challenges-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    gap: 2rem;
+    text-align: center;
+    color: #f0f0f0;
+}
+
+.challenges-container h2 {
+    color: #d4edb4;
+    font-size: 1.8rem;
+}
+
+.challenge-card {
+    background-color: #2b472f;
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    max-width: 360px;
+    width: 100%;
+    font-size: 1.3rem;
+    font-weight: 500;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.challenge-card:hover {
+    transform: scale(1.02);
+}
