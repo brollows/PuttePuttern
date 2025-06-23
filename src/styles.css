@@ -1,9 +1,10 @@
 /* Bakgrunn og helhet */
 body {
   margin: 0;
-  background-color: #1b2b1f; /* mørk skoggrønn */
+  background-color: #1b2b1f;
+  /* mørk skoggrønn */
   color: #f0f0f0;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Bungee', sans-serif;
 }
 
 /* Link resets */
@@ -13,8 +14,11 @@ a {
 
 /* Main content padding */
 main {
-  padding: 1.5rem;
-  min-height: 100vh;
+  padding: 1.5rem 1.5rem 0 1.5rem;
+  padding-bottom: 2.5rem;
+  height: 100vh;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
 /* Hovedmeny på forsiden */

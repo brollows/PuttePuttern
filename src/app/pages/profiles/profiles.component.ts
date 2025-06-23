@@ -24,13 +24,13 @@ export class ProfilesComponent implements OnInit {
     rangering: '',
     personalbest: '',
     sitat: '',
-    bilde: ''
+    bilde: '',
+    udiscnavn: ''
   };
 
   personalbestValid: boolean = true;
 
   editingIndex: number = -1;
-
 
   ngOnInit() {
     this.loadProfiles();
@@ -38,7 +38,7 @@ export class ProfilesComponent implements OnInit {
 
   openModal() {
     this.showModal = true;
-    this.newProfile = { fornavn: '', etternavn: '', rangering: '', personalbest: '', sitat: '', bilde: '' };
+    this.newProfile = { fornavn: '', etternavn: '', rangering: '', personalbest: '', sitat: '', bilde: '', udiscnavn: '' };
   }
 
   closeModal() {
@@ -76,10 +76,10 @@ export class ProfilesComponent implements OnInit {
       etternavn: capitalize(this.newProfile.etternavn),
       rangering: parseInt(this.newProfile.rangering, 10),
       personalbest: parseInt(this.newProfile.personalbest, 10),
-      sitat: this.newProfile.sitat || ''
+      sitat: this.newProfile.sitat || '',
+      udiscnavn: this.newProfile.udiscnavn || ''
     };
 
-    // 1. 👉 Sett inn profilen uten bilde
     const { data, error } = await this.supabase
       .from('profiles')
       .insert([formattedProfile])
@@ -94,14 +94,12 @@ export class ProfilesComponent implements OnInit {
     const addedProfile = data[0];
     let imageUrl = '';
 
-    // 2. 📸 Last opp bilde med `id` som filnavn
     if (this.newProfile.bilde?.startsWith('data:image')) {
       const blob = await fetch(this.newProfile.bilde).then(res => res.blob());
       const file = new File([blob], `profile-${addedProfile.id}.png`, { type: blob.type });
       imageUrl = await this.uploadImage(file, file.name) || '';
     }
 
-    // 3. 🔄 Oppdater profilen med bilde-URL
     if (imageUrl) {
       const { error: updateError } = await this.supabase
         .from('profiles')
@@ -115,13 +113,9 @@ export class ProfilesComponent implements OnInit {
       }
     }
 
-    console.log(`✅ Bruker lagt til: ${addedProfile.fornavn} ${addedProfile.etternavn} (ID: ${addedProfile.id})`);
-    //alert(`Bruker "${addedProfile.fornavn} ${addedProfile.etternavn}" ble lagt til! 🎉`);
-
     this.profiles.push(addedProfile);
     this.closeModal();
   }
-
 
   async addProfileToSupabase(profile: any) {
     const { data, error } = await this.supabase
@@ -132,7 +126,8 @@ export class ProfilesComponent implements OnInit {
         rangering: parseInt(profile.rangering, 10),
         personalbest: parseInt(profile.personalbest, 10),
         sitat: profile.sitat || '',
-        bilde: profile.bilde || ''
+        bilde: profile.bilde || '',
+        udiscnavn: profile.udiscnavn || ''
       }])
       .select();
 
@@ -142,7 +137,6 @@ export class ProfilesComponent implements OnInit {
     } else if (data && data.length > 0) {
       const added = data[0];
       console.log(`✅ Bruker lagt til: ${added.fornavn} ${added.etternavn} (ID: ${added.id})`);
-      //alert(`Bruker "${added.fornavn} ${added.etternavn}" ble lagt til! 🎉`);
     } else {
       console.warn('🟡 Ingen data returnert fra Supabase.');
     }
@@ -178,11 +172,8 @@ export class ProfilesComponent implements OnInit {
       return;
     }
 
-    // 1. 🗑️ Prøv å slette bildet hvis det finnes
     if (profile.bilde) {
       try {
-        // Eksempel på bilde-URL:
-        // https://xyz.supabase.co/storage/v1/object/public/profile-images/profile-17.png
         const urlParts = profile.bilde.split('/');
         const filename = urlParts[urlParts.length - 1];
 
@@ -201,7 +192,6 @@ export class ProfilesComponent implements OnInit {
       }
     }
 
-    // 2. 🔥 Slett profilen fra databasen
     const { error } = await this.supabase
       .from('profiles')
       .delete()
@@ -214,13 +204,11 @@ export class ProfilesComponent implements OnInit {
       return;
     }
 
-    // 3. 🧹 Fjern lokalt
     this.profiles.splice(this.removeIndex, 1);
     this.removeIndex = null;
 
     console.log(`✅ Bruker med ID ${profile.id} slettet`);
   }
-
 
   confirmRemove(index: number) {
     this.removeIndex = index;
@@ -230,7 +218,7 @@ export class ProfilesComponent implements OnInit {
     const { data, error } = await this.supabase
       .from('profiles')
       .select('*')
-      .order('id', { ascending: true }); // eller descending hvis du vil ha nyeste først
+      .order('id', { ascending: true });
 
     if (error) {
       console.error('❌ Klarte ikke hente profiler:', error);
@@ -248,14 +236,14 @@ export class ProfilesComponent implements OnInit {
   editProfile(index: number) {
     const profile = this.profiles[index];
 
-    // Lag en kopi for å unngå at endringer påvirker originalen direkte
     this.newProfile = {
       fornavn: profile.fornavn,
       etternavn: profile.etternavn,
       rangering: profile.rangering?.toString() || '',
       personalbest: profile.personalbest?.toString() || '',
       sitat: profile.sitat || '',
-      bilde: profile.bilde || ''
+      bilde: profile.bilde || '',
+      udiscnavn: profile.udiscnavn || ''
     };
 
     this.editingIndex = index;
@@ -278,42 +266,31 @@ export class ProfilesComponent implements OnInit {
       etternavn: this.newProfile.etternavn,
       rangering: parseInt(this.newProfile.rangering, 10),
       personalbest: parseInt(this.newProfile.personalbest, 10),
-      sitat: this.newProfile.sitat || ''
+      sitat: this.newProfile.sitat || '',
+      udiscnavn: this.newProfile.udiscnavn || ''
     };
 
-    let imageUrl = originalProfile.bilde; // behold eksisterende som default
+    let imageUrl = originalProfile.bilde;
 
     if (this.newProfile.bilde?.startsWith('data:image')) {
-      console.log("🆕 Nytt bilde oppdaget, overskriver eksisterende fil");
-
       const blob = await fetch(this.newProfile.bilde).then(res => res.blob());
       const file = new File([blob], `profile-${profileId}.png`, { type: blob.type });
-
       imageUrl = await this.uploadImage(file, file.name) || '';
-      console.log("📸 Oppdatert bilde-URL:", imageUrl);
     }
 
-    // Sørg for at bilde-URL alltid blir med
     updatedProfile.bilde = imageUrl;
 
-
-    // 🔄 Oppdater i databasen (ingen UPDATE-policy trengs hvis ikke bilde-URL endres)
     const { error } = await this.supabase
       .from('profiles')
       .update(updatedProfile)
       .eq('id', profileId);
 
-    console.log(profileId)
-
     if (error) {
       console.error('❌ Feil ved oppdatering:', error);
       alert('Kunne ikke oppdatere profilen.');
       return;
-    } else {
-      console.log('✅ Oppdatering fullført i databasen');
     }
 
-    // ✅ Oppdater lokal liste
     this.profiles[this.editingIndex] = {
       ...originalProfile,
       ...updatedProfile,
@@ -323,6 +300,4 @@ export class ProfilesComponent implements OnInit {
     this.editingIndex = -1;
     this.closeModal();
   }
-
-
 }

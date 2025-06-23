@@ -1,13 +1,21 @@
 .navbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2rem;
   background-color: #1a1a1a;
   padding: 0.75rem 0;
   display: flex;
   justify-content: center;
+  align-items: center;
+  border-top: 1px solid #333;
+  z-index: 100;
 }
 
 .home-icon {
   font-family: 'Material Symbols Outlined';
-  font-size: 28px;
+  font-size: 35px;
   color: white;
   text-decoration: none;
   transition: transform 0.2s ease;

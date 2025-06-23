@@ -1,170 +1,200 @@
 .profiles-page {
     padding: 1rem;
-    max-width: 600px;
+    max-width: 640px;
     margin: 0 auto;
     color: #f0f0f0;
+    font-family: 'Segoe UI', sans-serif;
 }
 
-/* Header med tittel og + knapp på samme linje */
+/* Header med tittel og + knapp */
 .profiles-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-/* Liten + ikon-knapp */
+.profiles-header h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    line-height: 1.2;
+}
+
+
 .add-icon-button {
     font-size: 1.5rem;
-    background-color: transparent;
+    padding: 0;
+    background: transparent;
     border: none;
     color: #d4edb4;
     cursor: pointer;
     transition: transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    height: 100%;
 }
+
 
 .add-icon-button:hover {
-    transform: scale(1.2);
+    background-color: #4c784e;
+    transform: scale(1.1);
 }
 
-/* Modal */
+/* ------------------
+   Modal
+------------------- */
 .modal {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 9999;
+    padding: 1rem;
 }
 
 .modal-content {
     background: #2b3b2e;
     padding: 1.5rem;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 400px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 420px;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    text-align: center;
 }
 
 .modal-content h2 {
-    margin-top: 0;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
     color: #d4edb4;
 }
 
-/* Jevne margins på input-felt i modal */
 .modal-content form {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    padding: 0.5rem 0;
 }
 
-.modal-content input[type="text"],
-.modal-content input[type="file"] {
-    width: 100%;
+.modal-content input {
     padding: 0.6rem;
     border-radius: 6px;
     border: none;
-    box-sizing: border-box;
-    /* sørger for at padding + bredde = 100% */
+    font-size: 1rem;
+    background: #f0f0f0;
+    color: #333;
+}
+
+.modal-content input[type="file"] {
+    background: transparent;
+    color: #fff;
 }
 
 .modal-actions {
     display: flex;
     justify-content: space-between;
-    margin-top: 1rem;
+    margin-top: 1.2rem;
 }
 
 .modal-actions button {
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1rem;
+    font-weight: bold;
     border: none;
     border-radius: 6px;
+    font-size: 1rem;
     cursor: pointer;
 }
 
-/* Profilvisning */
+.modal-actions button:first-child {
+    background-color: #28a745;
+    color: white;
+}
+
+.modal-actions button:last-child {
+    background-color: #ccc;
+    color: #333;
+}
+
+/* ------------------
+   Profilkort
+------------------- */
+.profile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
 .profile-card {
     position: relative;
     background: #2e4032;
-    padding: 0.75rem;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem 0rem;
+    padding: 1rem;
+    border-radius: 12px;
     color: #f0f0f0;
-    margin-bottom: 1rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
 }
 
 .profile-name {
-    margin: 0;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #d4edb4;
+    margin: 0 0 0.5rem;
 }
 
 .profile-body {
     display: flex;
-    gap: 0.75rem;
+    gap: 1rem;
     align-items: center;
 }
 
-.profile-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
+.preview-image {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 3px solid #4c784e;
+    object-fit: cover;
 }
 
-.preview-image {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 2px solid #4c784e;
+.profile-stats p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #e3f8da;
 }
 
 .profile-quote {
+    margin-top: 0.7rem;
     font-style: italic;
-    color: #cde0cb;
-    margin-top: 0.25rem;
-    /* redusert fra 0.5rem */
+    color: #c0f0c0;
 }
 
-.preview-image {
-    width: 100%;
-    max-width: 120px;
-    height: auto;
-    border-radius: 6px;
-    margin: 0.5rem 0;
-    object-fit: cover;
-    border: 2px solid #4c784e;
+/* ------------------
+   Rediger og slett-knapper
+------------------- */
+.edit-button,
+.remove-button {
+    position: absolute;
+    top: 10px;
+    font-size: 1.1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.2s ease;
 }
 
-/* Fjern spinner/piltaster fra number input */
-.numeric-input::-webkit-outer-spin-button,
-.numeric-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+.edit-button {
+    right: 36px;
+    color: #aad2ff;
 }
 
-.numeric-input {
-    appearance: textfield;
-    /* ✅ Standard fallback */
-    -moz-appearance: textfield;
-    /* Firefox */
-    -webkit-appearance: none;
-    /* Chrome/Safari */
+.edit-button:hover {
+    color: #77bbff;
+    transform: scale(1.1);
 }
 
 .remove-button {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: transparent;
-    border: none;
-    font-size: 1.2rem;
+    right: 10px;
     color: #ff8888;
-    cursor: pointer;
-    padding: 0;
 }
 
 .remove-button:hover {
@@ -172,35 +202,23 @@
     transform: scale(1.1);
 }
 
-.modal-create-user {
-    z-index: 2;
-}
-
+/* ------------------
+   Feilhåndtering
+------------------- */
 .invalid-input {
-    border: 1px solid red;
+    border: 1px solid red !important;
 }
 
 .error-text {
     color: red;
     font-size: 0.85rem;
-    margin-top: 0.3rem;
-    display: block;
+    margin-top: -0.5rem;
 }
 
-.edit-button {
-    position: absolute;
-    top: 8px;
-    right: 36px;
-    /* Flytt til venstre for å ikke overlappe ❌ */
-    background: transparent;
-    border: none;
-    font-size: 1.2rem;
-    color: #aad2ff;
-    cursor: pointer;
-    padding: 0;
-}
-
-.edit-button:hover {
-    color: #77bbff;
-    transform: scale(1.1);
+.udisc-logo {
+    margin-left: 0.18rem;
+    height: 14px;
+    vertical-align: middle;
+    margin-right: 0.28rem;
+    opacity: 1;
 }

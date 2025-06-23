@@ -17,6 +17,7 @@ export class TurnamentComponent implements OnInit {
 
   selectedRow: any = null;
   selectedProfile: any = null;
+  selectedIndex: number | null = null;
 
   readonly editableFields = ['total_score', 'total_birdies', 'total_par', 'total_bogeys'];
 
@@ -90,8 +91,9 @@ export class TurnamentComponent implements OnInit {
     return this.profiles.find(p => p.id === profileId);
   }
 
-  openEditModal(row: any) {
+  openEditModal(row: any, index: number) {
     this.selectedRow = { ...row };
+    this.selectedIndex = index;
     this.selectedProfile = this.getProfile(row['profile$id']);
   }
 

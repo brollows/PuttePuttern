@@ -1,18 +1,19 @@
-<h2>Regler for challenges</h2>
-<p>Hver gang en spiller får bogey må en challenge trykkes før neste hull.</p>
-<p>Challengen gjelder da for hele hullet.</p>
-<p>For eksempel om man får bogey på hull 10, så skal challengen fullføres på hull 11</p>
-<br>
-<p>NEKTER ELLER GLEMMER DU Å GJØRE CHALLENGE SÅ ER DET +1 i TOTAL SCORE</p>
-
-
-<hr>
+<h2 class="challenges-title">🎯 Challenge</h2>
 
 <section class="challenges-container">
-    <button class="menu-button" (click)="setRandomChallenge()">
-        🎲 Få en tilfeldig utfordring
+    <button class="challenge-button" (click)="setRandomChallenge()">
+        🎲 Trykk for å få en utfordring!
     </button>
     <div class="challenge-card">
         <p>{{ currentDisplayedChallenge }}</p>
     </div>
 </section>
+
+<hr>
+
+<div class="rules-box">
+    <p>Hver gang en spiller får <strong>bogey</strong>... må det trykkes på <em>🎲 "Få en utfordring"</em> før neste
+        hull!</p>
+    <p>Challenge'n gjelder for hele neste hull – f.eks. bogey på hull 10 → challenge på hull 11!</p>
+    <p class="rules-warning">NEKTER ELLER GLEMMER DU Å UTFØRE CHALLENGE = +1 STRAFFEKAST PÅ TOTALEN! 😱</p>
+</div>

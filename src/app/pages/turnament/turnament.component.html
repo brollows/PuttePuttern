@@ -1,3 +1,6 @@
+<h2 class="section-title">Turnering</h2>
+<hr>
+
 <!-- Pakk inn tabellen i en wrapper for horisontal scroll -->
 <div class="table-wrapper">
     <table class="tournament-table">
@@ -9,16 +12,19 @@
                 <th>Birdies</th>
                 <th>Par</th>
                 <th>Bogeys</th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let row of rows; let i = index" (click)="openEditModal(row)">
+            <tr *ngFor="let row of rows; let i = index" (click)="openEditModal(row, i)">
                 <td style="width: 1rem;" class="placement">{{ getPlacement(i) }}</td>
                 <td class="player-cell">
                     <img *ngIf="getProfile(row['profile$id'])?.bilde" [src]="getProfile(row['profile$id'])?.bilde"
                         class="avatar" />
-                    {{ getProfile(row['profile$id'])?.fornavn || 'Ukjent' }}
+                    <span class="player-name">
+                        {{ getProfile(row['profile$id'])?.fornavn || 'Ukjent' }}
+                        <img *ngIf="i === 0" src="assets/yellow-t-shirt-icon.png" alt="Ledertrøye"
+                            class="leader-icon" />
+                    </span>
                 </td>
                 <td>{{ row.total_score }}</td>
                 <td>{{ row.total_birdies }}</td>
@@ -32,7 +38,11 @@
 <!-- Modal er uendret i struktur -->
 <div class="modal" *ngIf="selectedRow">
     <div class="modal-content">
-        <h2>{{ selectedProfile?.fornavn }}</h2>
+        <h2>
+            {{ selectedProfile?.fornavn }}
+            <img *ngIf="selectedIndex === 0" src="assets/yellow-t-shirt-icon.png" alt="Ledertrøye"
+                class="leader-icon" />
+        </h2>
         <img *ngIf="selectedProfile?.bilde" [src]="selectedProfile.bilde" class="modal-avatar" />
 
         <div *ngFor="let field of editableFields" class="edit-field">

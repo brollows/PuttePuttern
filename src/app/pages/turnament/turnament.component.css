@@ -1,43 +1,87 @@
+.section-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #d4edb4;
+    margin: 0 0 0.5rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* --- TABELLSTIL --- */
 .table-wrapper {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
 }
 
 .tournament-table {
     width: 100%;
     border-collapse: collapse;
-    font-family: sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     font-size: 14px;
+    background: #2e4032;
+    color: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-.tournament-table th,
+.tournament-table th {
+    background-color: #1c2d21;
+    color: #d4edb4;
+    padding: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    border-bottom: 1px solid #446e49;
+}
+
 .tournament-table td {
-    padding: 0.5rem 0.7rem;
+    padding: 0.6rem 0.7rem;
     text-align: center;
-    height: 1rem;
+    height: 2.2rem;
 }
 
-.tournament-table tr {
-    border-bottom: 1px solid #ddd;
+.tournament-table tbody tr {
     transition: background-color 0.2s ease;
+    border-bottom: 1px solid #3c503f;
 }
 
 .tournament-table tbody tr:hover {
-    background-color: #f7f7f7;
+    background-color: #3e5c44;
     cursor: pointer;
 }
 
-.player-cell {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 0.5rem;
+/* --- Stripet bakgrunn for bedre lesbarhet --- */
+.tournament-table tbody tr:nth-child(even) {
+    background-color: #2f4635;
+    /* litt mørkere */
 }
 
-/* ------------------------
-   Avatar / Profile Images
-------------------------- */
+.tournament-table tbody tr:nth-child(odd) {
+    background-color: #344d3b;
+    /* litt lysere */
+}
+
+/* Behold hover-effekten på toppen */
+.tournament-table tbody tr:hover {
+    background-color: #3e5c44 !important;
+}
+
+.tournament-table td:nth-child(2),
+.tournament-table th:nth-child(2) {
+    width: 1%;
+    white-space: nowrap;
+}
+
+.player-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+/* --- PROFILBILDER --- */
 .avatar,
 .modal-avatar {
     border-radius: 50%;
@@ -45,19 +89,22 @@
 }
 
 .avatar {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
+    border: 2px solid #4c784e;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
 }
 
 .modal-avatar {
-    width: 72px;
-    height: 72px;
+    width: 80px;
+    height: 80px;
     margin: 1rem auto;
+    border: 3px solid #4c784e;
 }
 
-/* ------------------------
-   Buttons
-------------------------- */
+/* --- KNAPPER --- */
 button {
     cursor: pointer;
     border: none;
@@ -78,13 +125,11 @@ button:hover {
     color: #a00;
 }
 
-/* ------------------------
-   Modal Styling
-------------------------- */
+/* --- MODAL --- */
 .modal {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -93,20 +138,19 @@ button:hover {
 }
 
 .modal-content {
-    background-color: #345c35;
+    background-color: #2b3b2e;
     width: 100%;
     max-width: 360px;
     border-radius: 12px;
     padding: 1.5rem 1.2rem;
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
     text-align: center;
-    font-family: system-ui, sans-serif;
 }
 
 .modal-content h2 {
-    font-size: 1.4rem;
-    margin-bottom: 0.5rem;
-    color: black;
+    font-size: 1.5rem;
+    margin-bottom: 0.7rem;
+    color: #d4edb4;
 }
 
 .modal-actions {
@@ -120,6 +164,7 @@ button:hover {
     padding: 0.6rem 1rem;
     font-size: 1rem;
     border-radius: 8px;
+    font-weight: bold;
 }
 
 .modal-actions .primary {
@@ -137,9 +182,7 @@ button:hover {
     color: #333;
 }
 
-/* ------------------------
-   Edit Score Fields
-------------------------- */
+/* --- REDIGER SCORE --- */
 .edit-field {
     display: flex;
     justify-content: space-between;
@@ -156,6 +199,9 @@ button:hover {
     flex: 1;
     text-align: left;
     font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
 }
 
 .edit-controls {
@@ -169,6 +215,7 @@ button:hover {
     padding: 0.3rem 0.6rem;
     background-color: #f1f1f1;
     border-radius: 6px;
+    font-weight: bold;
 }
 
 .edit-controls button:hover {
@@ -180,4 +227,10 @@ button:hover {
     text-align: center;
     font-weight: bold;
     display: inline-block;
+}
+
+.leader-icon {
+    height: 18px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
 }
