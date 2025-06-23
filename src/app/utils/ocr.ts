@@ -1,3 +1,5 @@
+import jsPDF from 'jspdf';
+
 export interface ParsedScore {
     navn: string;
     total: number | null;
@@ -11,8 +13,8 @@ export async function runOCR(file: File): Promise<ParsedScore | null> {
         console.warn('🚫 OCR deaktivert under SSR');
         return null;
     }
-    const { default: Tesseract } = await import('tesseract.js');
 
+    const { default: Tesseract } = await import('tesseract.js');
     const imageDataUrl = await toDataURL(file);
     const originalImage = await loadImage(imageDataUrl);
     const canvas = document.createElement('canvas');
@@ -43,7 +45,11 @@ export async function runOCR(file: File): Promise<ParsedScore | null> {
     }
 
     const parArray = parLine.split(/\s+/).map(n => parseInt(n, 10)).filter(n => !isNaN(n));
-    const scoreArray = await extractScoreNumbersFromCanvas(canvas, parArray.length);
+    const imageSnippets: string[] = [];
+    const scoreArray = await extractScoreNumbersFromCanvas(canvas, parArray.length, imageSnippets);
+
+    // ➕ Lagre utklipp som PDF
+    //createPDFfromImages(imageSnippets);
 
     if (scoreArray.length !== parArray.length) {
         console.warn(`⚠️ Antall scorer (${scoreArray.length}) != antall hull (${parArray.length})`);
@@ -59,8 +65,9 @@ export async function runOCR(file: File): Promise<ParsedScore | null> {
     }
 
     const name = fullText.split('\n').find(line => /^[A-ZÆØÅ][a-zæøå]+$/.test(line)) || 'Ukjent';
-    const totalMatch = fullText.match(/\+?(\d+)\s*\(\d+\)/);
+    const totalMatch = fullText.match(/([+-]?\d+)\s*\(\d+\)/);
     const total = totalMatch ? parseInt(totalMatch[1], 10) : null;
+
 
     return { navn: name, total, birdies, pars, bogeys };
 }
@@ -91,7 +98,6 @@ async function runFullTextOCR(canvas: HTMLCanvasElement): Promise<string> {
     return result.data.text;
 }
 
-// 🔍 Forbedret PAR-linjeuttrekk
 function extractParLine(text: string): string | null {
     const lines = text.split('\n').map(l => l.trim().toLowerCase());
 
@@ -115,26 +121,46 @@ function extractParLine(text: string): string | null {
 
 async function extractScoreNumbersFromCanvas(
     canvas: HTMLCanvasElement,
-    count: number
+    count: number,
+    imageSnippets: string[]
 ): Promise<number[]> {
     const { default: Tesseract } = await import('tesseract.js');
     const ctx = canvas.getContext('2d')!;
-    const widthPerCell = 45;
-    const height = 45;
-    const spacing = 5;
-    const offsetX = 100;
-    const offsetY = 360;
+    const totalWidth = canvas.width;
+
+    const offsetY = 503;
+    const height = 30;
+    const marginLeft = 180;
+    const marginRight = 50;
+
+    const usableWidth = totalWidth - marginLeft - marginRight;
+    const rawCellWidth = usableWidth / count;
 
     const values: number[] = [];
+
     for (let i = 0; i < count; i++) {
-        const x = offsetX + i * (widthPerCell + spacing);
-        const sub = ctx.getImageData(x, offsetY, widthPerCell, height);
+        const cellX = marginLeft + i * rawCellWidth;
+        const cellWidth = rawCellWidth;
+
+        const cropPaddingX = cellWidth * 0.3; // strammere beskjæring
+        const cropWidth = cellWidth - 2 * cropPaddingX;
+
+        let x = Math.round(cellX + cropPaddingX);
+        x = adjustCropX(i, x, count);
+
+        const width = Math.round(cropWidth);
+
+        const sub = ctx.getImageData(x, offsetY, width, height);
 
         const subCanvas = document.createElement('canvas');
         const subCtx = subCanvas.getContext('2d')!;
-        subCanvas.width = widthPerCell;
+        subCtx.imageSmoothingEnabled = false;
+        subCanvas.width = width;
         subCanvas.height = height;
         subCtx.putImageData(sub, 0, 0);
+
+        const subImage = subCanvas.toDataURL('image/png');
+        imageSnippets.push(subImage);
 
         const result = await Tesseract.recognize(subCanvas, 'eng', {
             logger: m => console.log(`🔎 OCR hull ${i + 1}:`, m),
@@ -150,4 +176,29 @@ async function extractScoreNumbersFromCanvas(
     }
 
     return values;
+}
+
+// ↔️ Justeringsfunksjon for forskyvning
+function adjustCropX(index: number, rawX: number, count: number): number {
+    const mid = (count - 1) / 2;
+    const distanceFromCenter = Math.abs(index - mid);
+    const maxOffset = 6; // hvor mye vi vil kunne flytte
+    const factor = distanceFromCenter / mid;
+    const direction = index < mid ? -1 : 1; // ← trekker mot sentrum
+    return Math.round(rawX + direction * factor * maxOffset);
+}
+
+
+function createPDFfromImages(images: string[]) {
+    const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'px',
+        format: [images.length * 60 + 40, 70]
+    });
+
+    images.forEach((img, i) => {
+        pdf.addImage(img, 'PNG', 20 + i * 60, 10, 50, 50);
+    });
+
+    pdf.save('ocr-snippets.pdf');
 }
