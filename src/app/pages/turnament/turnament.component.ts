@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { getSupabaseClient } from '../../../supabase-client';
 import { CommonModule } from '@angular/common';
+import { runOCR, ParsedScore } from '../../utils/ocr';
+
+
 
 @Component({
   selector: 'app-turnament',
@@ -18,6 +21,10 @@ export class TurnamentComponent implements OnInit {
   selectedRow: any = null;
   selectedProfile: any = null;
   selectedIndex: number | null = null;
+
+  isOcrRunning = false;
+
+
 
   readonly editableFields = ['total_score', 'total_birdies', 'total_par', 'total_bogeys'];
 
@@ -157,4 +164,41 @@ export class TurnamentComponent implements OnInit {
       default: return placement;
     }
   }
+
+  async onOCRImageUpload(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.isOcrRunning = true;
+
+
+    try {
+      // Original forhåndsvisning
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      // 🧪 Lag forhåndsvisning av ferdig gråskala bilde (ikke invertert)
+      //const processed = await preprocessImage(file);
+      //this.ocrProcessedPreviewUrl = processed;
+
+      // 🔍 Kjør OCR og fyll inn feltene
+      const parsed: ParsedScore | null = await runOCR(file);
+      console.log('📊 Parsed:', parsed);
+
+      if (parsed && this.selectedRow) {
+        this.selectedRow.total_score = parsed.total ?? 0;
+        this.selectedRow.total_birdies = parsed.birdies;
+        this.selectedRow.total_par = parsed.pars;
+        this.selectedRow.total_bogeys = parsed.bogeys;
+      }
+
+    } catch (e) {
+      alert("OCR feilet. Sjekk bilde og prøv igjen.");
+    } finally {
+      this.isOcrRunning = false;
+    }
+  }
+
+
 }

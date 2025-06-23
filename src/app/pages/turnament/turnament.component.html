@@ -38,6 +38,15 @@
 <!-- Modal er uendret i struktur -->
 <div class="modal" *ngIf="selectedRow">
     <div class="modal-content">
+        <label class="modal-menu-button" [class.loading]="isOcrRunning">
+            <ng-container *ngIf="!isOcrRunning; else loading">
+                📷 Importer UDisc-bilde
+            </ng-container>
+            <ng-template #loading>
+                <span class="spinner"></span> Laster...
+            </ng-template>
+            <input type="file" accept="image/*" (change)="onOCRImageUpload($event)" hidden>
+        </label>
         <h2>
             {{ selectedProfile?.fornavn }}
             <img *ngIf="selectedIndex === 0" src="assets/yellow-t-shirt-icon.png" alt="Ledertrøye"

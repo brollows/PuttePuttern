@@ -21,7 +21,6 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
-              "assets",
               "src/favicon.ico",
               "src/assets"
             ],
@@ -37,7 +36,11 @@
             "allowedCommonJsDependencies": [
               "whatwg-url",
               "@supabase/realtime-js",
-              "@supabase/node-fetch"
+              "@supabase/node-fetch",
+              "tesseract.js",
+              "is-url",
+              "regenerator-runtime/runtime",
+              "encoding"
             ]
           },
           "configurations": {
@@ -88,7 +91,6 @@
             ],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
-              "assets",
               "src/favicon.ico",
               "src/assets"
             ],
