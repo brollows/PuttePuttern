@@ -203,6 +203,7 @@ export class TurnamentComponent implements OnInit {
 
     } catch (e) {
       alert("OCR feilet. Sjekk bilde og prøv igjen.");
+      console.log(e);
     } finally {
       this.isOcrRunning = false;
     }
