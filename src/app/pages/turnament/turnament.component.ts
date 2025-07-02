@@ -25,7 +25,8 @@ export class TurnamentComponent implements OnInit {
 
   isOcrRunning = false;
 
-
+  showInfoModal = false;
+  showExampleImage = true;
 
   readonly editableFields = ['total_score', 'total_birdies', 'total_par', 'total_bogeys'];
 
@@ -77,17 +78,31 @@ export class TurnamentComponent implements OnInit {
   }
 
   async removeRow(row: any) {
-    const { error } = await this.supabase
-      .from('turnament')
-      .delete()
-      .eq('id', row.id);
+    const rowProfile = this.getProfile(row['profile$id']);
+    if ((rowProfile == undefined) || (
+      row.total_score == 0
+      && row.total_birdies == 0
+      && row.total_bogeys == 0
+      && row.total_par == 0
+    )
+    ) {
 
-    if (!error) {
-      this.rows = this.rows.filter(r => r.id !== row.id);
-      this.closeEditModal()
+      const { error } = await this.supabase
+        .from('turnament')
+        .delete()
+        .eq('id', row.id);
+
+      if (!error) {
+        this.rows = this.rows.filter(r => r.id !== row.id);
+        this.closeEditModal()
+      } else {
+        console.error('Feil ved sletting:', error);
+      }
     } else {
-      console.error('Feil ved sletting:', error);
+      alert("Du må slette brukeren eller nulle ut scoren før du kan slette")
+      return;
     }
+
   }
 
   getProfileName(profileId: number) {
@@ -191,13 +206,25 @@ export class TurnamentComponent implements OnInit {
       console.log('📊 Parsed:', parsed);
 
       if (parsed && this.selectedRow) {
-        if (this.selectedProfile.udiscnavn != parsed.navn) {
-          window.alert(`Du prøvde å sette score til ${this.selectedProfile.udiscnavn}, med scorekortet til ${parsed.navn}.`);
-        } else {
+        const profileName = this.selectedProfile?.udiscnavn?.trim().toLowerCase();
+        const parsedName = parsed?.navn?.trim().toLowerCase();
+
+        const profileNameExists = !!profileName;
+        const parsedNameExists = !!parsedName;
+
+        if (parsedNameExists && profileNameExists && parsedName.includes(profileName)) {
           this.currentSelectedRow.total_score = parsed.total ?? 0;
           this.currentSelectedRow.total_birdies = parsed.birdies;
           this.currentSelectedRow.total_par = parsed.pars;
           this.currentSelectedRow.total_bogeys = parsed.bogeys;
+        } else {
+          if (!profileNameExists) {
+            window.alert(`Denne profilen har ikke linket UDisc-navnet sitt med profilen.`);
+          } else if (!parsedNameExists) {
+            window.alert(`Kunne ikke lese navnet til brukeren på scoreboardet.`);
+          } else {
+            window.alert(`Du prøvde å sette score til ${this.selectedProfile.udiscnavn}, med scorekortet til ${parsed.navn}.`);
+          }
         }
       }
 
@@ -209,5 +236,11 @@ export class TurnamentComponent implements OnInit {
     }
   }
 
+  openInfoModal() {
+    this.showInfoModal = true;
+  }
 
+  closeInfoModal() {
+    this.showInfoModal = false;
+  }
 }

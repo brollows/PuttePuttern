@@ -1,4 +1,8 @@
-<h2 class="section-title">Turnering</h2>
+<div class="tournament-header">
+    <h2 class="section-title">Turnering</h2>
+    <button class="info-icon-button" (click)="openInfoModal()" aria-label="Informasjon">🛈</button>
+</div>
+
 <hr>
 
 <!-- Pakk inn tabellen i en wrapper for horisontal scroll -->
@@ -71,6 +75,44 @@
             <button class="primary" (click)="saveEdits()">✅ Ferdig</button>
             <button class="danger" (click)="removeRow(selectedRow); $event.stopPropagation()">🗑️ Slett</button>
             <button class="cancel" (click)="closeEditModal()">Avbryt</button>
+        </div>
+    </div>
+</div>
+
+<!-- Info-modal for bildeopplasting fra UDisc -->
+<div class="modal" *ngIf="showInfoModal">
+    <div class="modal-content udisc-info-modal">
+        <h2>Last opp bilde fra UDisc</h2>
+
+        <p class="info-text">
+            Når du skal føre score så kan du hente bildet fra udisc istedet for å telle og trykke for hver birdie, par
+            osv.
+        </p>
+
+        <div class="udisc-scroll-wrapper">
+            <div class="udisc-step">
+                <p class="step-caption">1. Åpne runden din i UDisc og vis scorekortet. Trykk deretter på
+                    <span class="bold-text">share</span> knappen
+                    markert på bildet
+                </p>
+                <img src="assets/udisc-instruction-1.jpeg" alt="UDisc steg 1" class="udisc-image" />
+            </div>
+
+            <div class="udisc-step">
+                <p class="step-caption">2. Velg deretter den som heter <span class="bold-text">Scorekort med min
+                        statestikk</span> som markert under.</p>
+                <img src="assets/udisc-instruction-2.jpeg" alt="UDisc steg 2" class="udisc-image" />
+            </div>
+
+            <div class="udisc-step">
+                <p class="step-caption">3. Lagre bildet til telefonen og last opp det til appen når du skal redigere på
+                    score.</p>
+                <img src="assets/udisc-instruction-3.jpeg" alt="UDisc steg 3" class="udisc-image" />
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="primary" (click)="closeInfoModal()">Ait..</button>
         </div>
     </div>
 </div>

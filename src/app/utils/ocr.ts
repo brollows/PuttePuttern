@@ -218,7 +218,11 @@ async function extractScoreNumbersFromCanvas(
         const subImage = padded.toDataURL('image/png');
         imageSnippets.push(subImage);
 
-        const raw = await recognizeOnlyDigits(padded);
+        const {
+            data: { text }
+        } = await Tesseract.recognize(padded);
+
+        const raw = text.trim();
         //console.log(raw)
         const parsed = parseInt(raw, 10);
         if (!isNaN(parsed)) {
@@ -291,22 +295,4 @@ function createPDFfromImages(images: string[]) {
     });
 
     pdf.save('ocr-snippets.pdf');
-}
-
-async function recognizeOnlyDigits(canvas: HTMLCanvasElement): Promise<string> {
-    const { createWorker } = await import('tesseract.js');
-
-    const worker = await createWorker('eng'); // språk
-
-    await worker.setParameters({
-        tessedit_char_whitelist: '0123456789',
-        classify_bln_numeric_mode: '1'
-    });
-
-    const {
-        data: { text }
-    } = await worker.recognize(canvas);
-
-    await worker.terminate();
-    return text.trim();
 }
