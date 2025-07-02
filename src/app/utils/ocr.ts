@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 
+
 export interface ParsedScore {
     navn: string;
     total: number | null;
@@ -23,10 +24,9 @@ export async function runOCR(file: File): Promise<ParsedScore | null> {
     canvas.height = originalImage.height;
     ctx.drawImage(originalImage, 0, 0);
 
-    // Gråskala + invertert
+    // 🖤 Gråskala + invertering
     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imgData.data;
-
     for (let i = 0; i < data.length; i += 4) {
         const r = data[i], g = data[i + 1], b = data[i + 2];
         const avg = (r + g + b) / 3;
@@ -36,6 +36,29 @@ export async function runOCR(file: File): Promise<ParsedScore | null> {
         data[i + 2] = inv;
     }
     ctx.putImageData(imgData, 0, 0);
+
+
+
+    // 📌 Utsnitt for NAVN
+    const nameCropX = 200;
+    const nameCropY = 35;
+    const nameCropWidth = 600;
+    const nameCropHeight = 50;
+
+    const nameImageData = ctx.getImageData(nameCropX, nameCropY, nameCropWidth, nameCropHeight);
+    const nameCanvas = document.createElement('canvas');
+    nameCanvas.width = nameCropWidth;
+    nameCanvas.height = nameCropHeight;
+    const nameCtx = nameCanvas.getContext('2d')!;
+    nameCtx.putImageData(nameImageData, 0, 0);
+
+    const nameResult = await Tesseract.recognize(nameCanvas, 'eng', {
+        //logger: (m: any) => console.log('🔠 Navn-OCR:', m),
+    });
+
+    const rawName = nameResult.data.text.trim().split('\n')[0] || 'Ukjent';
+    const cleanedName = rawName.replace(/[^A-ZÆØÅa-zæøå\s-]/g, '').trim(); // valideringsryddig
+
 
     const fullText = await runFullTextOCR(canvas);
     const parLine = extractParLine(fullText);
@@ -48,8 +71,6 @@ export async function runOCR(file: File): Promise<ParsedScore | null> {
     const imageSnippets: string[] = [];
     const scoreArray = await extractScoreNumbersFromCanvas(canvas, parArray.length, imageSnippets);
 
-    // ➕ Lagre utklipp som PDF
-    //createPDFfromImages(imageSnippets);
 
     if (scoreArray.length !== parArray.length) {
         console.warn(`⚠️ Antall scorer (${scoreArray.length}) != antall hull (${parArray.length})`);
@@ -63,13 +84,47 @@ export async function runOCR(file: File): Promise<ParsedScore | null> {
         else if (score === par) pars++;
         else bogeys += (score - par);
     }
+    // 📌 Utsnitt for TOTAL i høyre topphjørne
+    const totalCropWidth = 350;
+    const totalCropHeight = 140;
+    const totalCropOffsetRight = 0; // helt i hjørnet
 
-    const name = fullText.split('\n').find(line => /^[A-ZÆØÅ][a-zæøå]+$/.test(line)) || 'Ukjent';
-    const totalMatch = fullText.match(/([+-]?\d+)\s*\(\d+\)/);
-    const total = totalMatch ? parseInt(totalMatch[1], 10) : null;
+    const totalCropX = canvas.width - totalCropOffsetRight - totalCropWidth;
+    const totalCropY = 0;
+
+    const totalImageData = ctx.getImageData(totalCropX, totalCropY, totalCropWidth, totalCropHeight);
+    const totalCanvas = document.createElement('canvas');
+    totalCanvas.width = totalCropWidth;
+    totalCanvas.height = totalCropHeight;
+    const totalCtx = totalCanvas.getContext('2d')!;
+    totalCtx.putImageData(totalImageData, 0, 0);
 
 
-    return { navn: name, total, birdies, pars, bogeys };
+    // utklipp test
+    const debugSnippets: string[] = [];
+    const totalImage = totalCanvas.toDataURL('image/png');
+    debugSnippets.push(totalImage);
+
+    // ➕ Lagre utklipp som PDF
+    //createPDFfromImages([...imageSnippets, ...debugSnippets]);
+
+
+    const totalResult = await Tesseract.recognize(totalCanvas, 'eng');
+    // Eksempel på typisk format: `+3 (77)`
+    const rawTotalText = totalResult.data.text.trim();
+    const totalMatch = rawTotalText.match(/([+-]?\d+)/);
+    let total = totalMatch ? parseInt(totalMatch[1], 10) : null;
+    if (total == null && scoreArray.length !== parArray.length) {
+        total = bogeys - birdies;
+    }
+
+    return {
+        navn: cleanedName || 'Ukjent',
+        total: total,
+        birdies,
+        pars,
+        bogeys
+    };
 }
 
 function toDataURL(file: File): Promise<string> {
@@ -93,7 +148,7 @@ function loadImage(dataUrl: string): Promise<HTMLImageElement> {
 async function runFullTextOCR(canvas: HTMLCanvasElement): Promise<string> {
     const { default: Tesseract } = await import('tesseract.js');
     const result = await Tesseract.recognize(canvas, 'eng', {
-        logger: m => console.log('🧠 OCR (full):', m)
+        //logger: m => console.log('🧠 OCR (full):', m)
     });
     return result.data.text;
 }
@@ -103,7 +158,7 @@ function extractParLine(text: string): string | null {
 
     for (const line of lines) {
         if (line.includes("par")) {
-            console.log("🔍 Par-linje funnet:", line);
+            //console.log("🔍 Par-linje funnet:", line);
             const numbers = line
                 .split(/\s+/)
                 .map(token => parseInt(token, 10))
@@ -130,8 +185,8 @@ async function extractScoreNumbersFromCanvas(
 
     const offsetY = 503;
     const height = 30;
-    const marginLeft = 180;
-    const marginRight = 50;
+    const marginLeft = 170;
+    const marginRight = 40;
 
     const usableWidth = totalWidth - marginLeft - marginRight;
     const rawCellWidth = usableWidth / count;
@@ -139,16 +194,11 @@ async function extractScoreNumbersFromCanvas(
     const values: number[] = [];
 
     for (let i = 0; i < count; i++) {
-        const cellX = marginLeft + i * rawCellWidth;
-        const cellWidth = rawCellWidth;
+        const cellCenterX = marginLeft + (i + 0.5) * rawCellWidth;
+        const fixedCropWidth = 36;
+        const x = Math.round(cellCenterX - fixedCropWidth / 2);
+        const width = fixedCropWidth;
 
-        const cropPaddingX = cellWidth * 0.3; // strammere beskjæring
-        const cropWidth = cellWidth - 2 * cropPaddingX;
-
-        let x = Math.round(cellX + cropPaddingX);
-        x = adjustCropX(i, x, count);
-
-        const width = Math.round(cropWidth);
 
         const sub = ctx.getImageData(x, offsetY, width, height);
 
@@ -159,14 +209,17 @@ async function extractScoreNumbersFromCanvas(
         subCanvas.height = height;
         subCtx.putImageData(sub, 0, 0);
 
-        const subImage = subCanvas.toDataURL('image/png');
+        subCtx.putImageData(sub, 0, 0);
+
+        // 🧱 Kun padding – ingen oppskalering
+        const padded = padCanvas(subCanvas, 50, 50);
+
+        // 📷 Lagre snippen for PDF/feilsøking før OCR
+        const subImage = padded.toDataURL('image/png');
         imageSnippets.push(subImage);
 
-        const result = await Tesseract.recognize(subCanvas, 'eng', {
-            logger: m => console.log(`🔎 OCR hull ${i + 1}:`, m),
-        });
-
-        const raw = result.data.text.trim();
+        const raw = await recognizeOnlyDigits(padded);
+        //console.log(raw)
         const parsed = parseInt(raw, 10);
         if (!isNaN(parsed)) {
             values.push(parsed);
@@ -174,19 +227,56 @@ async function extractScoreNumbersFromCanvas(
             console.warn(`🚫 Ugyldig OCR for hull ${i + 1}:`, raw);
         }
     }
-
+    // console.log("values:");
+    // console.log(values);
     return values;
 }
 
-// ↔️ Justeringsfunksjon for forskyvning
-function adjustCropX(index: number, rawX: number, count: number): number {
-    const mid = (count - 1) / 2;
-    const distanceFromCenter = Math.abs(index - mid);
-    const maxOffset = 6; // hvor mye vi vil kunne flytte
-    const factor = distanceFromCenter / mid;
-    const direction = index < mid ? -1 : 1; // ← trekker mot sentrum
-    return Math.round(rawX + direction * factor * maxOffset);
+function padCanvas(
+    original: HTMLCanvasElement,
+    padX = 50,
+    padY = 50
+): HTMLCanvasElement {
+    const originalCtx = original.getContext('2d')!;
+    const imageData = originalCtx.getImageData(0, 0, original.width, original.height);
+    const data = imageData.data;
+
+    const colorCounts: Record<string, number> = {};
+
+    for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const key = `${r},${g},${b}`;
+        colorCounts[key] = (colorCounts[key] || 0) + 1;
+    }
+
+    // Finn mest brukte farge
+    let mostCommon = '255,255,255';
+    let maxCount = 0;
+    for (const color in colorCounts) {
+        if (colorCounts[color] > maxCount) {
+            mostCommon = color;
+            maxCount = colorCounts[color];
+        }
+    }
+
+    const [r, g, b] = mostCommon.split(',').map(Number);
+    const bgColor = `rgb(${r}, ${g}, ${b})`;
+
+    // Nytt canvas med padding
+    const padded = document.createElement('canvas');
+    padded.width = original.width + 2 * padX;
+    padded.height = original.height + 2 * padY;
+
+    const paddedCtx = padded.getContext('2d')!;
+    paddedCtx.fillStyle = bgColor;
+    paddedCtx.fillRect(0, 0, padded.width, padded.height);
+
+    paddedCtx.drawImage(original, padX, padY);
+    return padded;
 }
+
 
 
 function createPDFfromImages(images: string[]) {
@@ -201,4 +291,22 @@ function createPDFfromImages(images: string[]) {
     });
 
     pdf.save('ocr-snippets.pdf');
+}
+
+async function recognizeOnlyDigits(canvas: HTMLCanvasElement): Promise<string> {
+    const { createWorker } = await import('tesseract.js');
+
+    const worker = await createWorker('eng'); // språk
+
+    await worker.setParameters({
+        tessedit_char_whitelist: '0123456789',
+        classify_bln_numeric_mode: '1'
+    });
+
+    const {
+        data: { text }
+    } = await worker.recognize(canvas);
+
+    await worker.terminate();
+    return text.trim();
 }

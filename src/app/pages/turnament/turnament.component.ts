@@ -19,6 +19,7 @@ export class TurnamentComponent implements OnInit {
   rows: any[] = [];
 
   selectedRow: any = null;
+  currentSelectedRow: any = null;
   selectedProfile: any = null;
   selectedIndex: number | null = null;
 
@@ -100,39 +101,48 @@ export class TurnamentComponent implements OnInit {
 
   openEditModal(row: any, index: number) {
     this.selectedRow = { ...row };
+    this.currentSelectedRow = {
+      total_birdies: 0,
+      total_bogeys: 0,
+      total_par: 0,
+      total_score: 0
+    };
     this.selectedIndex = index;
     this.selectedProfile = this.getProfile(row['profile$id']);
   }
 
   closeEditModal() {
     this.selectedRow = null;
+    this.currentSelectedRow = null;
     this.selectedProfile = null;
   }
 
   adjust(field: string, delta: number) {
     if (
-      this.selectedRow &&
+      this.currentSelectedRow &&
       ['total_score', 'total_birdies', 'total_par', 'total_bogeys'].includes(field)
     ) {
-      this.selectedRow[field] += delta;
+      this.currentSelectedRow[field] += delta;
     }
   }
 
   async saveEdits() {
+    const updated = {
+      total_score: this.selectedRow.total_score + this.currentSelectedRow.total_score,
+      total_birdies: this.selectedRow.total_birdies + this.currentSelectedRow.total_birdies,
+      total_par: this.selectedRow.total_par + this.currentSelectedRow.total_par,
+      total_bogeys: this.selectedRow.total_bogeys + this.currentSelectedRow.total_bogeys
+    };
+
     const { error } = await this.supabase
       .from('turnament')
-      .update({
-        total_score: this.selectedRow.total_score,
-        total_birdies: this.selectedRow.total_birdies,
-        total_par: this.selectedRow.total_par,
-        total_bogeys: this.selectedRow.total_bogeys
-      })
+      .update(updated)
       .eq('id', this.selectedRow.id);
 
     if (!error) {
       const index = this.rows.findIndex(r => r.id === this.selectedRow.id);
       if (index !== -1) {
-        this.rows[index] = { ...this.selectedRow };
+        this.rows[index] = { ...this.selectedRow, ...updated };
         this.sortRows();
       }
       this.closeEditModal();
@@ -174,23 +184,21 @@ export class TurnamentComponent implements OnInit {
 
 
     try {
-      // Original forhåndsvisning
       const reader = new FileReader();
       reader.readAsDataURL(file);
 
-      // 🧪 Lag forhåndsvisning av ferdig gråskala bilde (ikke invertert)
-      //const processed = await preprocessImage(file);
-      //this.ocrProcessedPreviewUrl = processed;
-
-      // 🔍 Kjør OCR og fyll inn feltene
       const parsed: ParsedScore | null = await runOCR(file);
       console.log('📊 Parsed:', parsed);
 
       if (parsed && this.selectedRow) {
-        this.selectedRow.total_score = parsed.total ?? 0;
-        this.selectedRow.total_birdies = parsed.birdies;
-        this.selectedRow.total_par = parsed.pars;
-        this.selectedRow.total_bogeys = parsed.bogeys;
+        if (this.selectedProfile.udiscnavn != parsed.navn) {
+          window.alert(`Du prøvde å sette score til ${this.selectedProfile.udiscnavn}, med scorekortet til ${parsed.navn}.`);
+        } else {
+          this.currentSelectedRow.total_score = parsed.total ?? 0;
+          this.currentSelectedRow.total_birdies = parsed.birdies;
+          this.currentSelectedRow.total_par = parsed.pars;
+          this.currentSelectedRow.total_bogeys = parsed.bogeys;
+        }
       }
 
     } catch (e) {

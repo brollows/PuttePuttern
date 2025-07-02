@@ -56,14 +56,16 @@
 
         <div *ngFor="let field of editableFields" class="edit-field">
             <div class="edit-label">
-                {{ field.replace('total_', '').toUpperCase() }}
+                {{ field.replace('total_', '').toUpperCase() }}:
+                <strong>{{ selectedRow[field] + currentSelectedRow[field] }}</strong>
             </div>
             <div class="edit-controls">
                 <button (click)="adjust(field, -1)">➖</button>
-                <span class="edit-value">{{ selectedRow[field] }}</span>
+                <span class="edit-value">{{ currentSelectedRow[field] }}</span>
                 <button (click)="adjust(field, 1)">➕</button>
             </div>
         </div>
+
 
         <div class="modal-actions">
             <button class="primary" (click)="saveEdits()">✅ Ferdig</button>
