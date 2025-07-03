@@ -26,7 +26,10 @@ export class TurnamentComponent implements OnInit {
   isOcrRunning = false;
 
   showInfoModal = false;
+  showCardsModal = false;
   showExampleImage = true;
+
+  randomCards = [];
 
   readonly editableFields = ['total_score', 'total_birdies', 'total_par', 'total_bogeys'];
 
@@ -236,11 +239,60 @@ export class TurnamentComponent implements OnInit {
     }
   }
 
+  generateRandomCards() {
+    if (this.randomCards.length < 1) {
+
+      let amount = this.rows.length;
+
+      let moduloPlayers = amount % 4
+      let amountOfCards = Math.floor(amount / 4)
+      if (moduloPlayers >= 2) {
+        amountOfCards += 1
+      }
+      console.log("Players: " + amount + "| amountOfCards: " + amountOfCards)
+
+      let tempRows = this.rows.slice();
+      let newRandomCards: any = [];
+
+
+      for (let i = 0; i < amountOfCards; i++) {
+        newRandomCards.push([]);
+      }
+
+
+      let currentIndex = 0;
+      while (tempRows.length > 0) {
+
+        let randomIndex = Math.floor(Math.random() * tempRows.length);
+        let picked = tempRows.splice(randomIndex, 1)[0];
+
+
+        newRandomCards[currentIndex].push(picked);
+
+
+        currentIndex = (currentIndex + 1) % amountOfCards;
+      }
+
+      this.randomCards = newRandomCards;
+    }
+    console.log(this.randomCards)
+  }
+
   openInfoModal() {
     this.showInfoModal = true;
   }
 
   closeInfoModal() {
     this.showInfoModal = false;
+  }
+
+  openCardsModal() {
+    this.showCardsModal = true;
+    this.generateRandomCards();
+  }
+
+  closeCardsModal() {
+    this.showCardsModal = false;
+    this.randomCards = [];
   }
 }

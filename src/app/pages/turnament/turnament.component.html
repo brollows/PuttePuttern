@@ -1,6 +1,7 @@
 <div class="tournament-header">
     <h2 class="section-title">Turnering</h2>
-    <button class="info-icon-button" (click)="openInfoModal()" aria-label="Informasjon">🛈</button>
+    <button class="info-icon-button" (click)="openInfoModal()" aria-label="Informasjon"><span
+            class="material-symbols-outlined" style="font-size: 2rem">info</span></button>
 </div>
 
 <hr>
@@ -38,6 +39,13 @@
         </tbody>
     </table>
 </div>
+
+<section class="cards-container">
+    <button class="cards-button" (click)="openCardsModal()">
+        🎲 Lag tilfeldige grupper!
+    </button>
+</section>
+
 
 <!-- Modal er uendret i struktur -->
 <div class="modal" *ngIf="selectedRow">
@@ -83,6 +91,9 @@
 <div class="modal" *ngIf="showInfoModal">
     <div class="modal-content udisc-info-modal">
         <h2>Last opp bilde fra UDisc</h2>
+        <button class="info-icon-button" (click)="closeInfoModal()" aria-label="Lukk">
+            <span class="material-symbols-outlined" style="font-size: 2rem">close</span>
+        </button>
 
         <p class="info-text">
             Når du skal føre score så kan du hente bildet fra udisc istedet for å telle og trykke for hver birdie, par
@@ -113,6 +124,43 @@
 
         <div class="modal-actions">
             <button class="primary" (click)="closeInfoModal()">Ait..</button>
+        </div>
+    </div>
+</div>
+
+<!-- Cards-modal for tilfeldige grupper -->
+<div class="modal" *ngIf="showCardsModal">
+    <div class="modal-content udisc-info-modal">
+        <div class="cards-groups-modal">
+            <div class="cards-groups-header">
+                <h2 class="section-title">Grupper</h2>
+                <button class="info-icon-button" (click)="closeCardsModal()" aria-label="Lukk">
+                    <span class="material-symbols-outlined" style="font-size: 2rem">close</span>
+                </button>
+            </div>
+
+            <div class="cards-groups-wrapper">
+                <div *ngFor="let group of randomCards; let groupIndex = index" class="group-card">
+                    <h3 class="group-title">Gruppe {{ groupIndex + 1 }}</h3>
+                    <table class="tournament-table cards-tournament-table">
+                        <tbody>
+                            <tr *ngFor="let row of group">
+                                <td class="player-cell">
+                                    <img *ngIf="getProfile(row['profile$id'])?.bilde"
+                                        [src]="getProfile(row['profile$id'])?.bilde" class="avatar" />
+                                    <span class="player-name">
+                                        {{ getProfile(row['profile$id'])?.fornavn || 'Ukjent' }}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="primary" (click)="closeCardsModal()">Lukk</button>
+            </div>
         </div>
     </div>
 </div>

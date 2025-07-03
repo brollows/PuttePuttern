@@ -26,7 +26,7 @@
                     required />
                 <input type="text" placeholder="UDisc navn" [(ngModel)]="newProfile.udiscnavn" name="udiscnavn"
                     required />
-                <input type="number" placeholder="Metrix rangering" [(ngModel)]="newProfile.rangering" name="rangering"
+                <input type="number" placeholder="UDisc rangering" [(ngModel)]="newProfile.rangering" name="rangering"
                     inputmode="numeric" pattern="[0-9]*" class="numeric-input" />
                 <input type="text" placeholder="Personlig beste - Lisleherad" [(ngModel)]="newProfile.personalbest"
                     name="personalbest" (ngModelChange)="validatePersonalbest()"
@@ -60,7 +60,7 @@
                         <img src="assets/udisc-logo.png" alt="UDisc" class="udisc-logo" />
                         UDisc: {{ profile.udiscnavn }}
                     </p>
-                    <p>🎯 Metrix: {{ profile.rangering }}</p>
+                    <p>🎯 UDisc rangering: {{ profile.rangering }}</p>
                     <p>🏆 PB Lisleherad: {{ profile.personalbest }}</p>
                 </div>
             </div>

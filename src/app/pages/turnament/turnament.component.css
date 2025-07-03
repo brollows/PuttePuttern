@@ -11,8 +11,9 @@
 /* --- TABELLSTIL --- */
 .table-wrapper {
     overflow-x: auto;
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    margin-bottom: 2rem;
+    max-height: 40rem;
 }
 
 .tournament-table {
@@ -355,4 +356,114 @@ button:hover {
     background-color: #4c784e;
     border-radius: 4px;
     transform: scale(1.1);
+}
+
+.cards-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem 1rem;
+}
+
+.cards-button {
+    background-color: #446e49;
+    color: #fff;
+    padding: 1rem 1.5rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+.cards-button:hover {
+    background-color: #58995c;
+    transform: scale(1.05);
+}
+
+.cards-groups-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    justify-content: flex-start;
+}
+
+.group-card {
+    background-color: #1b2b1f;
+    border: 2px solid #ccc;
+    border-radius: 1rem;
+    padding: 1rem;
+    min-width: 200px;
+    flex: 1 1 250px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.group-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.group-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.player-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.3rem 0;
+}
+
+.player-cell .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.player-name {
+    font-weight: 500;
+}
+
+/* Gruppetabell i modal, matcher .tournament-table */
+.cards-tournament-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
+    background: #2e4032;
+    color: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+
+.cards-tournament-table td {
+    padding: 0.6rem 0.7rem;
+    text-align: left;
+    height: 2.2rem;
+}
+
+.cards-tournament-table tbody tr {
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #3c503f;
+}
+
+.cards-tournament-table tbody tr:hover {
+    background-color: #3e5c44;
+}
+
+.cards-tournament-table tbody tr:nth-child(even) {
+    background-color: #2f4635;
+}
+
+.cards-tournament-table tbody tr:nth-child(odd) {
+    background-color: #344d3b;
 }
