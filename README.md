@@ -3,3 +3,6 @@ Google doc om turen: https://docs.google.com/document/d/1nkhEhk5QCf9EJ7LOi9Pl7sz
 host: https://app.netlify.com/teams/erik-faane/projects
 
 database: https://supabase.com/dashboard/project/zemgyaubopngyguaeocf
+
+
+Alltid bygg med ng build --configuration=production når du skal laste opp til netlify
