@@ -32,6 +32,13 @@ export class ProfilesComponent implements OnInit {
 
   editingIndex: number = -1;
 
+  // Jøss har du funnet pinkoden du a din nørd
+  pinCodeForDeletion: number = 69420;
+  pinCodeInput: number | null = null;
+  isPinCodeModalOpen: boolean = false;
+
+  isLoading: boolean = false;
+
   ngOnInit() {
     this.loadProfiles();
   }
@@ -66,6 +73,7 @@ export class ProfilesComponent implements OnInit {
       alert('Personlig beste må være et tall');
       return;
     }
+    this.isLoading = true;
 
     const capitalize = (text: string) =>
       text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
@@ -88,6 +96,7 @@ export class ProfilesComponent implements OnInit {
     if (error || !data || data.length === 0) {
       console.error('❌ Feil ved profil-innsetting:', error);
       alert('Kunne ikke lagre profilen 😢');
+      this.isLoading = false;
       return;
     }
 
@@ -108,6 +117,7 @@ export class ProfilesComponent implements OnInit {
 
       if (updateError) {
         console.error('⚠️ Feil ved oppdatering av bilde-URL:', updateError);
+        this.isLoading = false;
       } else {
         addedProfile.bilde = imageUrl;
       }
@@ -115,6 +125,7 @@ export class ProfilesComponent implements OnInit {
 
     this.profiles.push(addedProfile);
     this.closeModal();
+    this.isLoading = false;
   }
 
   async addProfileToSupabase(profile: any) {
@@ -208,6 +219,27 @@ export class ProfilesComponent implements OnInit {
     this.removeIndex = null;
 
     console.log(`✅ Bruker med ID ${profile.id} slettet`);
+
+    this.clearValues();
+  }
+
+  enterPinCode() {
+    this.isPinCodeModalOpen = true;
+  }
+
+  checkPinCode(inputPin: number | null) {
+    if (inputPin == this.pinCodeForDeletion) {
+      this.removeProfile()
+
+    } else {
+      alert('Feil pin. Kontakt admin for å slette brukeren!');
+      this.clearValues();
+    }
+  }
+
+  clearValues() {
+    this.pinCodeInput = null;
+    this.removeIndex = null;
   }
 
   confirmRemove(index: number) {

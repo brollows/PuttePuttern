@@ -75,9 +75,27 @@
             <h2>Bekreft sletting</h2>
             <p>Er du sikker på at du vil fjerne denne brukeren?</p>
             <div class="modal-actions">
-                <button (click)="removeProfile()">🗑️ Ja, fjern</button>
-                <button (click)="removeIndex = null">Avbryt</button>
+                <button (click)="enterPinCode()">🗑️ Ja, fjern</button>
+                <button (click)="removeIndex = null; clearValues()">Avbryt</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" *ngIf="isPinCodeModalOpen">
+        <div class="modal-content">
+            <h2>Skriv pin kode for å slette bruker!</h2>
+            <p>Du kan og spørre admin om å fjerne brukeren.</p>
+            <input type="number" placeholder="Skriv Pin" [(ngModel)]="pinCodeInput" name="pinCode" inputmode="numeric"
+                pattern="[0-9]*" class="numeric-input" />
+            <div class="modal-actions">
+                <button (click)="checkPinCode(pinCodeInput); isPinCodeModalOpen = false">Fjern bruker</button>
+                <button (click)="isPinCodeModalOpen = false; clearValues()">Avbryt</button>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Fullscreen loading overlay -->
+<div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-spinner"></div>
+</div>
