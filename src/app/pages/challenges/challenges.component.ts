@@ -26,7 +26,11 @@ export class ChallengesComponent {
     "Du må forklare kastet ditt til de andre etterpå som om det var planlagt, uansett hvor ræva det var",
     "Du må snakke som en asiater hele hullet",
     "Du må ta på deg rollen som en full onkel i familieselskap",
-    "Du må rangsjere de andre i gruppa di fre best til værst disc golfer"
+    "Du må rangsjere de andre i gruppa di fre best til værst disc golfer",
+    "Du er nå en tennis spiller. Moan for hvert kast hele hullet!",
+    "Vær en weeabo hele hullet! 'Yamete kudasai', 'NYA'",
+    "For å kunne kaste så må du ta den mest edgy joken du kan.",
+    "Du har herved CP i beina for neste hull!"
   ];
 
   currentDisplayedChallenge = "";
