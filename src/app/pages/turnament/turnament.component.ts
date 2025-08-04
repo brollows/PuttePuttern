@@ -76,6 +76,7 @@ export class TurnamentComponent implements OnInit {
   sortRows() {
     this.rows.sort((a, b) =>
       a.total_score - b.total_score ||
+      b.total_birdies - a.total_birdies ||
       a['profile$id'] - b['profile$id']
     );
   }
