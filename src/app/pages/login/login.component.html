@@ -1,0 +1,142 @@
+<section class="login-menu">
+  <h1>Putte Puttern</h1>
+
+  <div *ngIf="activeView === null" class="button-group">
+    <button class="menu-button" (click)="showLogin()">
+      <span class="material-symbols-outlined">login</span>
+      Log in
+    </button>
+
+    <button class="menu-button" (click)="showCreate()">
+      <span class="material-symbols-outlined">person_add</span>
+      Lag bruker
+    </button>
+  </div>
+
+  <div *ngIf="activeView === 'login'" class="panel form-panel">
+    <h2>Log in</h2>
+
+    <div class="message error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <div class="message success" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+
+    <div class="form-grid">
+      <label>
+        <span>Brukernavn</span>
+        <input [(ngModel)]="loginForm.username" type="text" />
+      </label>
+
+      <label>
+        <span>Passord</span>
+        <input [(ngModel)]="loginForm.password" type="password" />
+      </label>
+    </div>
+
+    <button
+      class="menu-button submit-button"
+      (click)="login()"
+      [disabled]="isSubmitting"
+    >
+      <span class="material-symbols-outlined">login</span>
+      {{ isSubmitting ? "Logger inn..." : "Logg inn" }}
+    </button>
+
+    <button
+      class="menu-button back-button"
+      (click)="goBack()"
+      [disabled]="isSubmitting"
+    >
+      <span class="material-symbols-outlined">arrow_back</span>
+      Tilbake
+    </button>
+  </div>
+
+  <div *ngIf="activeView === 'create'" class="panel form-panel">
+    <h2>Lag bruker</h2>
+
+    <div class="message error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <div class="message success" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+
+    <div class="form-grid">
+      <label>
+        <span>Fornavn</span>
+        <input [(ngModel)]="newUser.fornavn" type="text" />
+      </label>
+
+      <label>
+        <span>Etternavn</span>
+        <input [(ngModel)]="newUser.etternavn" type="text" />
+      </label>
+
+      <label>
+        <span>Brukernavn</span>
+        <input [(ngModel)]="newUser.username" type="text" />
+      </label>
+
+      <label>
+        <span>Passord</span>
+        <input [(ngModel)]="newUser.password" type="password" />
+      </label>
+
+      <label>
+        <span>UDisc-navn</span>
+        <input [(ngModel)]="newUser.udiscnavn" type="text" />
+      </label>
+
+      <label>
+        <span>Sitat</span>
+        <input [(ngModel)]="newUser.sitat" type="text" />
+      </label>
+
+      <label>
+        <span>Rangering</span>
+        <input [(ngModel)]="newUser.rangering" type="number" />
+      </label>
+
+      <label>
+        <span>Personal best</span>
+        <input [(ngModel)]="newUser.personalbest" type="number" />
+      </label>
+
+      <label>
+        <span>Bilde</span>
+        <input
+          type="file"
+          accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif"
+          (change)="onImageSelected($event)"
+        />
+      </label>
+    </div>
+
+    <p class="image-name" *ngIf="selectedImageName">
+      Valgt bilde: {{ selectedImageName }}
+    </p>
+
+    <button
+      class="menu-button submit-button"
+      (click)="createUser()"
+      [disabled]="isSubmitting"
+    >
+      <span class="material-symbols-outlined">check_circle</span>
+      {{ isSubmitting ? "Lagrer..." : "Opprett bruker" }}
+    </button>
+
+    <button
+      class="menu-button back-button"
+      (click)="goBack()"
+      [disabled]="isSubmitting"
+    >
+      <span class="material-symbols-outlined">arrow_back</span>
+      Tilbake
+    </button>
+  </div>
+</section>

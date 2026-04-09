@@ -1,101 +1,189 @@
 <section class="profiles-page">
-    <div class="profiles-header">
-        <h1>👤 Profiler</h1>
-        <button (click)="openModal()" class="add-icon-button" aria-label="Legg til bruker">➕</button>
-    </div>
+  <div class="profiles-header">
+    <h1>👤 Profiler</h1>
+  </div>
 
+  <div class="modal" *ngIf="showModal">
+    <div class="modal-content">
+      <h2>Rediger profil</h2>
 
-    <!-- Modal -->
-    <div class="modal modal-create-user" *ngIf="showModal">
-        <div class="modal-content">
-            <h2>{{ editingIndex >= 0 ? 'Rediger bruker' : 'Ny bruker' }}</h2>
-            <form (submit)="editingIndex >= 0 ? saveEditedProfile($event) : addProfile($event)">
-                <ng-container *ngIf="editingIndex < 0">
-                    <label>Profilbilde:
-                        <!-- Forhåndsvisning vises så fort bildet er lastet -->
-                        <br>
-                        <img *ngIf="newProfile.bilde" [src]="newProfile.bilde" alt="Forhåndsvisning"
-                            class="preview-image" />
-                        <input type="file" (change)="onImageUpload($event)" />
-                    </label>
-                </ng-container>
+      <form (submit)="saveEditedProfile($event)">
+        <label class="file-upload-label">
+          {{ editingOwnProfile ? "Endre profilbilde:" : "Profilbilde:" }}
+          <br />
+          <img
+            *ngIf="editProfileForm.bilde"
+            [src]="editProfileForm.bilde"
+            alt="Forhåndsvisning"
+            class="preview-image preview-image-large"
+          />
+          <input
+            type="file"
+            accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif"
+            (change)="onImageUpload($event)"
+          />
+        </label>
 
+        <input
+          type="text"
+          placeholder="Fornavn"
+          [(ngModel)]="editProfileForm.fornavn"
+          name="fornavn"
+          required
+        />
 
-                <input type="text" placeholder="Fornavn" [(ngModel)]="newProfile.fornavn" name="fornavn" required />
-                <input type="text" placeholder="Etternavn" [(ngModel)]="newProfile.etternavn" name="etternavn"
-                    required />
-                <input type="text" placeholder="UDisc navn" [(ngModel)]="newProfile.udiscnavn" name="udiscnavn"
-                    required />
-                <input type="number" placeholder="UDisc rangering" [(ngModel)]="newProfile.rangering" name="rangering"
-                    inputmode="numeric" pattern="[0-9]*" class="numeric-input" />
-                <input type="text" placeholder="Personlig beste - Lisleherad" [(ngModel)]="newProfile.personalbest"
-                    name="personalbest" (ngModelChange)="validatePersonalbest()"
-                    [class.invalid-input]="!personalbestValid" />
+        <input
+          type="text"
+          placeholder="Etternavn"
+          [(ngModel)]="editProfileForm.etternavn"
+          name="etternavn"
+          required
+        />
 
-                <span *ngIf="!personalbestValid" class="error-text">
-                    Dette feltet må inneholde tall
-                </span>
-                <input type="text" placeholder="Sitat" [(ngModel)]="newProfile.sitat" name="sitat" />
+        <input
+          type="text"
+          placeholder="UDisc navn"
+          [(ngModel)]="editProfileForm.udiscnavn"
+          name="udiscnavn"
+          required
+        />
 
-                <div class="modal-actions">
-                    <button type="submit">✅ Lagre</button>
-                    <button type="button" (click)="closeModal()">Avbryt</button>
-                </div>
-            </form>
+        <input
+          type="number"
+          placeholder="UDisc rangering"
+          [(ngModel)]="editProfileForm.rangering"
+          name="rangering"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          class="numeric-input"
+        />
+
+        <input
+          type="text"
+          placeholder="Personlig beste - Lisleherad"
+          [(ngModel)]="editProfileForm.personalbest"
+          name="personalbest"
+          (ngModelChange)="validatePersonalbest()"
+          [class.invalid-input]="!personalbestValid"
+        />
+
+        <span *ngIf="!personalbestValid" class="error-text">
+          Dette feltet må inneholde tall
+        </span>
+
+        <input
+          type="text"
+          placeholder="Sitat"
+          [(ngModel)]="editProfileForm.sitat"
+          name="sitat"
+        />
+
+        <div class="modal-actions">
+          <button type="submit">✅ Lagre</button>
+          <button type="button" (click)="closeModal()">Avbryt</button>
         </div>
+      </form>
     </div>
+  </div>
 
-    <!-- Liste med profiler -->
-    <div class="profile-list">
-        <div class="profile-card" *ngFor="let profile of profiles; let i = index">
-            <button class="edit-button" (click)="editProfile(i)">✏️</button>
-            <button class="remove-button" (click)="confirmRemove(i)">❌</button>
-            <h3 class="profile-name">{{ profile.fornavn }} {{ profile.etternavn }}</h3>
+  <div class="profile-list">
+    <div
+      class="profile-card"
+      *ngFor="let profile of displayedProfiles"
+      [class.own-profile-highlight]="isHighlightedProfile(profile)"
+    >
+      <button
+        class="edit-button"
+        *ngIf="canEditProfile(profile)"
+        (click)="editProfile(profile)"
+      >
+        ✏️
+      </button>
 
-            <div class="profile-body">
-                <img [src]="profile.bilde" alt="Profilbilde" *ngIf="profile.bilde" class="preview-image" />
+      <button
+        class="remove-button"
+        *ngIf="canRemoveProfile(profile)"
+        (click)="confirmRemove(profile)"
+      >
+        ❌
+      </button>
 
-                <div class="profile-stats">
-                    <p>
-                        <img src="assets/udisc-logo.png" alt="UDisc" class="udisc-logo" />
-                        UDisc: {{ profile.udiscnavn }}
-                    </p>
-                    <p>🎯 UDisc rangering: {{ profile.rangering }}</p>
-                    <p>🏆 PB Lisleherad: {{ profile.personalbest }}</p>
-                </div>
-            </div>
+      <h3 class="profile-name">
+        {{ profile.fornavn }} {{ profile.etternavn }}
+      </h3>
 
-            <q *ngIf="profile.sitat" class="profile-quote">"{{ profile.sitat }}"</q>
+      <div class="profile-body">
+        <img
+          [src]="profile.bilde"
+          alt="Profilbilde"
+          *ngIf="profile.bilde"
+          class="preview-image"
+        />
+
+        <div class="profile-stats">
+          <p>
+            <img src="assets/udisc-logo.png" alt="UDisc" class="udisc-logo" />
+            UDisc: {{ profile.udiscnavn }}
+          </p>
+          <p>🎯 UDisc rangering: {{ profile.rangering }}</p>
+          <p>🏆 PB Lisleherad: {{ profile.personalbest }}</p>
+          <p *ngIf="isOwnProfile(profile)">🔐 Rolle: {{ profile.role }}</p>
         </div>
-    </div>
+      </div>
 
-    <!-- Confirmation Modal -->
-    <div class="modal" *ngIf="removeIndex !== null">
-        <div class="modal-content">
-            <h2>Bekreft sletting</h2>
-            <p>Er du sikker på at du vil fjerne denne brukeren?</p>
-            <div class="modal-actions">
-                <button (click)="enterPinCode()">🗑️ Ja, fjern</button>
-                <button (click)="removeIndex = null; clearValues()">Avbryt</button>
-            </div>
-        </div>
-    </div>
+      <q *ngIf="profile.sitat" class="profile-quote">"{{ profile.sitat }}"</q>
 
-    <div class="modal" *ngIf="isPinCodeModalOpen">
-        <div class="modal-content">
-            <h2>Skriv pin kode for å slette bruker!</h2>
-            <p>Du kan og spørre admin om å fjerne brukeren.</p>
-            <input type="number" placeholder="Skriv Pin" [(ngModel)]="pinCodeInput" name="pinCode" inputmode="numeric"
-                pattern="[0-9]*" class="numeric-input" />
-            <div class="modal-actions">
-                <button (click)="checkPinCode(pinCodeInput); isPinCodeModalOpen = false">Fjern bruker</button>
-                <button (click)="isPinCodeModalOpen = false; clearValues()">Avbryt</button>
-            </div>
-        </div>
+      <button
+        *ngIf="isLoggedIn && isOwnProfile(profile)"
+        class="logout-button"
+        (click)="logout()"
+      >
+        Logg ut
+      </button>
     </div>
+  </div>
+
+  <div class="modal" *ngIf="removeProfileId !== null">
+    <div class="modal-content">
+      <h2>Bekreft sletting</h2>
+      <p>Er du sikker på at du vil fjerne denne brukeren?</p>
+
+      <div class="modal-actions">
+        <button (click)="enterPinCode()">🗑️ Ja, fjern</button>
+        <button (click)="removeProfileId = null; clearValues()">Avbryt</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" *ngIf="isPinCodeModalOpen">
+    <div class="modal-content">
+      <h2>Skriv pin kode for å slette bruker!</h2>
+      <p>Du kan og spørre admin om å fjerne brukeren.</p>
+
+      <input
+        type="number"
+        placeholder="Skriv Pin"
+        [(ngModel)]="pinCodeInput"
+        name="pinCode"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        class="numeric-input"
+      />
+
+      <div class="modal-actions">
+        <button
+          (click)="checkPinCode(pinCodeInput); isPinCodeModalOpen = false"
+        >
+          Fjern bruker
+        </button>
+        <button (click)="isPinCodeModalOpen = false; clearValues()">
+          Avbryt
+        </button>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- Fullscreen loading overlay -->
 <div class="loading-overlay" *ngIf="isLoading">
-    <div class="loading-spinner"></div>
+  <div class="loading-spinner"></div>
 </div>

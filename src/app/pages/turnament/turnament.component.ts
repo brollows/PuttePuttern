@@ -3,14 +3,12 @@ import { getSupabaseClient } from '../../../supabase-client';
 import { CommonModule } from '@angular/common';
 import { runOCR, ParsedScore } from '../../utils/ocr';
 
-
-
 @Component({
   selector: 'app-turnament',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './turnament.component.html',
-  styleUrls: ['./turnament.component.css']
+  styleUrls: ['./turnament.component.css'],
 })
 export class TurnamentComponent implements OnInit {
   supabase = getSupabaseClient();
@@ -31,7 +29,12 @@ export class TurnamentComponent implements OnInit {
 
   randomCards = [];
 
-  readonly editableFields = ['total_score', 'total_birdies', 'total_par', 'total_bogeys'];
+  readonly editableFields = [
+    'total_score',
+    'total_birdies',
+    'total_par',
+    'total_bogeys',
+  ];
 
   async ngOnInit() {
     await this.loadProfilesAndTurnament();
@@ -40,22 +43,33 @@ export class TurnamentComponent implements OnInit {
   async loadProfilesAndTurnament() {
     const [{ data: profiles }, { data: turnament }] = await Promise.all([
       this.supabase.from('profiles').select('*'),
-      this.supabase.from('turnament').select('*')
+      this.supabase.from('turnament').select('*'),
     ]);
 
-    this.profiles = profiles || [];
-    this.rows = turnament || [];
+    this.profiles = (profiles || []).filter(
+      (profile: any) => profile.role === 'user',
+    );
 
-    const existingIds = new Set(this.rows.map(row => row['profile$id']));
-    const missingProfiles = this.profiles.filter(p => !existingIds.has(p.id));
+    const allowedProfileIds = new Set(
+      this.profiles.map((profile) => profile.id),
+    );
+
+    this.rows = (turnament || []).filter((row: any) =>
+      allowedProfileIds.has(row['profile$id']),
+    );
+
+    const existingIds = new Set(this.rows.map((row) => row['profile$id']));
+    const missingProfiles = this.profiles.filter(
+      (profile) => !existingIds.has(profile.id),
+    );
 
     for (const profile of missingProfiles) {
       const newRow = {
-        'profile$id': profile.id,
+        profile$id: profile.id,
         total_score: 0,
         total_birdies: 0,
         total_par: 0,
-        total_bogeys: 0
+        total_bogeys: 0,
       };
 
       const { data, error } = await this.supabase
@@ -74,48 +88,49 @@ export class TurnamentComponent implements OnInit {
   }
 
   sortRows() {
-    this.rows.sort((a, b) =>
-      a.total_score - b.total_score ||
-      b.total_birdies - a.total_birdies ||
-      a['profile$id'] - b['profile$id']
+    this.rows.sort(
+      (a, b) =>
+        a.total_score - b.total_score ||
+        b.total_birdies - a.total_birdies ||
+        a['profile$id'] - b['profile$id'],
     );
   }
 
   async removeRow(row: any) {
     const rowProfile = this.getProfile(row['profile$id']);
-    if ((rowProfile == undefined) || (
-      row.total_score == 0
-      && row.total_birdies == 0
-      && row.total_bogeys == 0
-      && row.total_par == 0
-    )
+    if (
+      rowProfile == undefined ||
+      (row.total_score == 0 &&
+        row.total_birdies == 0 &&
+        row.total_bogeys == 0 &&
+        row.total_par == 0)
     ) {
-
       const { error } = await this.supabase
         .from('turnament')
         .delete()
         .eq('id', row.id);
 
       if (!error) {
-        this.rows = this.rows.filter(r => r.id !== row.id);
-        this.closeEditModal()
+        this.rows = this.rows.filter((r) => r.id !== row.id);
+        this.closeEditModal();
       } else {
         console.error('Feil ved sletting:', error);
       }
     } else {
-      alert("Du må slette brukeren eller nulle ut scoren før du kan slette")
+      alert('Du må slette brukeren eller nulle ut scoren før du kan slette');
       return;
     }
-
   }
 
   getProfileName(profileId: number) {
-    const profile = this.profiles.find(p => p.id === profileId);
-    return profile ? `${profile.fornavn} ${profile.etternavn}` : `Ukjent (${profileId})`;
+    const profile = this.profiles.find((p) => p.id === profileId);
+    return profile
+      ? `${profile.fornavn} ${profile.etternavn}`
+      : `Ukjent (${profileId})`;
   }
 
   getProfile(profileId: number) {
-    return this.profiles.find(p => p.id === profileId);
+    return this.profiles.find((p) => p.id === profileId);
   }
 
   openEditModal(row: any, index: number) {
@@ -124,7 +139,7 @@ export class TurnamentComponent implements OnInit {
       total_birdies: 0,
       total_bogeys: 0,
       total_par: 0,
-      total_score: 0
+      total_score: 0,
     };
     this.selectedIndex = index;
     this.selectedProfile = this.getProfile(row['profile$id']);
@@ -139,7 +154,9 @@ export class TurnamentComponent implements OnInit {
   adjust(field: string, delta: number) {
     if (
       this.currentSelectedRow &&
-      ['total_score', 'total_birdies', 'total_par', 'total_bogeys'].includes(field)
+      ['total_score', 'total_birdies', 'total_par', 'total_bogeys'].includes(
+        field,
+      )
     ) {
       this.currentSelectedRow[field] += delta;
     }
@@ -147,10 +164,13 @@ export class TurnamentComponent implements OnInit {
 
   async saveEdits() {
     const updated = {
-      total_score: this.selectedRow.total_score + this.currentSelectedRow.total_score,
-      total_birdies: this.selectedRow.total_birdies + this.currentSelectedRow.total_birdies,
+      total_score:
+        this.selectedRow.total_score + this.currentSelectedRow.total_score,
+      total_birdies:
+        this.selectedRow.total_birdies + this.currentSelectedRow.total_birdies,
       total_par: this.selectedRow.total_par + this.currentSelectedRow.total_par,
-      total_bogeys: this.selectedRow.total_bogeys + this.currentSelectedRow.total_bogeys
+      total_bogeys:
+        this.selectedRow.total_bogeys + this.currentSelectedRow.total_bogeys,
     };
 
     const { error } = await this.supabase
@@ -159,7 +179,7 @@ export class TurnamentComponent implements OnInit {
       .eq('id', this.selectedRow.id);
 
     if (!error) {
-      const index = this.rows.findIndex(r => r.id === this.selectedRow.id);
+      const index = this.rows.findIndex((r) => r.id === this.selectedRow.id);
       if (index !== -1) {
         this.rows[index] = { ...this.selectedRow, ...updated };
         this.sortRows();
@@ -187,10 +207,14 @@ export class TurnamentComponent implements OnInit {
     }
 
     switch (placement) {
-      case 1: return '🥇';
-      case 2: return '🥈';
-      case 3: return '🥉';
-      default: return placement;
+      case 1:
+        return '🥇';
+      case 2:
+        return '🥈';
+      case 3:
+        return '🥉';
+      default:
+        return placement;
     }
   }
 
@@ -201,7 +225,6 @@ export class TurnamentComponent implements OnInit {
 
     this.isOcrRunning = true;
 
-
     try {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -210,30 +233,41 @@ export class TurnamentComponent implements OnInit {
       console.log('📊 Parsed:', parsed);
 
       if (parsed && this.selectedRow) {
-        const profileName = this.selectedProfile?.udiscnavn?.trim().toLowerCase();
+        const profileName = this.selectedProfile?.udiscnavn
+          ?.trim()
+          .toLowerCase();
         const parsedName = parsed?.navn?.trim().toLowerCase();
 
         const profileNameExists = !!profileName;
         const parsedNameExists = !!parsedName;
 
-        if (parsedNameExists && profileNameExists && parsedName.includes(profileName)) {
+        if (
+          parsedNameExists &&
+          profileNameExists &&
+          parsedName.includes(profileName)
+        ) {
           this.currentSelectedRow.total_score = parsed.total ?? 0;
           this.currentSelectedRow.total_birdies = parsed.birdies;
           this.currentSelectedRow.total_par = parsed.pars;
           this.currentSelectedRow.total_bogeys = parsed.bogeys;
         } else {
           if (!profileNameExists) {
-            window.alert(`Denne profilen har ikke linket UDisc-navnet sitt med profilen.`);
+            window.alert(
+              `Denne profilen har ikke linket UDisc-navnet sitt med profilen.`,
+            );
           } else if (!parsedNameExists) {
-            window.alert(`Kunne ikke lese navnet til brukeren på scoreboardet.`);
+            window.alert(
+              `Kunne ikke lese navnet til brukeren på scoreboardet.`,
+            );
           } else {
-            window.alert(`Du prøvde å sette score til ${this.selectedProfile.udiscnavn}, med scorekortet til ${parsed.navn}.`);
+            window.alert(
+              `Du prøvde å sette score til ${this.selectedProfile.udiscnavn}, med scorekortet til ${parsed.navn}.`,
+            );
           }
         }
       }
-
     } catch (e) {
-      alert("OCR feilet. Sjekk bilde og prøv igjen.");
+      alert('OCR feilet. Sjekk bilde og prøv igjen.');
       console.log(e);
     } finally {
       this.isOcrRunning = false;
@@ -242,41 +276,35 @@ export class TurnamentComponent implements OnInit {
 
   generateRandomCards() {
     if (this.randomCards.length < 1) {
-
       let amount = this.rows.length;
 
-      let moduloPlayers = amount % 4
-      let amountOfCards = Math.floor(amount / 4)
+      let moduloPlayers = amount % 4;
+      let amountOfCards = Math.floor(amount / 4);
       if (moduloPlayers >= 2) {
-        amountOfCards += 1
+        amountOfCards += 1;
       }
-      console.log("Players: " + amount + "| amountOfCards: " + amountOfCards)
+      console.log('Players: ' + amount + '| amountOfCards: ' + amountOfCards);
 
       let tempRows = this.rows.slice();
       let newRandomCards: any = [];
-
 
       for (let i = 0; i < amountOfCards; i++) {
         newRandomCards.push([]);
       }
 
-
       let currentIndex = 0;
       while (tempRows.length > 0) {
-
         let randomIndex = Math.floor(Math.random() * tempRows.length);
         let picked = tempRows.splice(randomIndex, 1)[0];
 
-
         newRandomCards[currentIndex].push(picked);
-
 
         currentIndex = (currentIndex + 1) % amountOfCards;
       }
 
       this.randomCards = newRandomCards;
     }
-    console.log(this.randomCards)
+    console.log(this.randomCards);
   }
 
   openInfoModal() {
