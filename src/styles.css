@@ -4,7 +4,7 @@ body {
   background-color: #1b2b1f;
   /* mørk skoggrønn */
   color: #f0f0f0;
-  font-family: 'Bungee', sans-serif;
+  font-family: "Bungee", sans-serif;
 }
 
 /* Link resets */
@@ -47,7 +47,9 @@ main {
   border-radius: 12px;
   text-decoration: none !important;
   font-weight: bold;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition:
+    background 0.3s ease,
+    transform 0.2s ease;
 }
 
 .menu-button:hover,
@@ -60,14 +62,12 @@ main {
   outline: none;
 }
 
-
 /* Top navbar med home-ikon */
 .navbar {
   background-color: #0f1f14;
   padding: 0.75rem 0;
   display: flex;
   justify-content: center;
-  border-bottom: 1px solid #2f4f32;
 }
 
 .home-icon {
