@@ -1,6 +1,6 @@
 .home-menu {
   width: min(100%, 430px);
-  height: 100%;
+  min-height: 100%;
   margin: 0 auto;
   padding: 1rem 0.25rem;
 
@@ -62,6 +62,11 @@
     0 14px 32px rgba(0, 0, 0, 0.34);
 
   overflow: hidden;
+
+  /* IOS FIX: hindrer glow/blur fra å lekke utenfor rounded corners */
+  mask-image: radial-gradient(white, black);
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+
   transition:
     border-color 0.22s ease,
     box-shadow 0.22s ease;
@@ -89,6 +94,8 @@
   filter: blur(12px);
   opacity: 0.45;
   z-index: -1;
+  pointer-events: none;
+
   transition: opacity 0.22s ease;
 }
 
@@ -126,6 +133,7 @@
     rgba(145, 255, 240, 0.16),
     rgba(183, 139, 255, 0.14)
   );
+
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.08),
     0 0 18px rgba(100, 255, 230, 0.12);
