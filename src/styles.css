@@ -141,41 +141,6 @@ main:has(.home-menu) {
     opacity 0.22s ease;
 }
 
-.app-button::before,
-.menu-button::before,
-.challenge-button::before,
-.cards-button::before,
-.modal-menu-button::before,
-.submit-button::before,
-.back-button::before,
-.logout-button::before {
-  content: "";
-  position: absolute;
-  inset: auto -20% -80% 35%;
-  height: 130px;
-
-  background:
-    radial-gradient(circle, rgba(106, 255, 222, 0.65), transparent 56%),
-    radial-gradient(
-      circle at 70% 40%,
-      rgba(198, 111, 255, 0.85),
-      transparent 62%
-    ),
-    radial-gradient(
-      circle at 90% 60%,
-      rgba(255, 229, 137, 0.75),
-      transparent 55%
-    );
-
-  filter: blur(12px);
-  opacity: 0.45;
-  z-index: -1;
-
-  transition:
-    opacity 0.22s ease,
-    transform 0.22s ease;
-}
-
 .app-button:hover,
 .menu-button:hover,
 .challenge-button:hover,
