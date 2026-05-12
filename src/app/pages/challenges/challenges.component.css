@@ -14,6 +14,7 @@
 
 .challenges-title,
 .challenges-container h2 {
+  text-align: center;
   margin: 0;
   font-size: clamp(1.8rem, 8vw, 2.7rem);
   color: #fff7ff;

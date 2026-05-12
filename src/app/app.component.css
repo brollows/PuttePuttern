@@ -4,10 +4,27 @@
   left: 0;
   right: 0;
 
-  height: 2rem;
+  height: 3rem;
   padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom));
 
   background-color: #1a1a1a;
+  background:
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(106, 255, 222, 0.24),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 75% 35%,
+      rgba(183, 139, 255, 0.35),
+      transparent 38%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.11),
+      rgba(255, 255, 255, 0.025)
+    ),
+    rgba(25, 24, 35, 0.82);
   display: flex;
   justify-content: center;
   align-items: center;
