@@ -1,22 +1,251 @@
-/* Bakgrunn og helhet */
-body {
-  margin: 0;
-  background-color: #1b2b1f;
-  /* mørk skoggrønn */
-  color: #f0f0f0;
-  font-family: "Bungee", sans-serif;
+:root {
+  --bg-main: #09090f;
+  --bg-panel: rgba(25, 24, 35, 0.82);
+  --bg-panel-strong: rgba(18, 17, 27, 0.94);
+
+  --text-main: #fff7ff;
+  --text-muted: rgba(247, 243, 255, 0.72);
+
+  --accent-purple: #b77bff;
+  --accent-purple-strong: #8b5cf6;
+  --accent-cyan: #6affde;
+  --accent-yellow: #ffe68f;
+  --accent-red: #ff6f91;
+  --accent-green: #72ffc9;
+
+  --border-soft: rgba(255, 255, 255, 0.11);
+  --border-glow: rgba(205, 180, 255, 0.45);
+
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+
+  --shadow-card:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 14px 32px rgba(0, 0, 0, 0.34);
+
+  --shadow-glow: 0 0 28px rgba(139, 92, 246, 0.28);
 }
 
-/* Link resets */
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  color: var(--text-main);
+  font-family: "Bungee", sans-serif;
+
+  background:
+    radial-gradient(
+      circle at 15% 30%,
+      rgba(121, 82, 255, 0.45),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 75% 70%,
+      rgba(118, 76, 255, 0.38),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(255, 190, 245, 0.16),
+      transparent 24%
+    ),
+    linear-gradient(135deg, #09090f 0%, #11101a 45%, #171226 100%);
+
+  background-attachment: fixed;
+  overflow: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 a {
   color: inherit;
 }
 
-/* Main content padding */
+button,
+input {
+  font: inherit;
+}
+
 main {
-  padding: 1.5rem 1.5rem 0 1.5rem;
-  padding-bottom: 2.5rem;
-  height: 100vh;
-  box-sizing: border-box;
+  height: 100dvh;
+  padding: 1rem;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Home skal ikke scrolle */
+main:has(.home-menu) {
+  overflow: hidden;
+}
+
+/* Felles glass-card */
+.glass-card {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.11),
+      rgba(255, 255, 255, 0.025)
+    ),
+    var(--bg-panel);
+
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(16px);
+}
+
+/* Felles app-knapp */
+.app-button,
+.menu-button,
+.challenge-button,
+.cards-button,
+.modal-menu-button,
+.submit-button,
+.back-button,
+.logout-button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.11),
+      rgba(255, 255, 255, 0.025)
+    ),
+    rgba(25, 24, 35, 0.82);
+
+  color: #fff;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+
+  transition:
+    transform 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease,
+    opacity 0.22s ease;
+}
+
+.app-button::before,
+.menu-button::before,
+.challenge-button::before,
+.cards-button::before,
+.modal-menu-button::before,
+.submit-button::before,
+.back-button::before,
+.logout-button::before {
+  content: "";
+  position: absolute;
+  inset: auto -20% -80% 35%;
+  height: 130px;
+
+  background:
+    radial-gradient(circle, rgba(106, 255, 222, 0.65), transparent 56%),
+    radial-gradient(
+      circle at 70% 40%,
+      rgba(198, 111, 255, 0.85),
+      transparent 62%
+    ),
+    radial-gradient(
+      circle at 90% 60%,
+      rgba(255, 229, 137, 0.75),
+      transparent 55%
+    );
+
+  filter: blur(12px);
+  opacity: 0.45;
+  z-index: -1;
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease;
+}
+
+.app-button:hover,
+.menu-button:hover,
+.challenge-button:hover,
+.cards-button:hover,
+.modal-menu-button:hover,
+.submit-button:hover,
+.back-button:hover,
+.logout-button:hover {
+  transform: translateY(-3px) scale(1.01);
+  border-color: var(--border-glow);
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+}
+
+.app-button:hover::before,
+.menu-button:hover::before,
+.challenge-button:hover::before,
+.cards-button:hover::before,
+.modal-menu-button:hover::before,
+.submit-button:hover::before,
+.back-button:hover::before,
+.logout-button:hover::before {
+  opacity: 0.78;
+  transform: translateY(-8px) scale(1.08);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Felles input */
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  outline: none;
+
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: rgba(106, 255, 222, 0.65);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 3px rgba(106, 255, 222, 0.13);
+}
+
+input::placeholder {
+  color: rgba(247, 243, 255, 0.42);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes popin {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }

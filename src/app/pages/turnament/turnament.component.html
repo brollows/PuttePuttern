@@ -1,166 +1,249 @@
 <div class="tournament-header">
-    <h2 class="section-title">Turnering</h2>
-    <button class="info-icon-button" (click)="openInfoModal()" aria-label="Informasjon"><span
-            class="material-symbols-outlined" style="font-size: 2rem">info</span></button>
+  <h2 class="section-title">Turnering</h2>
+
+  <button
+    class="info-icon-button"
+    (click)="openInfoModal()"
+    aria-label="Informasjon"
+  >
+    <span class="material-symbols-outlined">info</span>
+  </button>
 </div>
 
-<hr>
+<div class="section-divider"></div>
 
-<!-- Pakk inn tabellen i en wrapper for horisontal scroll -->
 <div class="table-wrapper">
-    <table class="tournament-table">
-        <thead>
-            <tr>
-                <th style="width: 1rem;">🏆</th>
-                <th>Spiller</th>
-                <th>Score</th>
-                <th>Birdies</th>
-                <th>Par</th>
-                <th>Bogeys</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let row of rows; let i = index" (click)="openEditModal(row, i)">
-                <td style="width: 1rem;" class="placement">{{ getPlacement(i) }}</td>
-                <td class="player-cell">
-                    <img *ngIf="getProfile(row['profile$id'])?.bilde" [src]="getProfile(row['profile$id'])?.bilde"
-                        class="avatar" />
-                    <span class="player-name">
-                        {{ getProfile(row['profile$id'])?.fornavn || 'Ukjent' }}
-                        <img *ngIf="i === 0" src="assets/yellow-t-shirt-icon.png" alt="Ledertrøye"
-                            class="leader-icon" />
-                    </span>
-                </td>
-                <td>{{ row.total_score }}</td>
-                <td>{{ row.total_birdies }}</td>
-                <td>{{ row.total_par }}</td>
-                <td>{{ row.total_bogeys }}</td>
-            </tr>
-        </tbody>
-    </table>
+  <table class="tournament-table">
+    <thead>
+      <tr>
+        <th class="placement-header">🏆</th>
+        <th>Spiller</th>
+        <th>Score</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr
+        *ngFor="let row of rows; let i = index"
+        (click)="openEditModal(row, i)"
+      >
+        <td class="placement">{{ getPlacement(i) }}</td>
+
+        <td class="player-cell">
+          <img
+            *ngIf="getProfile(row['profile$id'])?.bilde"
+            [src]="getProfile(row['profile$id'])?.bilde"
+            class="avatar"
+            alt="Profilbilde"
+          />
+
+          <span class="player-name">
+            {{ getProfile(row["profile$id"])?.fornavn || "Ukjent" }}
+
+            <img
+              *ngIf="i === 0"
+              src="assets/yellow-t-shirt-icon.png"
+              alt="Ledertrøye"
+              class="leader-icon"
+            />
+          </span>
+        </td>
+
+        <td>{{ row.total_score }}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
 <section class="cards-container">
-    <button class="cards-button" (click)="openCardsModal()">
-        🎲 Lag tilfeldige grupper!
-    </button>
+  <button class="cards-button" (click)="openCardsModal()">
+    🎲 Lag tilfeldige grupper!
+  </button>
 </section>
 
-
-<!-- Modal er uendret i struktur -->
+<!-- Edit score modal -->
 <div class="modal" *ngIf="selectedRow">
-    <div class="modal-content">
-        <label class="modal-menu-button" [class.loading]="isOcrRunning">
-            <ng-container *ngIf="!isOcrRunning; else loading">
-                📷 Importer UDisc-bilde
-            </ng-container>
-            <ng-template #loading>
-                <span class="spinner"></span> Laster...
-            </ng-template>
-            <input type="file" accept="image/*" (change)="onOCRImageUpload($event)" hidden>
-        </label>
-        <h2>
-            {{ selectedProfile?.fornavn }}
-            <img *ngIf="selectedIndex === 0" src="assets/yellow-t-shirt-icon.png" alt="Ledertrøye"
-                class="leader-icon" />
-        </h2>
-        <img *ngIf="selectedProfile?.bilde" [src]="selectedProfile.bilde" class="modal-avatar" />
+  <div class="modal-content">
+    <label class="modal-menu-button" [class.loading]="isOcrRunning">
+      <ng-container *ngIf="!isOcrRunning; else loading">
+        📷 Importer UDisc-bilde
+      </ng-container>
 
-        <div *ngFor="let field of editableFields" class="edit-field">
-            <div class="edit-label">
-                {{ field.replace('total_', '').toUpperCase() }}:
-                <strong>{{ selectedRow[field] + currentSelectedRow[field] }}</strong>
-            </div>
-            <div class="edit-controls">
-                <button (click)="adjust(field, -1)">➖</button>
-                <span class="edit-value">{{ currentSelectedRow[field] }}</span>
-                <button (click)="adjust(field, 1)">➕</button>
-            </div>
-        </div>
+      <ng-template #loading>
+        <span class="spinner"></span> Laster...
+      </ng-template>
 
+      <input
+        type="file"
+        accept="image/*"
+        (change)="onOCRImageUpload($event)"
+        hidden
+      />
+    </label>
 
-        <div class="modal-actions">
-            <button class="primary" (click)="saveEdits()">✅ Ferdig</button>
-            <button class="danger" (click)="removeRow(selectedRow); $event.stopPropagation()">🗑️ Slett</button>
-            <button class="cancel" (click)="closeEditModal()">Avbryt</button>
-        </div>
+    <h2>
+      {{ selectedProfile?.fornavn }}
+
+      <img
+        *ngIf="selectedIndex === 0"
+        src="assets/yellow-t-shirt-icon.png"
+        alt="Ledertrøye"
+        class="leader-icon"
+      />
+    </h2>
+
+    <img
+      *ngIf="selectedProfile?.bilde"
+      [src]="selectedProfile.bilde"
+      class="modal-avatar"
+      alt="Profilbilde"
+    />
+
+    <div *ngFor="let field of editableFields" class="edit-field">
+      <div class="edit-label">
+        {{ field.replace("total_", "").toUpperCase() }}:
+        <strong>{{ selectedRow[field] + currentSelectedRow[field] }}</strong>
+      </div>
+
+      <div class="edit-controls">
+        <button type="button" (click)="adjust(field, -1)">➖</button>
+        <span class="edit-value">{{ currentSelectedRow[field] }}</span>
+        <button type="button" (click)="adjust(field, 1)">➕</button>
+      </div>
     </div>
+
+    <div class="modal-actions">
+      <button class="primary" type="button" (click)="saveEdits()">
+        ✅ Ferdig
+      </button>
+      <button
+        class="danger"
+        type="button"
+        (click)="removeRow(selectedRow); $event.stopPropagation()"
+      >
+        🗑️ Slett
+      </button>
+      <button class="cancel" type="button" (click)="closeEditModal()">
+        Avbryt
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- Info-modal for bildeopplasting fra UDisc -->
 <div class="modal" *ngIf="showInfoModal">
-    <div class="modal-content udisc-info-modal">
-        <h2>Last opp bilde fra UDisc</h2>
-        <button class="info-icon-button" (click)="closeInfoModal()" aria-label="Lukk">
-            <span class="material-symbols-outlined" style="font-size: 2rem">close</span>
-        </button>
+  <div class="modal-content udisc-info-modal">
+    <button
+      class="modal-close-button"
+      (click)="closeInfoModal()"
+      aria-label="Lukk"
+    >
+      <span class="material-symbols-outlined">close</span>
+    </button>
 
-        <p class="info-text">
-            Når du skal føre score så kan du hente bildet fra udisc istedet for å telle og trykke for hver birdie, par
-            osv.
+    <h2>Last opp bilde fra UDisc</h2>
+
+    <p class="info-text">
+      Når du skal føre score kan du hente bildet fra UDisc istedenfor å telle og
+      trykke for hver birdie, par og bogey.
+    </p>
+
+    <div class="udisc-scroll-wrapper">
+      <div class="udisc-step">
+        <p class="step-caption">
+          1. Åpne runden din i UDisc og vis scorekortet. Trykk deretter på
+          <span class="bold-text">share</span>-knappen markert på bildet.
         </p>
 
-        <div class="udisc-scroll-wrapper">
-            <div class="udisc-step">
-                <p class="step-caption">1. Åpne runden din i UDisc og vis scorekortet. Trykk deretter på
-                    <span class="bold-text">share</span> knappen
-                    markert på bildet
-                </p>
-                <img src="assets/udisc-instruction-1.jpeg" alt="UDisc steg 1" class="udisc-image" />
-            </div>
+        <img
+          src="assets/udisc-instruction-1.jpeg"
+          alt="UDisc steg 1"
+          class="udisc-image"
+        />
+      </div>
 
-            <div class="udisc-step">
-                <p class="step-caption">2. Velg deretter den som heter <span class="bold-text">Scorekort med min
-                        statestikk</span> som markert under.</p>
-                <img src="assets/udisc-instruction-2.jpeg" alt="UDisc steg 2" class="udisc-image" />
-            </div>
+      <div class="udisc-step">
+        <p class="step-caption">
+          2. Velg deretter den som heter
+          <span class="bold-text">Scorekort med min statistikk</span>.
+        </p>
 
-            <div class="udisc-step">
-                <p class="step-caption">3. Lagre bildet til telefonen og last opp det til appen når du skal redigere på
-                    score.</p>
-                <img src="assets/udisc-instruction-3.jpeg" alt="UDisc steg 3" class="udisc-image" />
-            </div>
-        </div>
+        <img
+          src="assets/udisc-instruction-2.jpeg"
+          alt="UDisc steg 2"
+          class="udisc-image"
+        />
+      </div>
 
-        <div class="modal-actions">
-            <button class="primary" (click)="closeInfoModal()">Ait..</button>
-        </div>
+      <div class="udisc-step">
+        <p class="step-caption">
+          3. Lagre bildet til telefonen og last det opp i appen når du skal
+          redigere score.
+        </p>
+
+        <img
+          src="assets/udisc-instruction-3.jpeg"
+          alt="UDisc steg 3"
+          class="udisc-image"
+        />
+      </div>
     </div>
+
+    <div class="modal-actions">
+      <button class="primary" type="button" (click)="closeInfoModal()">
+        Ait..
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- Cards-modal for tilfeldige grupper -->
 <div class="modal" *ngIf="showCardsModal">
-    <div class="modal-content udisc-info-modal">
-        <div class="cards-groups-modal">
-            <div class="cards-groups-header">
-                <h2 class="section-title">Grupper</h2>
-                <button class="info-icon-button" (click)="closeCardsModal()" aria-label="Lukk">
-                    <span class="material-symbols-outlined" style="font-size: 2rem">close</span>
-                </button>
-            </div>
+  <div class="modal-content groups-modal">
+    <div class="cards-groups-header">
+      <h2 class="modal-section-title">Grupper</h2>
 
-            <div class="cards-groups-wrapper">
-                <div *ngFor="let group of randomCards; let groupIndex = index" class="group-card">
-                    <h3 class="group-title">Gruppe {{ groupIndex + 1 }}</h3>
-                    <table class="tournament-table cards-tournament-table">
-                        <tbody>
-                            <tr *ngFor="let row of group">
-                                <td class="player-cell">
-                                    <img *ngIf="getProfile(row['profile$id'])?.bilde"
-                                        [src]="getProfile(row['profile$id'])?.bilde" class="avatar" />
-                                    <span class="player-name">
-                                        {{ getProfile(row['profile$id'])?.fornavn || 'Ukjent' }}
-                                    </span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="modal-actions">
-                <button class="primary" (click)="closeCardsModal()">Lukk</button>
-            </div>
-        </div>
+      <button
+        class="modal-close-button"
+        (click)="closeCardsModal()"
+        aria-label="Lukk"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
     </div>
+
+    <div class="cards-groups-wrapper">
+      <div
+        *ngFor="let group of randomCards; let groupIndex = index"
+        class="group-card"
+      >
+        <h3 class="group-title">Gruppe {{ groupIndex + 1 }}</h3>
+
+        <table class="group-table">
+          <tbody>
+            <tr *ngFor="let row of group">
+              <td class="group-player-cell">
+                <img
+                  *ngIf="getProfile(row['profile$id'])?.bilde"
+                  [src]="getProfile(row['profile$id'])?.bilde"
+                  class="avatar"
+                  alt="Profilbilde"
+                />
+
+                <span class="player-name">
+                  {{ getProfile(row["profile$id"])?.fornavn || "Ukjent" }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="primary" type="button" (click)="closeCardsModal()">
+        Lukk
+      </button>
+    </div>
+  </div>
 </div>

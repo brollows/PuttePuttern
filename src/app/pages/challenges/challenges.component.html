@@ -1,19 +1,104 @@
-<h2 class="challenges-title">🎯 Challenge</h2>
+<h2 class="challenges-title">🎡 Bogey-hjulet</h2>
 
-<section class="challenges-container">
-    <button class="challenge-button" (click)="setRandomChallenge()">
-        🎲 Trykk for å få en utfordring!
-    </button>
-    <div class="challenge-card">
-        <p>{{ currentDisplayedChallenge }}</p>
-    </div>
-</section>
-
-<hr>
+<br />
 
 <div class="rules-box">
-    <p>Hver gang en spiller får <strong>bogey</strong>... må det trykkes på <em>🎲 "Få en utfordring"</em> før neste
-        hull!</p>
-    <p>Challenge'n gjelder for hele neste hull – f.eks. bogey på hull 10 → challenge på hull 11!</p>
-    <p class="rules-warning">NEKTER ELLER GLEMMER DU Å UTFØRE CHALLENGE = +1 STRAFFEKAST PÅ TOTALEN! 😱</p>
+  <p>
+    Én gang per bane har du muligheten til å spinne
+    <strong>Bogey-hjulet</strong>.
+  </p>
+
+  <p>
+    Hjulet kan gi deg <strong>mulligan</strong>, <em>challenge</em> eller
+    <strong style="color: var(--accent-red)">+1 på score</strong>.
+  </p>
+
+  <p>
+    For at spinnet skal være gyldig, må minst én annen spiller i gruppa se at du
+    faktisk spinner hjulet. Du kan altså ikke spinne alene og bare vise fram
+    resultatet etterpå.
+  </p>
+
+  <p>
+    Får du <strong style="color: var(--accent-red)">+1 på score</strong>, må
+    straffekastet legges til totalen din med én gang.
+  </p>
+
+  <p>
+    Får du <strong>mulligan</strong>, må den brukes med én gang. Den kan ikke
+    spares til senere.
+  </p>
+
+  <p>
+    Hvis du spinner når du ikke står på teepad, gjelder en eventuell
+    <em>challenge</em> på neste hull.
+  </p>
+
+  <p class="rules-warning">
+    Får du challenge på siste hull, må du chugge én enhet når dere kommer til
+    hytta – eller i bilen etter runden, hvis det lar seg gjøre. 😱
+  </p>
+</div>
+
+<hr />
+
+<section class="challenges-container">
+  <button class="challenge-button" type="button" (click)="openWheel()">
+    🎡 Spinn hjulet!
+  </button>
+
+  <div class="challenge-card" *ngIf="currentDisplayedChallenge">
+    <p>{{ currentDisplayedChallenge }}</p>
+  </div>
+</section>
+
+<div class="wheel-modal-backdrop" *ngIf="wheelOpen">
+  <div class="wheel-modal">
+    <button
+      class="close-button"
+      type="button"
+      (click)="closeWheel()"
+      [disabled]="isSpinning"
+    >
+      ✕
+    </button>
+
+    <h3>Bogey-hjulet</h3>
+
+    <div class="wheel-wrapper">
+      <div class="wheel-pointer">▼</div>
+
+      <div
+        class="wheel"
+        [class.spinning]="isSpinning"
+        [style.--wheel-gradient]="wheelGradient"
+        [style.transform]="'rotate(' + wheelRotation + 'deg)'"
+      >
+        <div
+          class="wheel-label"
+          *ngFor="let segment of wheelSegments; let i = index"
+          [style.--segment-angle.deg]="i * segmentDegrees + segmentDegrees / 2"
+        >
+          <span>{{ segment.label }}</span>
+        </div>
+      </div>
+
+      <div class="wheel-center">
+        <span class="wheel-center-icon">🎯</span>
+      </div>
+    </div>
+
+    <p class="spin-status">
+      {{ wheelStatusText }}
+    </p>
+
+    <button
+      class="challenge-button spin-button"
+      type="button"
+      (click)="spinWheel()"
+      [disabled]="isSpinning"
+    >
+      {{ isSpinning ? "Spinner..." : "SPINN!" }}
+    </button>
+  </div>
 </div>

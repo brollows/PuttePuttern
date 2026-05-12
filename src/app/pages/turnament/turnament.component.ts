@@ -29,12 +29,7 @@ export class TurnamentComponent implements OnInit {
 
   randomCards = [];
 
-  readonly editableFields = [
-    'total_score',
-    'total_birdies',
-    'total_par',
-    'total_bogeys',
-  ];
+  readonly editableFields = ['total_score'];
 
   async ngOnInit() {
     await this.loadProfilesAndTurnament();
@@ -67,9 +62,6 @@ export class TurnamentComponent implements OnInit {
       const newRow = {
         profile$id: profile.id,
         total_score: 0,
-        total_birdies: 0,
-        total_par: 0,
-        total_bogeys: 0,
       };
 
       const { data, error } = await this.supabase
@@ -98,13 +90,7 @@ export class TurnamentComponent implements OnInit {
 
   async removeRow(row: any) {
     const rowProfile = this.getProfile(row['profile$id']);
-    if (
-      rowProfile == undefined ||
-      (row.total_score == 0 &&
-        row.total_birdies == 0 &&
-        row.total_bogeys == 0 &&
-        row.total_par == 0)
-    ) {
+    if (rowProfile == undefined || row.total_score == 0) {
       const { error } = await this.supabase
         .from('turnament')
         .delete()
@@ -136,9 +122,6 @@ export class TurnamentComponent implements OnInit {
   openEditModal(row: any, index: number) {
     this.selectedRow = { ...row };
     this.currentSelectedRow = {
-      total_birdies: 0,
-      total_bogeys: 0,
-      total_par: 0,
       total_score: 0,
     };
     this.selectedIndex = index;
@@ -152,12 +135,7 @@ export class TurnamentComponent implements OnInit {
   }
 
   adjust(field: string, delta: number) {
-    if (
-      this.currentSelectedRow &&
-      ['total_score', 'total_birdies', 'total_par', 'total_bogeys'].includes(
-        field,
-      )
-    ) {
+    if (this.currentSelectedRow && ['total_score'].includes(field)) {
       this.currentSelectedRow[field] += delta;
     }
   }
@@ -166,11 +144,6 @@ export class TurnamentComponent implements OnInit {
     const updated = {
       total_score:
         this.selectedRow.total_score + this.currentSelectedRow.total_score,
-      total_birdies:
-        this.selectedRow.total_birdies + this.currentSelectedRow.total_birdies,
-      total_par: this.selectedRow.total_par + this.currentSelectedRow.total_par,
-      total_bogeys:
-        this.selectedRow.total_bogeys + this.currentSelectedRow.total_bogeys,
     };
 
     const { error } = await this.supabase
@@ -247,9 +220,6 @@ export class TurnamentComponent implements OnInit {
           parsedName.includes(profileName)
         ) {
           this.currentSelectedRow.total_score = parsed.total ?? 0;
-          this.currentSelectedRow.total_birdies = parsed.birdies;
-          this.currentSelectedRow.total_par = parsed.pars;
-          this.currentSelectedRow.total_bogeys = parsed.bogeys;
         } else {
           if (!profileNameExists) {
             window.alert(
