@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { beforeEach, describe, expect, it } from 'vitest';
 import { TurnamentComponent } from './turnament.component';
 
 describe('TurnamentComponent', () => {
@@ -8,9 +8,8 @@ describe('TurnamentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TurnamentComponent]
-    })
-    .compileComponents();
+      imports: [TurnamentComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(TurnamentComponent);
     component = fixture.componentInstance;

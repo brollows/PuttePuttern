@@ -4,5 +4,5 @@ host: https://app.netlify.com/teams/erik-faane/projects
 
 database: https://supabase.com/dashboard/project/zemgyaubopngyguaeocf
 
-
-Alltid bygg med ng build --configuration=production når du skal laste opp til netlify
+GJELDER IKKE LENGER: Alltid bygg med ng build --configuration=production når du skal laste opp til netlify
+Nå bygger netlify rett fra github

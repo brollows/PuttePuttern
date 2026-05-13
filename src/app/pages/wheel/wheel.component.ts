@@ -11,13 +11,13 @@ interface WheelSegment {
 }
 
 @Component({
-  selector: 'app-challenges',
+  selector: 'app-wheel',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './challenges.component.html',
-  styleUrl: './challenges.component.css',
+  templateUrl: './wheel.component.html',
+  styleUrl: './wheel.component.css',
 })
-export class ChallengesComponent {
+export class WheelComponent {
   readonly segmentCount = 9;
   readonly segmentDegrees = 360 / this.segmentCount;
   readonly spinDurationMs = 10000;
@@ -136,11 +136,16 @@ export class ChallengesComponent {
     const winningIndex = Math.floor(Math.random() * this.wheelSegments.length);
     const winningSegment = this.wheelSegments[winningIndex];
 
-    const segmentCenterAngle =
-      winningIndex * this.segmentDegrees + this.segmentDegrees / 2;
+    const safeMargin = this.segmentDegrees * 0.18;
+
+    const randomOffsetWithinSegment =
+      safeMargin + Math.random() * (this.segmentDegrees - safeMargin * 2);
+
+    const segmentTargetAngle =
+      winningIndex * this.segmentDegrees + randomOffsetWithinSegment;
 
     const fullSpins = 10 + Math.floor(Math.random() * 5);
-    const finalRotation = 360 - segmentCenterAngle;
+    const finalRotation = 360 - segmentTargetAngle;
     const currentNormalizedRotation = this.wheelRotation % 360;
 
     const nextRotation =
