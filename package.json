@@ -1,5 +1,5 @@
 {
-  "name": "putte-puttern-2025",
+  "name": "putte-puttern",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:putte-puttern-2025": "node dist/putte-puttern-2025/server/server.mjs"
+    "serve:ssr:putte-puttern": "node dist/putte-puttern/server/server.mjs"
   },
   "private": true,
   "dependencies": {

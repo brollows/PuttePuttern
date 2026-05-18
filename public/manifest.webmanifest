@@ -1,6 +1,6 @@
 {
-  "name": "putte-puttern-2025",
-  "short_name": "putte-puttern-2025",
+  "name": "putte-puttern",
+  "short_name": "putte-puttern",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",

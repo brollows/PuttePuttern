@@ -34,10 +34,6 @@ export class ProfilesComponent implements OnInit {
   personalbestValid = true;
   editingProfileId: number | null = null;
 
-  pinCodeForDeletion: number = 69420;
-  pinCodeInput: number | null = null;
-  isPinCodeModalOpen = false;
-
   isLoading = false;
 
   constructor(private router: Router) {}
@@ -223,21 +219,7 @@ export class ProfilesComponent implements OnInit {
     console.log(`✅ Bruker med ID ${profile.id} slettet`);
   }
 
-  enterPinCode() {
-    this.isPinCodeModalOpen = true;
-  }
-
-  checkPinCode(inputPin: number | null) {
-    if (inputPin == this.pinCodeForDeletion) {
-      this.removeProfile();
-    } else {
-      alert('Feil pin. Kontakt admin for å slette brukeren!');
-      this.clearValues();
-    }
-  }
-
   clearValues() {
-    this.pinCodeInput = null;
     this.removeProfileId = null;
   }
 
@@ -366,6 +348,7 @@ export class ProfilesComponent implements OnInit {
       const updatedLoggedInUser = this.profiles.find(
         (profile) => profile.id === this.editingProfileId,
       );
+
       if (updatedLoggedInUser) {
         localStorage.setItem(
           this.STORAGE_KEY,
