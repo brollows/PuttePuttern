@@ -431,3 +431,21 @@ hr {
     font-size: 0.65rem;
   }
 }
+
+.spin-cooldown {
+  margin: 0.1rem auto 0.75rem;
+  padding: 0.65rem 0.85rem;
+  width: fit-content;
+  max-width: 100%;
+
+  border-radius: 999px;
+  border: 1px solid rgba(255, 243, 106, 0.38);
+
+  color: #fff36a;
+  background: rgba(255, 243, 106, 0.1);
+
+  font-size: 0.95rem;
+  font-weight: 800;
+
+  box-shadow: 0 0 18px rgba(255, 243, 106, 0.14);
+}

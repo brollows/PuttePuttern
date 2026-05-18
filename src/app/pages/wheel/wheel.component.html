@@ -8,20 +8,12 @@
     <strong>Bogey-hjulet</strong>.
   </p>
 
-  <p>
-    Hjulet kan gi deg <strong>mulligan</strong>, <em>challenge</em> eller
-    <strong style="color: var(--accent-red)">+1 på score</strong>.
-  </p>
+  <p>Hjulet kan gi deg <strong>mulligan</strong> eller <em>challenge</em></p>
 
   <p>
     For at spinnet skal være gyldig, må minst én annen spiller i gruppa se at du
     faktisk spinner hjulet. Du kan altså ikke spinne alene og bare vise fram
     resultatet etterpå.
-  </p>
-
-  <p>
-    Får du <strong style="color: var(--accent-red)">+1 på score</strong>, må
-    straffekastet legges til totalen din med én gang.
   </p>
 
   <p>
@@ -92,13 +84,23 @@
       {{ wheelStatusText }}
     </p>
 
+    <div class="spin-cooldown" *ngIf="cooldownRemainingMs > 0 && !isSpinning">
+      {{ cooldownText }}
+    </div>
+
     <button
       class="challenge-button spin-button"
       type="button"
       (click)="spinWheel()"
-      [disabled]="isSpinning"
+      [disabled]="isSpinDisabled"
     >
-      {{ isSpinning ? "Spinner..." : "SPINN!" }}
+      {{
+        isSpinning
+          ? "Spinner..."
+          : cooldownRemainingMs > 0
+            ? "Cooldown..."
+            : "SPINN!"
+      }}
     </button>
   </div>
 </div>

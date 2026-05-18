@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 
 type WheelResultType = 'mulligan' | 'plusOne' | 'challenge';
 
@@ -17,34 +17,39 @@ interface WheelSegment {
   templateUrl: './wheel.component.html',
   styleUrl: './wheel.component.css',
 })
-export class WheelComponent {
+export class WheelComponent implements OnDestroy {
   readonly segmentCount = 9;
   readonly segmentDegrees = 360 / this.segmentCount;
   readonly spinDurationMs = 10000;
+
+  readonly spinCooldownMs = 5 * 60 * 1000;
 
   wheelOpen = false;
   isSpinning = false;
   wheelRotation = 0;
 
+  cooldownRemainingMs = 0;
+  private cooldownIntervalId: number | null = null;
+  private cooldownEndsAt = 0;
+
   wheelStatusText = 'Trykk SPINN for å avgjøre skjebnen 👀';
   currentDisplayedChallenge = '';
 
   challenges = [
-    'Du må kommentere ditt eget kast fra tee som om det var vist på TV',
-    'Du må rope ut en bestemt frase før eller etter hvert kast',
-    'Du er gruppas heiagjeng. Du må applaudere og skryte av alle kast til motspillerene hele hullet. UANSETT UTFALL',
-    'Du må gi en annen spiller en pep-talk før personen skal kaste',
-    'Du må synge en tilfeldig linje fra en sang før kast fra tee',
-    'Du må snakke høyt i kommandoform til discen, f.eks. “Fly, og ikke skuff meg!”',
-    'Du må gi teknisk instruksjon til gruppa etter kastene deres. Coach, hva må de jobbe med?',
-    'Du må etterligne stemmen til en kjent karakter hele hullet',
-    'Du må uansett hvordan kastet fra tee går, feire som om det var ace',
-    'Du må finne på en falsk sponsor og rope ut navnet før kastet',
-    'Gjør en dansebevegelse før du kaster fra tee',
-    'Ta en moradi-vits til en av de andre på gruppa di før du kaster fra tee',
-    'Du må introdusere deg selv på engelsk med fullt navn som om du er disc golf-proff før kast fra tee',
-    'Du må stå som superhelt i power pose i 5 sekunder før kast',
-    'Du må forklare kastet ditt etterpå som om det var planlagt, uansett hvor dårlig det var',
+    'Kast grenade minst én gang i løpet av hullet. Grenade = kast discen nesten vertikalt opp med tommelen på innsiden av rimen.',
+    'Putt med ikke-dominant arm dette hullet.',
+    'Utkastet må kastes standstill, altså uten tilløp.',
+    'Ett kast på hullet må være en roller.',
+    'Ett kast på hullet må være patent pending. Det betyr et kast der du står litt vridd/baklengs.',
+    'Ett kast på hullet må være overhand, enten tomahawk eller thumber.',
+    'Utkastet må kastes med putter. Ikke zone eller andre approach discer. Bruk den du ville puttet med',
+    'Ett kast på hullet må kastes med discen opp-ned.',
+    'Utkastet må kastes med den mest understabile discen du har med deg. Eller om noen på gruppa har en mer understabil disc.',
+    'Utkastet må kastes med den mest overstabile discen du har med deg. Eller om noen på gruppa har en mer overstabil disc.',
+    'La den andre på gruppa velge hvor du skal ta utkastet fra.',
+    'Gruppa velger en mando som gjelder for deg hele hullet.',
+    'Gruppa velger hvilken disc du skal kaste med. Denne discen skal brukes fra tee til den ligger i kurv.',
+    'Du må kaste to ganger fra tee. Du må fortsette å spille fra den dårligste discen. Gruppa bestemmer hvilken det er.',
   ];
 
   wheelSegments: WheelSegment[] = [
@@ -55,10 +60,22 @@ export class WheelComponent {
       color: '#31f58f',
     },
     {
-      type: 'challenge',
-      label: 'CHALLENGE',
-      resultText: '',
-      color: '#b78bff',
+      type: 'mulligan',
+      label: 'MULLIGAN',
+      resultText: '🟢 MULLIGAN! Du får kaste på nytt!',
+      color: '#31f58f',
+    },
+    {
+      type: 'mulligan',
+      label: 'MULLIGAN',
+      resultText: '🟢 MULLIGAN! Du får kaste på nytt!',
+      color: '#31f58f',
+    },
+    {
+      type: 'mulligan',
+      label: 'MULLIGAN',
+      resultText: '🟢 MULLIGAN! Du får kaste på nytt!',
+      color: '#31f58f',
     },
     {
       type: 'mulligan',
@@ -73,10 +90,10 @@ export class WheelComponent {
       color: '#b78bff',
     },
     {
-      type: 'mulligan',
-      label: 'MULLIGAN',
-      resultText: '🟢 MULLIGAN! Du får kaste på nytt!',
-      color: '#31f58f',
+      type: 'challenge',
+      label: 'CHALLENGE',
+      resultText: '',
+      color: '#b78bff',
     },
     {
       type: 'challenge',
@@ -85,22 +102,10 @@ export class WheelComponent {
       color: '#b78bff',
     },
     {
-      type: 'mulligan',
-      label: 'MULLIGAN',
-      resultText: '🟢 MULLIGAN! Du får kaste på nytt!',
-      color: '#31f58f',
-    },
-    {
       type: 'challenge',
       label: 'CHALLENGE',
       resultText: '',
       color: '#b78bff',
-    },
-    {
-      type: 'plusOne',
-      label: '+1 SCORE',
-      resultText: '🔴 +1 PÅ SCORE! Brutalt. Rett på totalen.',
-      color: '#ff4d6d',
     },
   ];
 
@@ -115,9 +120,22 @@ export class WheelComponent {
       .join(', ');
   }
 
+  get isSpinDisabled(): boolean {
+    return this.isSpinning || this.cooldownRemainingMs > 0;
+  }
+
+  get cooldownText(): string {
+    const totalSeconds = Math.ceil(this.cooldownRemainingMs / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
   openWheel() {
     this.wheelOpen = true;
     this.wheelStatusText = 'Trykk SPINN for å avgjøre skjebnen 👀';
+    this.currentDisplayedChallenge = '';
   }
 
   closeWheel() {
@@ -127,7 +145,9 @@ export class WheelComponent {
   }
 
   spinWheel() {
-    if (this.isSpinning) return;
+    if (this.isSpinDisabled) return;
+
+    this.startSpinCooldown();
 
     this.isSpinning = true;
     this.currentDisplayedChallenge = '';
@@ -164,12 +184,44 @@ export class WheelComponent {
     }, this.spinDurationMs);
   }
 
+  ngOnDestroy() {
+    this.clearCooldownInterval();
+  }
+
+  private startSpinCooldown() {
+    this.cooldownEndsAt = Date.now() + this.spinCooldownMs;
+    this.updateCooldownRemaining();
+
+    this.clearCooldownInterval();
+
+    this.cooldownIntervalId = window.setInterval(() => {
+      this.updateCooldownRemaining();
+
+      if (this.cooldownRemainingMs <= 0) {
+        this.clearCooldownInterval();
+      }
+    }, 1000);
+  }
+
+  private updateCooldownRemaining() {
+    this.cooldownRemainingMs = Math.max(0, this.cooldownEndsAt - Date.now());
+  }
+
+  private clearCooldownInterval() {
+    if (this.cooldownIntervalId === null) return;
+
+    window.clearInterval(this.cooldownIntervalId);
+    this.cooldownIntervalId = null;
+  }
+
   private handleWheelResult(segment: WheelSegment) {
     if (segment.type === 'challenge') {
       const challenge = this.getRandomChallenge();
 
-      this.currentDisplayedChallenge = `🟣 CHALLENGE: ${challenge}`;
-      this.wheelStatusText = '🟣 CHALLENGE!';
+      segment.resultText = `🟣 CHALLENGE: ${challenge}`;
+
+      this.currentDisplayedChallenge = segment.resultText;
+      this.wheelStatusText = segment.resultText;
       return;
     }
 
