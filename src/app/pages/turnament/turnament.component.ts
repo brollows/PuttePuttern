@@ -29,9 +29,14 @@ export class TurnamentComponent implements OnInit {
 
   randomCards = [];
 
+  currentUser: any = null;
+
   readonly editableFields = ['total_score'];
 
   async ngOnInit() {
+    const storedUser = localStorage.getItem('putteputtern_logged_in_user');
+    this.currentUser = storedUser ? JSON.parse(storedUser) : null;
+
     await this.loadProfilesAndTurnament();
   }
 
@@ -120,6 +125,9 @@ export class TurnamentComponent implements OnInit {
   }
 
   openEditModal(row: any, index: number) {
+    if (!this.canEditRow(row)) {
+      return;
+    }
     this.selectedRow = { ...row };
     this.currentSelectedRow = {
       total_score: 0,
@@ -141,6 +149,11 @@ export class TurnamentComponent implements OnInit {
   }
 
   async saveEdits() {
+    if (!this.canEditRow(this.selectedRow)) {
+      alert('Du kan bare lagre score på din egen profil.');
+      return;
+    }
+
     const updated = {
       total_score:
         this.selectedRow.total_score + this.currentSelectedRow.total_score,
@@ -293,5 +306,14 @@ export class TurnamentComponent implements OnInit {
   closeCardsModal() {
     this.showCardsModal = false;
     this.randomCards = [];
+  }
+
+  canEditRow(row: any): boolean {
+    if (!this.currentUser || !row) return false;
+
+    return (
+      this.currentUser.role === 'admin' ||
+      row['profile$id'] === this.currentUser.id
+    );
   }
 }

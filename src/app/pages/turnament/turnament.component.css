@@ -718,3 +718,10 @@ button {
     transform: rotate(360deg);
   }
 }
+
+.my-profile {
+  color: yellow;
+}
+.my-profile .player-name {
+  color: yellow;
+}

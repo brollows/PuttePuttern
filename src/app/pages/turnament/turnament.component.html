@@ -26,6 +26,7 @@
       <tr
         *ngFor="let row of rows; let i = index"
         (click)="openEditModal(row, i)"
+        [class.my-profile]="canEditRow(row)"
       >
         <td class="placement">{{ getPlacement(i) }}</td>
 
