@@ -59,7 +59,7 @@
 
     <h2><em>Mulige challanges:</em></h2>
     <span *ngFor="let challange of challenges; let i = index">
-      <p>{{ i + 1 }}. {{ challange }}</p>
+      <p class="challenge-text">{{ i + 1 }}. {{ challange }}</p>
       <hr />
     </span>
   </div>
@@ -84,7 +84,7 @@
       ✕
     </button>
 
-    <p>{{ currentDisplayedChallenge }}</p>
+    <p class="challenge-text">{{ currentDisplayedChallenge }}</p>
 
     <small class="challenge-dismiss-hint" *ngIf="cooldownRemainingMs > 0">
       Kan fjernes når cooldown er ferdig.
@@ -129,7 +129,7 @@
       </div>
     </div>
 
-    <p class="spin-status">
+    <p class="spin-status challenge-text">
       {{ wheelStatusText }}
     </p>
 

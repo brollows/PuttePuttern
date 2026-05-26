@@ -38,20 +38,22 @@ export class WheelComponent implements OnInit, OnDestroy {
   rulesExpanded = false;
 
   challenges = [
-    'Kast grenade minst én gang i løpet av hullet. Grenade = kast discen nesten vertikalt opp med tommelen på innsiden av rimen.',
-    'Putt med ikke-dominant arm dette hullet.',
-    'Utkastet må kastes standstill, altså uten tilløp.',
-    'Ett kast på hullet må være en roller.',
-    'Ett kast på hullet må være patent pending. Det betyr et kast der du står litt vridd/baklengs.',
-    'Ett kast på hullet må være overhand, enten tomahawk eller thumber.',
-    'Utkastet må kastes med putter. Ikke zone eller andre approach discer. Bruk den du ville puttet med',
-    'Ett kast på hullet må kastes med discen opp-ned.',
-    'Utkastet må kastes med den mest understabile discen du har med deg. Eller om noen på gruppa har en mer understabil disc.',
-    'Utkastet må kastes med den mest overstabile discen du har med deg. Eller om noen på gruppa har en mer overstabil disc.',
-    'La den andre på gruppa velge hvor du skal ta utkastet fra.',
-    'Gruppa velger en mando som gjelder for deg hele hullet.',
-    'Gruppa velger hvilken disc du skal kaste med. Denne discen skal brukes fra tee til den ligger i kurv.',
-    'Du må kaste to ganger fra tee. Du må fortsette å spille fra den dårligste discen. Gruppa bestemmer hvilken det er.',
+    `Utkastet må kastes med putter. Ikke zone eller andre approach discer. Bruk den du ville puttet med. 
+    
+    (I tilfelle du heter Ole, så vet vi at du putter med hva som helst. Ikke vær vrang, du vet hva slags putter det er snakk om)`,
+    `Kast grenade minst én gang i løpet av hullet. Grenade = kast discen nesten vertikalt opp med tommelen på innsiden av rimen.`,
+    `Putt med ikke-dominant arm dette hullet.`,
+    `Utkastet må kastes standstill, altså uten tilløp.`,
+    `Ett kast på hullet må være en roller.`,
+    `Ett kast på hullet må være patent pending. Det betyr et kast der du står litt vridd/baklengs.`,
+    `Ett kast på hullet må være overhand, enten tomahawk eller thumber.`,
+    `Ett kast på hullet må kastes med discen opp-ned.`,
+    `Utkastet må kastes med den mest understabile discen du har med deg. Eller om noen på gruppa har en mer understabil disc.`,
+    `Utkastet må kastes med den mest overstabile discen du har med deg. Eller om noen på gruppa har en mer overstabil disc.`,
+    `La den andre på gruppa velge hvor du skal ta utkastet fra.`,
+    `Gruppa velger en mando som gjelder for deg hele hullet.`,
+    `Gruppa velger hvilken disc du skal kaste med. Denne discen skal brukes fra tee til den ligger i kurv.`,
+    `Du må kaste to ganger fra tee. Du må fortsette å spille fra den dårligste discen. Gruppa bestemmer hvilken det er.`,
   ];
 
   wheelSegments: WheelSegment[] = [
