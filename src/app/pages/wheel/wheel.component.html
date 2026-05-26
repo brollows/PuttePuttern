@@ -30,7 +30,7 @@
       <strong>Bogey-hjulet</strong>.
     </p>
 
-    <p>Hjulet kan gi deg <strong>mulligan</strong> eller <em>challenge</em></p>
+    <p>Hjulet kan gi deg <strong>mulligan</strong> eller <em>challenge</em>.</p>
 
     <p>
       For at spinnet skal være gyldig, må minst én annen spiller i gruppa se at
@@ -43,15 +43,25 @@
       spares til senere.
     </p>
 
+    <p>Får du <em>challenge</em>, skal den gjennomføres så fort som mulig.</p>
+
     <p>
       Hvis du spinner når du ikke står på teepad, gjelder en eventuell
-      <em>challenge</em> på neste hull.
+      <em>challenge</em> på neste hull dersom challengen gjelder et helt hull.
+      Gjelder den ett kast, én putt eller en enkelthandling, skal den gjøres med
+      én gang.
     </p>
 
     <p class="rules-warning">
-      Får du challenge på siste hull, må du chugge én enhet når dere kommer til
-      hytta – eller i bilen etter runden, hvis det lar seg gjøre. 😱
+      Får du challenge på siste hull, og du ikke får gjort challanges i sin
+      helhet, må du chugge én enhet så fort du har mulighet. 😱
     </p>
+
+    <h2><em>Mulige challanges:</em></h2>
+    <span *ngFor="let challange of challenges; let i = index">
+      <p>{{ i + 1 }}. {{ challange }}</p>
+      <hr />
+    </span>
   </div>
 </div>
 
