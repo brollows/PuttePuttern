@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
 type WheelResultType = 'mulligan' | 'plusOne' | 'challenge';
 
@@ -17,11 +17,11 @@ interface WheelSegment {
   templateUrl: './wheel.component.html',
   styleUrl: './wheel.component.css',
 })
-export class WheelComponent implements OnDestroy {
-  readonly segmentCount = 9;
-  readonly segmentDegrees = 360 / this.segmentCount;
-  readonly spinDurationMs = 10000;
+export class WheelComponent implements OnInit, OnDestroy {
+  private readonly cooldownStorageKey = 'bogeyWheelCooldownEndsAt';
+  private readonly resultStorageKey = 'bogeyWheelLastResult';
 
+  readonly spinDurationMs = 10000;
   readonly spinCooldownMs = 5 * 60 * 1000;
 
   wheelOpen = false;
@@ -34,6 +34,8 @@ export class WheelComponent implements OnDestroy {
 
   wheelStatusText = 'Trykk SPINN for å avgjøre skjebnen 👀';
   currentDisplayedChallenge = '';
+
+  rulesExpanded = false;
 
   challenges = [
     'Kast grenade minst én gang i løpet av hullet. Grenade = kast discen nesten vertikalt opp med tommelen på innsiden av rimen.',
@@ -60,22 +62,10 @@ export class WheelComponent implements OnDestroy {
       color: '#31f58f',
     },
     {
-      type: 'mulligan',
-      label: 'MULLIGAN',
-      resultText: '🟢 MULLIGAN! Du får kaste på nytt!',
-      color: '#31f58f',
-    },
-    {
-      type: 'mulligan',
-      label: 'MULLIGAN',
-      resultText: '🟢 MULLIGAN! Du får kaste på nytt!',
-      color: '#31f58f',
-    },
-    {
-      type: 'mulligan',
-      label: 'MULLIGAN',
-      resultText: '🟢 MULLIGAN! Du får kaste på nytt!',
-      color: '#31f58f',
+      type: 'challenge',
+      label: 'CHALLENGE',
+      resultText: '',
+      color: '#b78bff',
     },
     {
       type: 'mulligan',
@@ -90,16 +80,22 @@ export class WheelComponent implements OnDestroy {
       color: '#b78bff',
     },
     {
-      type: 'challenge',
-      label: 'CHALLENGE',
-      resultText: '',
-      color: '#b78bff',
+      type: 'mulligan',
+      label: 'MULLIGAN',
+      resultText: '🟢 MULLIGAN! Du får kaste på nytt!',
+      color: '#31f58f',
     },
     {
       type: 'challenge',
       label: 'CHALLENGE',
       resultText: '',
       color: '#b78bff',
+    },
+    {
+      type: 'mulligan',
+      label: 'MULLIGAN',
+      resultText: '🟢 MULLIGAN! Du får kaste på nytt!',
+      color: '#31f58f',
     },
     {
       type: 'challenge',
@@ -108,6 +104,19 @@ export class WheelComponent implements OnDestroy {
       color: '#b78bff',
     },
   ];
+
+  ngOnInit() {
+    this.restoreSpinCooldown();
+    this.restoreStoredWheelResult();
+  }
+
+  get segmentCount(): number {
+    return this.wheelSegments.length;
+  }
+
+  get segmentDegrees(): number {
+    return 360 / this.segmentCount;
+  }
 
   get wheelGradient(): string {
     return this.wheelSegments
@@ -124,6 +133,14 @@ export class WheelComponent implements OnDestroy {
     return this.isSpinning || this.cooldownRemainingMs > 0;
   }
 
+  get canDismissCurrentResult(): boolean {
+    return (
+      !!this.currentDisplayedChallenge &&
+      !this.isSpinning &&
+      this.cooldownRemainingMs <= 0
+    );
+  }
+
   get cooldownText(): string {
     const totalSeconds = Math.ceil(this.cooldownRemainingMs / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -133,9 +150,11 @@ export class WheelComponent implements OnDestroy {
   }
 
   openWheel() {
+    this.restoreSpinCooldown();
+    this.restoreStoredWheelResult();
+
     this.wheelOpen = true;
     this.wheelStatusText = 'Trykk SPINN for å avgjøre skjebnen 👀';
-    this.currentDisplayedChallenge = '';
   }
 
   closeWheel() {
@@ -150,7 +169,7 @@ export class WheelComponent implements OnDestroy {
     this.startSpinCooldown();
 
     this.isSpinning = true;
-    this.currentDisplayedChallenge = '';
+    this.clearStoredWheelResult();
     this.wheelStatusText = 'Hjulet spinner...';
 
     const winningIndex = Math.floor(Math.random() * this.wheelSegments.length);
@@ -184,20 +203,68 @@ export class WheelComponent implements OnDestroy {
     }, this.spinDurationMs);
   }
 
+  dismissCurrentResult() {
+    if (!this.canDismissCurrentResult) return;
+
+    this.clearStoredWheelResult();
+  }
+
   ngOnDestroy() {
     this.clearCooldownInterval();
   }
 
+  toggleRules() {
+    this.rulesExpanded = !this.rulesExpanded;
+  }
+
+  collapseRules(event: MouseEvent) {
+    event.stopPropagation();
+    this.rulesExpanded = false;
+  }
+
   private startSpinCooldown() {
     this.cooldownEndsAt = Date.now() + this.spinCooldownMs;
-    this.updateCooldownRemaining();
+    this.saveCooldownEndsAt();
+    this.startCooldownInterval();
+  }
 
+  private restoreSpinCooldown() {
+    const storedCooldownEndsAt = localStorage.getItem(this.cooldownStorageKey);
+
+    if (!storedCooldownEndsAt) {
+      this.cooldownEndsAt = 0;
+      this.cooldownRemainingMs = 0;
+      return;
+    }
+
+    const parsedCooldownEndsAt = Number(storedCooldownEndsAt);
+
+    if (
+      !Number.isFinite(parsedCooldownEndsAt) ||
+      parsedCooldownEndsAt <= Date.now()
+    ) {
+      this.clearStoredCooldown();
+      return;
+    }
+
+    this.cooldownEndsAt = parsedCooldownEndsAt;
+    this.startCooldownInterval();
+  }
+
+  private startCooldownInterval() {
+    this.updateCooldownRemaining();
     this.clearCooldownInterval();
+
+    if (this.cooldownRemainingMs <= 0) {
+      this.clearStoredCooldown();
+      return;
+    }
 
     this.cooldownIntervalId = window.setInterval(() => {
       this.updateCooldownRemaining();
 
       if (this.cooldownRemainingMs <= 0) {
+        this.clearStoredCooldown();
         this.clearCooldownInterval();
       }
     }, 1000);
@@ -205,6 +272,31 @@ export class WheelComponent implements OnDestroy {
 
   private updateCooldownRemaining() {
     this.cooldownRemainingMs = Math.max(0, this.cooldownEndsAt - Date.now());
+  }
+
+  private saveCooldownEndsAt() {
+    localStorage.setItem(this.cooldownStorageKey, String(this.cooldownEndsAt));
+  }
+
+  private clearStoredCooldown() {
+    this.cooldownEndsAt = 0;
+    this.cooldownRemainingMs = 0;
+    localStorage.removeItem(this.cooldownStorageKey);
+  }
+
+  private saveWheelResult(resultText: string) {
+    this.currentDisplayedChallenge = resultText;
+    localStorage.setItem(this.resultStorageKey, resultText);
+  }
+
+  private restoreStoredWheelResult() {
+    this.currentDisplayedChallenge =
+      localStorage.getItem(this.resultStorageKey) || '';
+  }
+
+  private clearStoredWheelResult() {
+    this.currentDisplayedChallenge = '';
+    localStorage.removeItem(this.resultStorageKey);
   }
 
   private clearCooldownInterval() {
@@ -217,15 +309,14 @@ export class WheelComponent implements OnDestroy {
   private handleWheelResult(segment: WheelSegment) {
     if (segment.type === 'challenge') {
       const challenge = this.getRandomChallenge();
+      const resultText = `🟣 CHALLENGE: ${challenge}`;
 
-      segment.resultText = `🟣 CHALLENGE: ${challenge}`;
-
-      this.currentDisplayedChallenge = segment.resultText;
-      this.wheelStatusText = segment.resultText;
+      this.saveWheelResult(resultText);
+      this.wheelStatusText = resultText;
       return;
     }
 
-    this.currentDisplayedChallenge = segment.resultText;
+    this.saveWheelResult(segment.resultText);
     this.wheelStatusText = segment.resultText;
   }
 

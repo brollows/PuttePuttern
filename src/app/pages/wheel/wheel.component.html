@@ -2,34 +2,57 @@
 
 <br />
 
-<div class="rules-box">
-  <p>
-    Én gang per bane har du muligheten til å spinne
-    <strong>Bogey-hjulet</strong>.
-  </p>
+<div
+  class="rules-box"
+  [class.rules-box-expanded]="rulesExpanded"
+  role="button"
+  tabindex="0"
+  (click)="toggleRules()"
+  (keydown.enter)="toggleRules()"
+  (keydown.space)="toggleRules()"
+>
+  <button
+    *ngIf="rulesExpanded"
+    class="rules-collapse-button"
+    type="button"
+    (click)="collapseRules($event)"
+    aria-label="Minimer regler"
+    title="Minimer regler"
+  >
+    -
+  </button>
 
-  <p>Hjulet kan gi deg <strong>mulligan</strong> eller <em>challenge</em></p>
+  <p class="rules-collapsed-text" *ngIf="!rulesExpanded">Trykk for regler</p>
 
-  <p>
-    For at spinnet skal være gyldig, må minst én annen spiller i gruppa se at du
-    faktisk spinner hjulet. Du kan altså ikke spinne alene og bare vise fram
-    resultatet etterpå.
-  </p>
+  <div class="rules-content" *ngIf="rulesExpanded">
+    <p>
+      Én gang per bane har du muligheten til å spinne
+      <strong>Bogey-hjulet</strong>.
+    </p>
 
-  <p>
-    Får du <strong>mulligan</strong>, må den brukes med én gang. Den kan ikke
-    spares til senere.
-  </p>
+    <p>Hjulet kan gi deg <strong>mulligan</strong> eller <em>challenge</em></p>
 
-  <p>
-    Hvis du spinner når du ikke står på teepad, gjelder en eventuell
-    <em>challenge</em> på neste hull.
-  </p>
+    <p>
+      For at spinnet skal være gyldig, må minst én annen spiller i gruppa se at
+      du faktisk spinner hjulet. Du kan altså ikke spinne alene og bare vise
+      fram resultatet etterpå.
+    </p>
 
-  <p class="rules-warning">
-    Får du challenge på siste hull, må du chugge én enhet når dere kommer til
-    hytta – eller i bilen etter runden, hvis det lar seg gjøre. 😱
-  </p>
+    <p>
+      Får du <strong>mulligan</strong>, må den brukes med én gang. Den kan ikke
+      spares til senere.
+    </p>
+
+    <p>
+      Hvis du spinner når du ikke står på teepad, gjelder en eventuell
+      <em>challenge</em> på neste hull.
+    </p>
+
+    <p class="rules-warning">
+      Får du challenge på siste hull, må du chugge én enhet når dere kommer til
+      hytta – eller i bilen etter runden, hvis det lar seg gjøre. 😱
+    </p>
+  </div>
 </div>
 
 <hr />
@@ -40,7 +63,22 @@
   </button>
 
   <div class="challenge-card" *ngIf="currentDisplayedChallenge">
+    <button
+      class="challenge-dismiss-button"
+      type="button"
+      (click)="dismissCurrentResult()"
+      [disabled]="!canDismissCurrentResult"
+      aria-label="Fjern resultat"
+      title="Fjern resultat"
+    >
+      ✕
+    </button>
+
     <p>{{ currentDisplayedChallenge }}</p>
+
+    <small class="challenge-dismiss-hint" *ngIf="cooldownRemainingMs > 0">
+      Kan fjernes når cooldown er ferdig.
+    </small>
   </div>
 </section>
 
@@ -64,6 +102,7 @@
         class="wheel"
         [class.spinning]="isSpinning"
         [style.--wheel-gradient]="wheelGradient"
+        [style.--segment-degrees.deg]="segmentDegrees"
         [style.transform]="'rotate(' + wheelRotation + 'deg)'"
       >
         <div
