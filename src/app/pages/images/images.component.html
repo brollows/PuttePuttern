@@ -1,27 +1,188 @@
-<p>Planen er at folk skal kunne laste opp bilder fra turen.</p>
-<hr />
-<p>
-  Det skal listes to og to bilder i bredden som man skal kunne skrolle nedover
-  for
-</p>
-<p>
-  Hvert bilde vises med profilen som har lastet det opp nederst til høyre i en
-  mindre boble
-</p>
+<button
+  type="button"
+  class="floating-upload-button"
+  (click)="openUploadModal()"
+  aria-label="Last opp bilde"
+>
+  +
+</button>
 
-<hr />
+<div
+  class="upload-modal-backdrop"
+  *ngIf="showUploadModal"
+  (click)="closeUploadModal()"
+>
+  <div class="upload-modal" (click)="$event.stopPropagation()">
+    <div class="upload-modal-header">
+      <div>
+        <h2>Last opp bilde</h2>
+        <p>Del et bilde fra turen</p>
+      </div>
 
-<p>
-  Trykker man på bildet så får man opp ett større view av bildet der nederst så
-  er det hvem har lastet det opp. Når er det lastet opp. Nedlastnings knapp.
-</p>
+      <button
+        type="button"
+        class="modal-close-button"
+        (click)="closeUploadModal()"
+        [disabled]="uploading"
+        aria-label="Lukk"
+      >
+        ×
+      </button>
+    </div>
 
-<p>
-  Lage en egen tabell som linker til en ny storage som holder på alle bildene.
-</p>
+    <div class="upload-modal-body">
+      <label
+        class="file-upload-box"
+        [class.has-preview]="selectedImagePreviewUrl"
+      >
+        <input
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/gif"
+          (change)="onFileSelected($event)"
+          [disabled]="uploading"
+        />
 
-<hr />
-<p>
-  Kan hende det burde settes en maks antall bilder per bruker sånn at det ikke
-  spammes. Kan denne kanskje settes høy til for eksempel 100 bilder?
-</p>
+        <ng-container *ngIf="!selectedImagePreviewUrl">
+          <span>Trykk for å velge bilde</span>
+        </ng-container>
+
+        <ng-container *ngIf="selectedImagePreviewUrl">
+          <img
+            class="selected-image-preview"
+            [src]="selectedImagePreviewUrl"
+            alt="Forhåndsvisning av valgt bilde"
+          />
+
+          <span class="selected-file-name">
+            {{ selectedFile?.name }}
+          </span>
+        </ng-container>
+      </label>
+
+      <button
+        type="button"
+        class="upload-submit-button"
+        (click)="uploadImage()"
+        [disabled]="uploading || !selectedFile"
+      >
+        {{ uploading ? "Laster opp..." : "Last opp bilde" }}
+      </button>
+
+      <p class="upload-message" *ngIf="uploadMessage">
+        {{ uploadMessage }}
+      </p>
+    </div>
+  </div>
+</div>
+
+<div
+  class="image-view-modal-backdrop"
+  *ngIf="selectedImage"
+  (click)="closeImageModal()"
+>
+  <div class="image-view-modal" (click)="$event.stopPropagation()">
+    <button
+      type="button"
+      class="image-view-close-button"
+      (click)="closeImageModal()"
+      aria-label="Lukk bilde"
+    >
+      ×
+    </button>
+
+    <button
+      type="button"
+      class="image-nav-button image-nav-button-left"
+      (click)="showPreviousImage($event)"
+      aria-label="Forrige bilde"
+    >
+      ‹
+    </button>
+
+    <button
+      type="button"
+      class="image-nav-button image-nav-button-right"
+      (click)="showNextImage($event)"
+      aria-label="Neste bilde"
+    >
+      ›
+    </button>
+
+    <div class="image-view-image-wrapper">
+      <img
+        class="image-view-full-image"
+        [src]="selectedImage.imageUrl"
+        alt="Gallery image"
+      />
+    </div>
+
+    <div class="image-view-info">
+      <a
+        class="image-download-button"
+        [href]="selectedImage.imageUrl"
+        [attr.download]="getImageDownloadName(selectedImage)"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Last ned bilde"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="#e3e3e3"
+        >
+          <path
+            d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"
+          />
+        </svg>
+      </a>
+
+      <div class="image-view-meta">
+        <p>
+          Lastet opp av
+          <strong>{{ getProfileFullName(selectedImage["profile$id"]) }}</strong>
+        </p>
+
+        <p>
+          {{ formatCreatedDate(selectedImage.created) }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="images-page">
+  <div class="images-header">
+    <h2 class="section-title">Bilde galleri</h2>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <p class="loading-text" *ngIf="loadingImages">Laster bilder...</p>
+
+  <p class="empty-text" *ngIf="!loadingImages && images.length === 0">
+    Ingen bilder funnet.
+  </p>
+
+  <div class="images-grid" *ngIf="!loadingImages && images.length > 0">
+    <div
+      *ngFor="let image of images"
+      class="image-card"
+      role="button"
+      tabindex="0"
+      (click)="openImageModal(image)"
+      (keydown.enter)="openImageModal(image)"
+      (keydown.space)="openImageModal(image)"
+    >
+      <img [src]="image.imageUrl" alt="Gallery image" />
+
+      <div
+        class="image-profile-bubble"
+        *ngIf="getProfileById(image['profile$id']) as profile"
+      >
+        {{ profile.fornavn }}
+      </div>
+    </div>
+  </div>
+</div>
