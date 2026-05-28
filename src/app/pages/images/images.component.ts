@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { getSupabaseClient } from '../../../supabase-client';
 
 interface GalleryImage {
+  id: number;
   created: string;
   image: string;
   profile$id: number;
@@ -19,6 +20,9 @@ export class ImagesComponent implements OnInit {
   supabase = getSupabaseClient();
 
   private readonly STORAGE_KEY = 'putteputtern_logged_in_user';
+  private readonly MAX_IMAGES_PER_PROFILE = 40;
+  private readonly MAX_IMAGE_SIZE_MB = 2;
+  private readonly MAX_IMAGE_SIZE_BYTES = this.MAX_IMAGE_SIZE_MB * 1024 * 1024;
 
   selectedFile: File | null = null;
   uploadMessage = '';
@@ -39,6 +43,10 @@ export class ImagesComponent implements OnInit {
   get loggedInUser(): any {
     const raw = localStorage.getItem(this.STORAGE_KEY);
     return raw ? JSON.parse(raw) : null;
+  }
+
+  get isAdmin(): boolean {
+    return this.loggedInUser?.role === 'admin';
   }
 
   openUploadModal() {
@@ -99,11 +107,26 @@ export class ImagesComponent implements OnInit {
       return;
     }
 
+    const profileId = this.loggedInUser.id;
+
+    const existingImagesForProfile = this.images.filter(
+      (image) => image.profile$id === profileId,
+    );
+
+    if (existingImagesForProfile.length >= this.MAX_IMAGES_PER_PROFILE) {
+      this.uploadMessage = `Du kan maks laste opp ${this.MAX_IMAGES_PER_PROFILE} bilder.`;
+      return;
+    }
+
+    if (this.selectedFile.size > this.MAX_IMAGE_SIZE_BYTES) {
+      this.uploadMessage = `Bildet kan maks være ${this.MAX_IMAGE_SIZE_MB} MB.`;
+      return;
+    }
+
     this.uploading = true;
     this.uploadMessage = '';
 
     try {
-      const profileId = this.loggedInUser.id;
       const file = this.selectedFile;
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
@@ -147,7 +170,7 @@ export class ImagesComponent implements OnInit {
     try {
       const { data, error } = await this.supabase
         .from('gallery_images')
-        .select('created, image, profile$id')
+        .select('id, created, image, profile$id')
         .order('created', { ascending: false });
 
       if (error) {
@@ -155,6 +178,7 @@ export class ImagesComponent implements OnInit {
       }
 
       this.images = (data ?? []).map((image: any) => ({
+        id: image.id,
         created: image.created,
         image: image.image,
         profile$id: image['profile$id'],
@@ -231,5 +255,45 @@ export class ImagesComponent implements OnInit {
   getImageDownloadName(image: GalleryImage): string {
     const fileName = image.image.split('/').pop() || 'putteputtern-bilde';
     return fileName;
+  }
+
+  async deleteImage(image: GalleryImage, event?: Event) {
+    event?.stopPropagation();
+
+    if (!this.isAdmin) return;
+
+    const confirmed = confirm('Er du sikker på at du vil slette dette bildet?');
+
+    if (!confirmed) return;
+
+    try {
+      const { error: storageError } = await this.supabase.storage
+        .from('gallery-images')
+        .remove([image.image]);
+
+      if (storageError) {
+        console.warn('Error deleting image from storage:', storageError);
+      }
+
+      const { error: databaseError } = await this.supabase
+        .from('gallery_images')
+        .delete()
+        .eq('id', image.id);
+
+      if (databaseError) {
+        throw databaseError;
+      }
+
+      this.images = this.images.filter(
+        (galleryImage) => galleryImage.id !== image.id,
+      );
+
+      if (this.selectedImage?.id === image.id) {
+        this.selectedImage = null;
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      alert('Kunne ikke slette bildet.');
+    }
   }
 }
