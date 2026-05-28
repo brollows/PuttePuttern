@@ -7,6 +7,7 @@ import { ProfilesComponent } from './pages/profiles/profiles.component';
 import { WheelComponent } from './pages/wheel/wheel.component';
 import { LoginComponent } from './pages/login/login.component';
 import { UnitsLeagueComponent } from './pages/units-league/units-league.component';
+import { ImagesComponent } from './pages/images/images.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -27,6 +28,11 @@ export const routes: Routes = [
   {
     path: 'units-league',
     component: UnitsLeagueComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'images',
+    component: ImagesComponent,
     canActivate: [authGuard],
   },
 
