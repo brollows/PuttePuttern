@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { getSupabaseClient } from '../../../supabase-client';
 
@@ -16,17 +16,22 @@ interface GalleryImage {
   templateUrl: './images.component.html',
   styleUrl: './images.component.css',
 })
-export class ImagesComponent implements OnInit {
+export class ImagesComponent implements OnInit, OnDestroy {
   supabase = getSupabaseClient();
 
   private readonly STORAGE_KEY = 'putteputtern_logged_in_user';
   private readonly MAX_IMAGES_PER_PROFILE = 40;
-  private readonly MAX_IMAGE_SIZE_MB = 2;
+
+  readonly MAX_IMAGE_SIZE_MB = 2;
+
   private readonly MAX_IMAGE_SIZE_BYTES = this.MAX_IMAGE_SIZE_MB * 1024 * 1024;
 
   selectedFile: File | null = null;
   uploadMessage = '';
+  compressedImageMessage = '';
   uploading = false;
+  compressingImage = false;
+  imageTooLarge = false;
   loadingImages = false;
   showUploadModal = false;
   selectedImagePreviewUrl: string | null = null;
@@ -40,6 +45,10 @@ export class ImagesComponent implements OnInit {
     this.fetchImages();
   }
 
+  ngOnDestroy() {
+    document.body.classList.remove('modal-open');
+  }
+
   get loggedInUser(): any {
     const raw = localStorage.getItem(this.STORAGE_KEY);
     return raw ? JSON.parse(raw) : null;
@@ -49,18 +58,39 @@ export class ImagesComponent implements OnInit {
     return this.loggedInUser?.role === 'admin';
   }
 
+  isOwnImage(image: GalleryImage): boolean {
+    return this.loggedInUser?.id === image.profile$id;
+  }
+
+  canDeleteImage(image: GalleryImage): boolean {
+    return this.isAdmin || this.isOwnImage(image);
+  }
+
   openUploadModal() {
     this.showUploadModal = true;
     this.uploadMessage = '';
+    this.compressedImageMessage = '';
+    this.updateBodyScrollLock();
   }
 
   closeUploadModal() {
-    if (this.uploading) return;
+    if (this.uploading || this.compressingImage) return;
 
     this.showUploadModal = false;
     this.selectedFile = null;
     this.uploadMessage = '';
+    this.compressedImageMessage = '';
+    this.imageTooLarge = false;
     this.clearSelectedImagePreview();
+    this.updateBodyScrollLock();
+  }
+
+  updateBodyScrollLock() {
+    if (this.showUploadModal || this.selectedImage) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
   }
 
   onFileSelected(event: Event) {
@@ -68,12 +98,17 @@ export class ImagesComponent implements OnInit {
 
     if (!input.files || input.files.length === 0) {
       this.selectedFile = null;
+      this.imageTooLarge = false;
+      this.uploadMessage = '';
+      this.compressedImageMessage = '';
       this.clearSelectedImagePreview();
       return;
     }
 
     this.selectedFile = input.files[0];
     this.uploadMessage = '';
+    this.compressedImageMessage = '';
+    this.imageTooLarge = this.selectedFile.size > this.MAX_IMAGE_SIZE_BYTES;
 
     this.clearSelectedImagePreview();
     this.selectedImagePreviewUrl = URL.createObjectURL(this.selectedFile);
@@ -119,7 +154,8 @@ export class ImagesComponent implements OnInit {
     }
 
     if (this.selectedFile.size > this.MAX_IMAGE_SIZE_BYTES) {
-      this.uploadMessage = `Bildet kan maks være ${this.MAX_IMAGE_SIZE_MB} MB.`;
+      this.imageTooLarge = true;
+      this.uploadMessage = `Bildet er for stort. Maks størrelse er ${this.MAX_IMAGE_SIZE_MB} MB. Trykk på komprimer først.`;
       return;
     }
 
@@ -152,7 +188,9 @@ export class ImagesComponent implements OnInit {
       }
 
       this.uploadMessage = 'Bildet ble lastet opp!';
+      this.compressedImageMessage = '';
       this.selectedFile = null;
+      this.imageTooLarge = false;
       this.clearSelectedImagePreview();
 
       await this.fetchImages();
@@ -162,6 +200,135 @@ export class ImagesComponent implements OnInit {
     } finally {
       this.uploading = false;
     }
+  }
+
+  async compressSelectedImage() {
+    if (!this.selectedFile) return;
+
+    if (this.selectedFile.type === 'image/gif') {
+      this.uploadMessage = 'GIF kan ikke komprimeres uten å miste animasjonen.';
+      return;
+    }
+
+    this.compressingImage = true;
+    this.uploadMessage = '';
+    this.compressedImageMessage = '';
+
+    try {
+      const compressedFile = await this.compressImageToMaxSize(
+        this.selectedFile,
+        this.MAX_IMAGE_SIZE_BYTES,
+      );
+
+      this.selectedFile = compressedFile;
+      this.imageTooLarge = compressedFile.size > this.MAX_IMAGE_SIZE_BYTES;
+
+      this.clearSelectedImagePreview();
+      this.selectedImagePreviewUrl = URL.createObjectURL(compressedFile);
+
+      if (this.imageTooLarge) {
+        this.uploadMessage =
+          'Bildet er fortsatt for stort etter komprimering. Prøv et annet bilde.';
+        return;
+      }
+
+      this.compressedImageMessage =
+        'Bildet ble komprimert og er klart for opplasting.';
+    } catch (error) {
+      console.error('Error compressing image:', error);
+      this.uploadMessage = 'Kunne ikke komprimere bildet.';
+    } finally {
+      this.compressingImage = false;
+    }
+  }
+
+  compressImageToMaxSize(file: File, maxSizeBytes: number): Promise<File> {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      const objectUrl = URL.createObjectURL(file);
+
+      image.onload = async () => {
+        URL.revokeObjectURL(objectUrl);
+
+        try {
+          let width = image.width;
+          let height = image.height;
+          let quality = 0.85;
+
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+
+          if (!context) {
+            reject(new Error('Could not create canvas context.'));
+            return;
+          }
+
+          let blob: Blob | null = null;
+
+          for (let attempt = 0; attempt < 12; attempt++) {
+            canvas.width = Math.round(width);
+            canvas.height = Math.round(height);
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+            blob = await new Promise<Blob | null>((blobResolve) =>
+              canvas.toBlob(blobResolve, 'image/jpeg', quality),
+            );
+
+            if (!blob) {
+              reject(new Error('Could not compress image.'));
+              return;
+            }
+
+            if (blob.size <= maxSizeBytes) {
+              const compressedFile = new File(
+                [blob],
+                this.getCompressedFileName(file.name),
+                { type: 'image/jpeg' },
+              );
+
+              resolve(compressedFile);
+              return;
+            }
+
+            if (quality > 0.45) {
+              quality -= 0.1;
+            } else {
+              width *= 0.85;
+              height *= 0.85;
+            }
+          }
+
+          if (!blob) {
+            reject(new Error('Could not compress image.'));
+            return;
+          }
+
+          const compressedFile = new File(
+            [blob],
+            this.getCompressedFileName(file.name),
+            { type: 'image/jpeg' },
+          );
+
+          resolve(compressedFile);
+        } catch (error) {
+          reject(error);
+        }
+      };
+
+      image.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error('Could not load image.'));
+      };
+
+      image.src = objectUrl;
+    });
+  }
+
+  getCompressedFileName(originalFileName: string): string {
+    const nameWithoutExtension = originalFileName.replace(/\.[^/.]+$/, '');
+    return `${nameWithoutExtension}-compressed.jpg`;
   }
 
   async fetchImages() {
@@ -202,10 +369,12 @@ export class ImagesComponent implements OnInit {
 
   openImageModal(image: GalleryImage) {
     this.selectedImage = image;
+    this.updateBodyScrollLock();
   }
 
   closeImageModal() {
     this.selectedImage = null;
+    this.updateBodyScrollLock();
   }
 
   showPreviousImage(event?: Event) {
@@ -260,7 +429,7 @@ export class ImagesComponent implements OnInit {
   async deleteImage(image: GalleryImage, event?: Event) {
     event?.stopPropagation();
 
-    if (!this.isAdmin) return;
+    if (!this.canDeleteImage(image)) return;
 
     const confirmed = confirm('Er du sikker på at du vil slette dette bildet?');
 
@@ -290,6 +459,7 @@ export class ImagesComponent implements OnInit {
 
       if (this.selectedImage?.id === image.id) {
         this.selectedImage = null;
+        this.updateBodyScrollLock();
       }
     } catch (error) {
       console.error('Error deleting image:', error);

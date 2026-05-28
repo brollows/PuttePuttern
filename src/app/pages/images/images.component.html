@@ -23,7 +23,7 @@
         type="button"
         class="modal-close-button"
         (click)="closeUploadModal()"
-        [disabled]="uploading"
+        [disabled]="uploading || compressingImage"
         aria-label="Lukk"
       >
         ×
@@ -39,7 +39,7 @@
           type="file"
           accept="image/png,image/jpeg,image/webp,image/gif"
           (change)="onFileSelected($event)"
-          [disabled]="uploading"
+          [disabled]="uploading || compressingImage"
         />
 
         <ng-container *ngIf="!selectedImagePreviewUrl">
@@ -59,11 +59,30 @@
         </ng-container>
       </label>
 
+      <p class="upload-warning" *ngIf="imageTooLarge">
+        Bildet er større enn {{ MAX_IMAGE_SIZE_MB }} MB. Du kan komprimere det
+        før opplasting.
+      </p>
+
+      <p class="upload-message" *ngIf="compressedImageMessage">
+        {{ compressedImageMessage }}
+      </p>
+
+      <button
+        type="button"
+        class="compress-image-button"
+        *ngIf="imageTooLarge"
+        (click)="compressSelectedImage()"
+        [disabled]="compressingImage || uploading"
+      >
+        {{ compressingImage ? "Komprimerer..." : "Komprimer bilde" }}
+      </button>
+
       <button
         type="button"
         class="upload-submit-button"
         (click)="uploadImage()"
-        [disabled]="uploading || !selectedFile"
+        [disabled]="uploading || compressingImage || !selectedFile"
       >
         {{ uploading ? "Laster opp..." : "Last opp bilde" }}
       </button>
@@ -142,7 +161,7 @@
         <button
           type="button"
           class="image-delete-button"
-          *ngIf="isAdmin"
+          *ngIf="canDeleteImage(selectedImage)"
           (click)="deleteImage(selectedImage, $event)"
           aria-label="Slett bilde"
         >

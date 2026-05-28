@@ -212,3 +212,9 @@ input::placeholder {
     transform: scale(1) translateY(0);
   }
 }
+
+body.modal-open {
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
+}
