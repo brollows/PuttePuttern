@@ -16,7 +16,7 @@
   <table class="ul-table">
     <thead>
       <tr>
-        <th class="ul-placement-header">🏆</th>
+        <th class="ul-placement-header" style="font-size: large">😃</th>
         <th>Spiller</th>
         <th>
           <span class="material-symbols-outlined">sports_bar</span>
@@ -41,13 +41,6 @@
 
           <span class="ul-player-name">
             {{ getProfile(row["profile$id"])?.fornavn || "Ukjent" }}
-
-            <img
-              *ngIf="i === 0"
-              src="assets/yellow-t-shirt-icon.png"
-              alt="Ledertrøye"
-              class="ul-leader-icon"
-            />
           </span>
         </td>
 
@@ -62,13 +55,6 @@
   <div class="ul-modal-content">
     <h2>
       {{ selectedProfile?.fornavn }}
-
-      <img
-        *ngIf="selectedIndex === 0"
-        src="assets/yellow-t-shirt-icon.png"
-        alt="Ledertrøye"
-        class="ul-leader-icon"
-      />
     </h2>
 
     <img
