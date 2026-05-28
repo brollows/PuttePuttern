@@ -1,0 +1,135 @@
+<div class="ul-header">
+  <h2 class="ul-section-title">Drikke turnering</h2>
+
+  <button
+    class="ul-info-icon-button"
+    (click)="openInfoModal()"
+    aria-label="Informasjon"
+  >
+    <span class="material-symbols-outlined">info</span>
+  </button>
+</div>
+
+<div class="ul-section-divider"></div>
+
+<div class="ul-table-wrapper">
+  <table class="ul-table">
+    <thead>
+      <tr>
+        <th class="ul-placement-header">🏆</th>
+        <th>Spiller</th>
+        <th>
+          <span class="material-symbols-outlined">sports_bar</span>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr
+        *ngFor="let row of rows; let i = index"
+        (click)="openEditModal(row, i)"
+      >
+        <td class="ul-placement">{{ getPlacement(i) }}</td>
+
+        <td class="ul-player-cell">
+          <img
+            *ngIf="getProfile(row['profile$id'])?.bilde"
+            [src]="getProfile(row['profile$id'])?.bilde"
+            class="ul-avatar"
+            alt="Profilbilde"
+          />
+
+          <span class="ul-player-name">
+            {{ getProfile(row["profile$id"])?.fornavn || "Ukjent" }}
+
+            <img
+              *ngIf="i === 0"
+              src="assets/yellow-t-shirt-icon.png"
+              alt="Ledertrøye"
+              class="ul-leader-icon"
+            />
+          </span>
+        </td>
+
+        <td>{{ row.total_units }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Edit units modal -->
+<div class="ul-modal" *ngIf="selectedRow">
+  <div class="ul-modal-content">
+    <h2>
+      {{ selectedProfile?.fornavn }}
+
+      <img
+        *ngIf="selectedIndex === 0"
+        src="assets/yellow-t-shirt-icon.png"
+        alt="Ledertrøye"
+        class="ul-leader-icon"
+      />
+    </h2>
+
+    <img
+      *ngIf="selectedProfile?.bilde"
+      [src]="selectedProfile.bilde"
+      class="ul-modal-avatar"
+      alt="Profilbilde"
+    />
+
+    <div *ngFor="let field of editableFields" class="ul-edit-field">
+      <div class="ul-edit-label">
+        <span class="material-symbols-outlined ul-smaller-icon-and-spacing"
+          >sports_bar</span
+        >Antall enheter:
+      </div>
+
+      <div class="ul-edit-controls">
+        <button type="button" (click)="adjust(field, -1)">➖</button>
+        <strong>{{ selectedRow[field] + currentSelectedRow[field] }}</strong>
+        <button type="button" (click)="adjust(field, 1)">➕</button>
+      </div>
+    </div>
+
+    <div class="ul-modal-actions">
+      <button class="ul-primary" type="button" (click)="saveEdits()">
+        Lagre enheter
+      </button>
+      <button class="ul-cancel" type="button" (click)="closeEditModal()">
+        Avbryt
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Info-modal for bildeopplasting fra UDisc -->
+<div class="ul-modal" *ngIf="showInfoModal">
+  <div class="ul-modal-content ul-udisc-info-modal">
+    <button
+      class="ul-modal-close-button"
+      (click)="closeInfoModal()"
+      aria-label="Lukk"
+    >
+      <span class="material-symbols-outlined">close</span>
+    </button>
+
+    <h2>Drikke turnering</h2>
+
+    <div class="ul-udisc-scroll-wrapper">
+      <div class="ul-udisc-step">
+        <p class="ul-step-caption">
+          Rett og slett bare en turnering for å se hvem som har drukket mest på
+          turen! Alt telles som en enhet uansett om det er en shot, øl eller
+          drink. Prosent har ikke noe å si så lenge det er alkohol i den.
+        </p>
+
+        <img
+          src="assets/chugging-beer.jpeg"
+          alt="chugging-beer"
+          class="ul-drinking-image"
+        />
+      </div>
+    </div>
+  </div>
+</div>
