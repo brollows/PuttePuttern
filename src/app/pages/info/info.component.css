@@ -319,3 +319,21 @@
     font-size: clamp(2rem, 11vw, 2.8rem);
   }
 }
+
+.install-section {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.install-button {
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.9rem 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  background: #ffffff;
+  color: #1b2b1f;
+}
