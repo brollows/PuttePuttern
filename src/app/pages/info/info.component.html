@@ -14,50 +14,44 @@
       Legg Putte Puttern på hjemskjermen for rask tilgang under turen.
     </p>
 
-    <ng-container *ngIf="pwaInstall.isInstalled; else notInstalled">
-      <p class="install-status">PuttePuttern er allerede installert som app.</p>
-    </ng-container>
+    <button
+      *ngIf="pwaInstall.canInstall"
+      type="button"
+      class="install-button"
+      (click)="installApp()"
+    >
+      Installer app
+    </button>
 
-    <ng-template #notInstalled>
-      <button
-        *ngIf="pwaInstall.canInstall"
-        type="button"
-        class="install-button"
-        (click)="installApp()"
-      >
-        Installer app
-      </button>
+    <div class="install-grid">
+      <article class="install-card">
+        <span class="platform-icon"></span>
+        <div>
+          <h3>iPhone</h3>
+          <p>
+            Åpne i Safari, trykk på <em>Del</em> og velg
+            <em>Legg til på Hjem-skjermen</em>.
+          </p>
+        </div>
+      </article>
 
-      <div class="install-grid">
-        <article class="install-card">
-          <span class="platform-icon"></span>
-          <div>
-            <h3>iPhone</h3>
-            <p>
-              Åpne i Safari, trykk på <em>Del</em> og velg
-              <em>Legg til på Hjem-skjermen</em>.
-            </p>
-          </div>
-        </article>
+      <article class="install-card">
+        <span class="material-symbols-outlined platform-symbol">android</span>
+        <div>
+          <h3>Android / PC</h3>
+          <p>
+            <ng-container *ngIf="pwaInstall.canInstall; else manualInstall">
+              Trykk på <em>Installer app</em>-knappen over.
+            </ng-container>
 
-        <article class="install-card">
-          <span class="material-symbols-outlined platform-symbol">android</span>
-          <div>
-            <h3>Android</h3>
-            <p>
-              <ng-container *ngIf="pwaInstall.canInstall; else androidManual">
-                Trykk på <em>Installer app</em>-knappen over.
-              </ng-container>
-
-              <ng-template #androidManual>
-                Åpne i Chrome, trykk på menyen <em>⋮</em> og velg
-                <em>Legg til på startskjerm</em>.
-              </ng-template>
-            </p>
-          </div>
-        </article>
-      </div>
-    </ng-template>
+            <ng-template #manualInstall>
+              Åpne nettlesermenyen og velg
+              <em>Installer app</em> eller <em>Legg til på startskjerm</em>.
+            </ng-template>
+          </p>
+        </div>
+      </article>
+    </div>
   </section>
 
   <section class="info-card hall-card">
