@@ -8,12 +8,16 @@ import { SwUpdate } from '@angular/service-worker';
   standalone: true,
   imports: [RouterModule, RouterOutlet, CommonModule],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  constructor(public router: Router, private swUpdate: SwUpdate) {
+  menuOpen: boolean = false;
+  constructor(
+    public router: Router,
+    private swUpdate: SwUpdate,
+  ) {
     if (this.swUpdate.isEnabled) {
-      this.swUpdate.versionUpdates.subscribe(event => {
+      this.swUpdate.versionUpdates.subscribe((event) => {
         if (event.type === 'VERSION_READY') {
           // Automatisk oppdatering ved ny versjon
           this.swUpdate.activateUpdate().then(() => {

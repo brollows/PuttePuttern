@@ -16,7 +16,6 @@
 
 .home-menu h1 {
   margin: 0 0 clamp(1rem, 3vh, 1.6rem);
-  font-size: clamp(2rem, 9vw, 3rem);
   line-height: 1.05;
   font-weight: 800;
   letter-spacing: 1px;

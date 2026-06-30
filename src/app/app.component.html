@@ -1,5 +1,119 @@
-<nav class="navbar" *ngIf="router.url !== '/'">
-  <a class="home-icon material-symbols-outlined" routerLink="/" aria-label="Hjem">home</a>
+<nav class="navbar">
+  <div class="navbar-content">
+    <a
+      class="home-icon material-symbols-outlined"
+      routerLink="/"
+      aria-label="Hjem"
+      >home</a
+    >
+
+    <a
+      class="home-icon material-symbols-outlined"
+      routerLink="/turnering"
+      aria-label="Turnering"
+      >emoji_events</a
+    >
+
+    <a
+      class="home-icon material-symbols-outlined"
+      routerLink="/units-league"
+      aria-label="Units League"
+      >sports_bar
+    </a>
+
+    <a
+      class="home-icon material-symbols-outlined"
+      routerLink="/challenges"
+      aria-label="Challenges"
+      >target</a
+    >
+
+    <a
+      class="home-icon material-symbols-outlined"
+      routerLink="/images"
+      aria-label="Images"
+      >image</a
+    >
+  </div>
+</nav>
+
+<button
+  class="side-menu-toggle material-symbols-outlined"
+  type="button"
+  aria-label="Åpne meny"
+  (click)="menuOpen = true"
+  *ngIf="!menuOpen"
+>
+  menu
+</button>
+
+<div
+  class="side-menu-backdrop"
+  *ngIf="menuOpen"
+  (click)="menuOpen = false"
+></div>
+
+<nav class="side-menu" [class.open]="menuOpen">
+  <a
+    class="side-menu-icon material-symbols-outlined"
+    routerLink="/"
+    aria-label="Hjem"
+    (click)="menuOpen = false"
+    >home</a
+  >
+  <a
+    class="side-menu-icon material-symbols-outlined"
+    routerLink="/info"
+    aria-label="Informasjon"
+    (click)="menuOpen = false"
+  >
+    info
+  </a>
+
+  <a
+    class="side-menu-icon material-symbols-outlined"
+    routerLink="/turnering"
+    aria-label="Turnering"
+    (click)="menuOpen = false"
+  >
+    emoji_events
+  </a>
+
+  <a
+    class="side-menu-icon material-symbols-outlined"
+    routerLink="/units-league"
+    aria-label="Drikke turnering"
+    (click)="menuOpen = false"
+  >
+    sports_bar
+  </a>
+
+  <a
+    class="side-menu-icon material-symbols-outlined"
+    routerLink="/challenges"
+    aria-label="Bogey-hjulet"
+    (click)="menuOpen = false"
+  >
+    target
+  </a>
+
+  <a
+    class="side-menu-icon material-symbols-outlined"
+    routerLink="/images"
+    aria-label="Bilder"
+    (click)="menuOpen = false"
+  >
+    image
+  </a>
+
+  <a
+    class="side-menu-icon material-symbols-outlined"
+    routerLink="/profiler"
+    aria-label="Profiler"
+    (click)="menuOpen = false"
+  >
+    person
+  </a>
 </nav>
 
 <main>
