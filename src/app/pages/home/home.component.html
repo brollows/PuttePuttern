@@ -1,32 +1,202 @@
-<section class="home-menu">
-  <h1>Putte Puttern</h1>
-  <a class="menu-button" routerLink="/info">
-    <span class="material-symbols-outlined">info</span>
-    Informasjon
-  </a>
+<section class="home-overview">
+  <header class="overview-header">
+    <h1>
+      <span>PUTTE</span>
+      <span>PUTTERN</span>
+    </h1>
+  </header>
 
-  <a class="menu-button" routerLink="/turnering">
-    <span class="material-symbols-outlined">emoji_events</span>
-    Turnering
-  </a>
+  <div class="section-divider"></div>
 
-  <a class="menu-button" routerLink="/units-league">
-    <span class="material-symbols-outlined">sports_bar</span>
-    Drikke turnering
-  </a>
+  <div class="overview-state" *ngIf="isLoading">
+    <span class="overview-spinner"></span>
+    Laster oversikt...
+  </div>
 
-  <a class="menu-button" routerLink="/challenges">
-    <span class="material-symbols-outlined">target</span>
-    Bogey-hjulet
-  </a>
+  <div class="overview-state error" *ngIf="!isLoading && errorMessage">
+    {{ errorMessage }}
+  </div>
 
-  <a class="menu-button" routerLink="/images">
-    <span class="material-symbols-outlined">image</span>
-    Bilder
-  </a>
+  <ng-container *ngIf="!isLoading && !errorMessage">
+    <a class="profile-panel overview-action" routerLink="/profiler">
+      <div class="profile-summary" *ngIf="currentProfile; else noProfileText">
+        <div class="profile-identity">
+          <div class="profile-heading">
+            <h2>{{ currentProfile.fornavn }} {{ currentProfile.etternavn }}</h2>
+          </div>
 
-  <a class="menu-button" routerLink="/profiler">
-    <span class="material-symbols-outlined">person</span>
-    Profiler
-  </a>
+          <img
+            *ngIf="currentProfile.bilde"
+            [src]="currentProfile.bilde"
+            class="profile-avatar"
+            alt="Profilbilde"
+          />
+        </div>
+
+        <div class="profile-quick-stats">
+          <div class="quick-stat">
+            <span>Turnering</span>
+            <strong>{{ currentTournamentRow?.total_score ?? 0 }}</strong>
+          </div>
+
+          <div class="quick-stat">
+            <span>Enheter</span>
+            <strong>{{ currentUnitsLeagueRow?.total_units ?? 0 }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noProfileText>
+        <p class="empty-text">Fant ikke profilen din.</p>
+      </ng-template>
+
+      <p class="profile-quote" *ngIf="currentProfile?.sitat">
+        "{{ currentProfile.sitat }}"
+      </p>
+
+      <div class="profile-extra" *ngIf="currentProfile">
+        <div>
+          <span>Rangering</span>
+          <strong>{{ currentProfile.rangering ?? "-" }}</strong>
+        </div>
+
+        <div>
+          <span>PB Lisleherad</span>
+          <strong>{{ currentProfile.personalbest ?? "-" }}</strong>
+        </div>
+
+        <div *ngIf="currentProfile.udiscnavn">
+          <span>UDisc</span>
+          <strong>{{ currentProfile.udiscnavn }}</strong>
+        </div>
+
+      </div>
+    </a>
+
+    <a
+      class="overview-list-link"
+      routerLink="/turnering"
+      aria-label="Aapne turnering"
+    >
+      <div class="list-heading">
+        <h2>Turnering</h2>
+        <span>Top 3</span>
+      </div>
+
+      <table
+        class="mini-table"
+        *ngIf="topTournamentRows.length; else noTournamentRows"
+      >
+        <tbody>
+          <tr *ngFor="let row of topTournamentRows">
+            <td class="placement-cell">
+              <span
+                class="placement-badge"
+                [ngClass]="getPlacementClass(getTournamentPlacement(row))"
+              >
+                {{ getPlacementLabel(getTournamentPlacement(row)) }}
+              </span>
+            </td>
+            <td>
+              <span class="player-cell">
+                <img
+                  *ngIf="getProfile(row['profile$id'])?.bilde"
+                  [src]="getProfile(row['profile$id'])?.bilde"
+                  class="mini-avatar"
+                  alt="Profilbilde"
+                />
+                <span>{{ getProfileFirstName(row["profile$id"]) }}</span>
+              </span>
+            </td>
+            <td>{{ row.total_score ?? 0 }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #noTournamentRows>
+        <p class="empty-text">Ingen turneringsscore enda.</p>
+      </ng-template>
+    </a>
+
+    <a
+      class="overview-list-link"
+      routerLink="/units-league"
+      aria-label="Aapne drikke turnering"
+    >
+      <div class="list-heading">
+        <h2>Drikke turnering</h2>
+        <span>Top 3</span>
+      </div>
+
+      <table
+        class="mini-table"
+        *ngIf="topUnitsLeagueRows.length; else noUnitsRows"
+      >
+        <tbody>
+          <tr *ngFor="let row of topUnitsLeagueRows">
+            <td class="placement-cell">
+              <span
+                class="placement-badge"
+                [ngClass]="getPlacementClass(getUnitsLeaguePlacement(row))"
+              >
+                {{ getPlacementLabel(getUnitsLeaguePlacement(row)) }}
+              </span>
+            </td>
+            <td>
+              <span class="player-cell">
+                <img
+                  *ngIf="getProfile(row['profile$id'])?.bilde"
+                  [src]="getProfile(row['profile$id'])?.bilde"
+                  class="mini-avatar"
+                  alt="Profilbilde"
+                />
+                <span>{{ getProfileFirstName(row["profile$id"]) }}</span>
+              </span>
+            </td>
+            <td>{{ row.total_units ?? 0 }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #noUnitsRows>
+        <p class="empty-text">Ingen enheter registrert enda.</p>
+      </ng-template>
+    </a>
+
+    <section
+      class="gallery-panel"
+      routerLink="/images"
+      role="button"
+      tabindex="0"
+      aria-label="Aapne bilder"
+    >
+      <div class="list-heading">
+        <h2>Bilder</h2>
+
+        <button
+          type="button"
+          class="randomize-button"
+          (click)="randomizeGalleryImages(); $event.stopPropagation()"
+          [disabled]="galleryImages.length <= 3"
+        >
+          Randomize
+        </button>
+      </div>
+
+      <div
+        class="gallery-preview"
+        *ngIf="randomGalleryImages.length; else noGalleryImages"
+      >
+        <img
+          *ngFor="let image of randomGalleryImages"
+          [src]="image.imageUrl"
+          alt="Bilde fra galleriet"
+        />
+      </div>
+
+      <ng-template #noGalleryImages>
+        <p class="empty-text">Ingen bilder i galleriet enda.</p>
+      </ng-template>
+    </section>
+  </ng-container>
 </section>
