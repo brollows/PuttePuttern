@@ -193,6 +193,19 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  getUnitsLeaguePlacementLabel(placement: number) {
+    switch (placement) {
+      case 1:
+        return '\u{1F922}';
+      case 2:
+        return '\u{1F635}\u{200D}\u{1F4AB}';
+      case 3:
+        return '\u{1F974}';
+      default:
+        return placement.toString();
+    }
+  }
+
   getPlacementClass(placement: number) {
     switch (placement) {
       case 1:
@@ -201,6 +214,19 @@ export class HomeComponent implements OnInit {
         return 'placement-silver';
       case 3:
         return 'placement-bronze';
+      default:
+        return '';
+    }
+  }
+
+  getUnitsLeaguePlacementClass(placement: number) {
+    switch (placement) {
+      case 1:
+        return 'placement-sick';
+      case 2:
+        return 'placement-dizzy';
+      case 3:
+        return 'placement-woozy';
       default:
         return '';
     }

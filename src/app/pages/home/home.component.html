@@ -74,7 +74,7 @@
     </a>
 
     <a
-      class="overview-list-link"
+      class="overview-list-link tournament-card"
       routerLink="/turnering"
       aria-label="Aapne turnering"
     >
@@ -119,7 +119,7 @@
     </a>
 
     <a
-      class="overview-list-link"
+      class="overview-list-link units-card"
       routerLink="/units-league"
       aria-label="Aapne drikke turnering"
     >
@@ -136,10 +136,10 @@
           <tr *ngFor="let row of topUnitsLeagueRows">
             <td class="placement-cell">
               <span
-                class="placement-badge"
-                [ngClass]="getPlacementClass(getUnitsLeaguePlacement(row))"
+                class="placement-badge units-placement-badge"
+                [ngClass]="getUnitsLeaguePlacementClass(getUnitsLeaguePlacement(row))"
               >
-                {{ getPlacementLabel(getUnitsLeaguePlacement(row)) }}
+                {{ getUnitsLeaguePlacementLabel(getUnitsLeaguePlacement(row)) }}
               </span>
             </td>
             <td>
