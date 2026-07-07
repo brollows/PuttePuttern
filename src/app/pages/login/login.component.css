@@ -18,10 +18,10 @@
   margin: 0 0 1.2rem;
   font-size: clamp(2rem, 9vw, 3rem);
   line-height: 1.05;
-  color: #fff7ff;
+  color: #f4fbff;
   text-shadow:
-    0 0 18px rgba(183, 139, 255, 0.55),
-    0 0 36px rgba(94, 240, 220, 0.18);
+    0 0 18px rgba(var(--accent-purple-rgb), 0.55),
+    0 0 36px rgba(var(--accent-cyan-rgb), 0.18);
 }
 
 .button-group {
@@ -75,7 +75,7 @@
       rgba(255, 255, 255, 0.11),
       rgba(255, 255, 255, 0.025)
     ),
-    rgba(18, 17, 27, 0.88);
+    rgba(3, 8, 18, 0.88);
 
   border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-card);
@@ -84,7 +84,7 @@
 .panel h2 {
   margin: 0;
   color: var(--accent-cyan);
-  text-shadow: 0 0 16px rgba(106, 255, 222, 0.2);
+  text-shadow: 0 0 16px rgba(var(--accent-cyan-rgb), 0.2);
 }
 
 .panel p {

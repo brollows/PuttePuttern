@@ -54,9 +54,25 @@
 ></div>
 
 <nav class="side-menu" [class.open]="menuOpen">
+  <div class="side-menu-brand">
+    <img
+      class="side-menu-brand-logo"
+      src="assets/app_logo.png"
+      alt="PuttePuttern logo"
+    />
+    <div class="side-menu-brand-text">
+      <span>PUTTE</span>
+      <span>PUTTERN</span>
+    </div>
+  </div>
+
+  <div class="side-menu-divider"></div>
+
   <a
     class="side-menu-icon material-symbols-outlined"
     routerLink="/"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
     aria-label="Hjem"
     (click)="menuOpen = false"
     >home</a
@@ -64,6 +80,7 @@
   <a
     class="side-menu-icon material-symbols-outlined"
     routerLink="/info"
+    routerLinkActive="active"
     aria-label="Informasjon"
     (click)="menuOpen = false"
   >
@@ -73,6 +90,7 @@
   <a
     class="side-menu-icon material-symbols-outlined"
     routerLink="/turnering"
+    routerLinkActive="active"
     aria-label="Turnering"
     (click)="menuOpen = false"
   >
@@ -82,6 +100,7 @@
   <a
     class="side-menu-icon material-symbols-outlined"
     routerLink="/units-league"
+    routerLinkActive="active"
     aria-label="Drikke turnering"
     (click)="menuOpen = false"
   >
@@ -91,6 +110,7 @@
   <a
     class="side-menu-icon material-symbols-outlined"
     routerLink="/challenges"
+    routerLinkActive="active"
     aria-label="Bogey-hjulet"
     (click)="menuOpen = false"
   >
@@ -100,6 +120,7 @@
   <a
     class="side-menu-icon material-symbols-outlined"
     routerLink="/images"
+    routerLinkActive="active"
     aria-label="Bilder"
     (click)="menuOpen = false"
   >
@@ -109,6 +130,7 @@
   <a
     class="side-menu-icon material-symbols-outlined"
     routerLink="/profiler"
+    routerLinkActive="active"
     aria-label="Profiler"
     (click)="menuOpen = false"
   >

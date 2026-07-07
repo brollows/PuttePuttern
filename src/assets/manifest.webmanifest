@@ -3,8 +3,8 @@
     "short_name": "PuttePutt",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#1b2b1f",
-    "theme_color": "#1b2b1f",
+    "background_color": "#020711",
+    "theme_color": "#020711",
     "icons": [
         {
             "src": "app_logo.png",

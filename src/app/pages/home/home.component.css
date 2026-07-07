@@ -20,16 +20,16 @@
 
 .overview-header h1 {
   margin: 0;
-  color: #fff7ff;
+  color: #f4fbff;
   font-size: clamp(1.9rem, 9vw, 2.8rem);
   font-weight: 900;
   line-height: 0.92;
   letter-spacing: 0;
 
   text-shadow:
-    0 0 14px rgba(183, 139, 255, 0.72),
-    0 0 36px rgba(139, 92, 246, 0.38),
-    0 0 52px rgba(94, 240, 220, 0.14);
+    0 0 14px rgba(var(--accent-purple-rgb), 0.72),
+    0 0 36px rgba(var(--accent-purple-strong-rgb), 0.38),
+    0 0 52px rgba(var(--accent-cyan-rgb), 0.14);
 }
 
 .overview-header h1 span {
@@ -59,7 +59,7 @@
       rgba(255, 255, 255, 0.1),
       rgba(255, 255, 255, 0.025)
     ),
-    rgba(25, 24, 35, 0.86);
+    rgba(5, 13, 28, 0.86);
   box-shadow: var(--shadow-card);
 }
 
@@ -98,7 +98,7 @@
       rgba(255, 255, 255, 0.105),
       rgba(255, 255, 255, 0.035)
     ),
-    rgba(18, 17, 27, 0.86);
+    rgba(3, 8, 18, 0.86);
 
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
@@ -113,11 +113,11 @@
 
 .profile-panel:hover,
 .profile-panel:focus-visible {
-  border-color: rgba(106, 255, 222, 0.28);
+  border-color: rgba(var(--accent-cyan-rgb), 0.28);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
     0 18px 44px rgba(0, 0, 0, 0.36),
-    0 0 24px rgba(106, 255, 222, 0.09);
+    0 0 24px rgba(var(--accent-cyan-rgb), 0.09);
   transform: translateY(-1px);
 }
 
@@ -158,8 +158,8 @@
   flex: 0 0 auto;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid rgba(106, 255, 222, 0.55);
-  box-shadow: 0 0 18px rgba(106, 255, 222, 0.12);
+  border: 2px solid rgba(var(--accent-cyan-rgb), 0.55);
+  box-shadow: 0 0 18px rgba(var(--accent-cyan-rgb), 0.12);
 }
 
 .profile-avatar {
@@ -212,7 +212,7 @@
   margin: clamp(0.38rem, 0.9dvh, 0.55rem) 0 0;
   overflow: hidden;
 
-  color: rgba(255, 230, 143, 0.9);
+  color: rgba(var(--accent-cyan-rgb), 0.9);
   font-family: "Segoe UI", sans-serif;
   font-size: clamp(0.76rem, 3vw, 0.9rem);
   font-style: italic;
@@ -240,7 +240,7 @@
       rgba(255, 255, 255, 0.105),
       rgba(255, 255, 255, 0.035)
     ),
-    rgba(18, 17, 27, 0.86);
+    rgba(3, 8, 18, 0.86);
 
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
@@ -296,7 +296,7 @@
       rgba(255, 255, 255, 0.105),
       rgba(255, 255, 255, 0.035)
     ),
-    rgba(18, 17, 27, 0.86);
+    rgba(3, 8, 18, 0.86);
 
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
@@ -323,11 +323,11 @@
 
 .gallery-panel:hover,
 .gallery-panel:focus-visible {
-  border-color: rgba(183, 139, 255, 0.3);
+  border-color: rgba(var(--accent-purple-rgb), 0.3);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
     0 18px 44px rgba(0, 0, 0, 0.36),
-    0 0 24px rgba(183, 139, 255, 0.1);
+    0 0 24px rgba(var(--accent-purple-rgb), 0.1);
   transform: translateY(-1px);
 }
 
@@ -342,7 +342,7 @@
 .list-heading h2 {
   margin: 0;
   overflow: hidden;
-  color: #fff7ff;
+  color: #f4fbff;
   font-size: clamp(0.98rem, 4.5vw, 1.25rem);
   line-height: 1.05;
   text-overflow: ellipsis;
@@ -361,7 +361,7 @@
 .randomize-button {
   flex: 0 0 auto;
   padding: 0.35rem 0.58rem;
-  border: 1px solid rgba(106, 255, 222, 0.3);
+  border: 1px solid rgba(var(--accent-cyan-rgb), 0.3);
   border-radius: 999px;
 
   color: var(--accent-cyan);
@@ -460,7 +460,7 @@
       rgba(255, 255, 255, 0.12),
       rgba(255, 255, 255, 0.03)
     ),
-    rgba(18, 17, 27, 0.76);
+    rgba(3, 8, 18, 0.76);
 
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
@@ -472,51 +472,51 @@
 }
 
 .placement-gold {
-  border-color: rgba(255, 230, 143, 0.42);
+  border-color: rgba(var(--accent-cyan-rgb), 0.42);
   background:
     radial-gradient(circle at 32% 22%, rgba(255, 255, 255, 0.42), transparent 34%),
-    linear-gradient(135deg, rgba(255, 230, 143, 0.25), rgba(139, 92, 246, 0.12)),
-    rgba(18, 17, 27, 0.76);
+    linear-gradient(135deg, rgba(var(--accent-cyan-rgb), 0.25), rgba(var(--accent-purple-strong-rgb), 0.12)),
+    rgba(3, 8, 18, 0.76);
 }
 
 .placement-silver {
   border-color: rgba(224, 230, 241, 0.34);
   background:
     radial-gradient(circle at 32% 22%, rgba(255, 255, 255, 0.36), transparent 34%),
-    linear-gradient(135deg, rgba(224, 230, 241, 0.2), rgba(106, 255, 222, 0.1)),
-    rgba(18, 17, 27, 0.76);
+    linear-gradient(135deg, rgba(224, 230, 241, 0.2), rgba(var(--accent-cyan-rgb), 0.1)),
+    rgba(3, 8, 18, 0.76);
 }
 
 .placement-bronze {
   border-color: rgba(219, 151, 89, 0.38);
   background:
     radial-gradient(circle at 32% 22%, rgba(255, 255, 255, 0.3), transparent 34%),
-    linear-gradient(135deg, rgba(219, 151, 89, 0.22), rgba(183, 139, 255, 0.1)),
-    rgba(18, 17, 27, 0.76);
+    linear-gradient(135deg, rgba(219, 151, 89, 0.22), rgba(var(--accent-purple-rgb), 0.1)),
+    rgba(3, 8, 18, 0.76);
 }
 
 .placement-sick {
   border-color: rgba(114, 255, 201, 0.38);
   background:
     radial-gradient(circle at 32% 22%, rgba(255, 255, 255, 0.28), transparent 34%),
-    linear-gradient(135deg, rgba(114, 255, 201, 0.22), rgba(106, 255, 222, 0.1)),
-    rgba(18, 17, 27, 0.76);
+    linear-gradient(135deg, rgba(114, 255, 201, 0.22), rgba(var(--accent-cyan-rgb), 0.1)),
+    rgba(3, 8, 18, 0.76);
 }
 
 .placement-dizzy {
-  border-color: rgba(183, 139, 255, 0.38);
+  border-color: rgba(var(--accent-purple-rgb), 0.38);
   background:
     radial-gradient(circle at 32% 22%, rgba(255, 255, 255, 0.28), transparent 34%),
-    linear-gradient(135deg, rgba(183, 139, 255, 0.22), rgba(106, 255, 222, 0.09)),
-    rgba(18, 17, 27, 0.76);
+    linear-gradient(135deg, rgba(var(--accent-purple-rgb), 0.22), rgba(var(--accent-cyan-rgb), 0.09)),
+    rgba(3, 8, 18, 0.76);
 }
 
 .placement-woozy {
-  border-color: rgba(255, 230, 143, 0.38);
+  border-color: rgba(var(--accent-cyan-rgb), 0.38);
   background:
     radial-gradient(circle at 32% 22%, rgba(255, 255, 255, 0.28), transparent 34%),
-    linear-gradient(135deg, rgba(255, 230, 143, 0.2), rgba(255, 111, 145, 0.1)),
-    rgba(18, 17, 27, 0.76);
+    linear-gradient(135deg, rgba(var(--accent-cyan-rgb), 0.2), rgba(255, 111, 145, 0.1)),
+    rgba(3, 8, 18, 0.76);
 }
 
 .player-cell {

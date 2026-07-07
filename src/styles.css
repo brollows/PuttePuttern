@@ -1,29 +1,35 @@
 :root {
-  --bg-main: #09090f;
-  --bg-panel: rgba(25, 24, 35, 0.82);
-  --bg-panel-strong: rgba(18, 17, 27, 0.94);
+  --bg-main: #020711;
+  --bg-deep: #050b18;
+  --bg-panel: rgba(5, 13, 28, 0.82);
+  --bg-panel-strong: rgba(3, 8, 18, 0.96);
 
-  --text-main: #fff7ff;
-  --text-muted: rgba(247, 243, 255, 0.72);
+  --text-main: #f4fbff;
+  --text-muted: rgba(221, 241, 255, 0.68);
 
-  --accent-purple: #b77bff;
-  --accent-purple-strong: #8b5cf6;
-  --accent-cyan: #6affde;
-  --accent-yellow: #ffe68f;
+  --accent-cyan: #7dfff6;
+  --accent-cyan-rgb: 125, 255, 246;
+  --accent-purple: #9b7cff;
+  --accent-purple-rgb: 155, 124, 255;
+  --accent-purple-strong: #6d46ff;
+  --accent-purple-strong-rgb: 109, 70, 255;
+  --accent-yellow: #bffcff;
   --accent-red: #ff6f91;
-  --accent-green: #72ffc9;
+  --accent-green: #79fff6;
 
-  --border-soft: rgba(255, 255, 255, 0.11);
-  --border-glow: rgba(205, 180, 255, 0.45);
+  --border-soft: rgba(149, 235, 255, 0.14);
+  --border-glow: rgba(125, 255, 246, 0.48);
 
   --radius-md: 16px;
   --radius-lg: 22px;
   --radius-xl: 28px;
 
   --shadow-card:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 14px 32px rgba(0, 0, 0, 0.34);
+    inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 16px 36px rgba(0, 0, 0, 0.42);
 
-  --shadow-glow: 0 0 28px rgba(139, 92, 246, 0.28);
+  --shadow-glow:
+    0 0 28px rgba(var(--accent-cyan-rgb), 0.18),
+    0 0 38px rgba(var(--accent-purple-rgb), 0.16);
 }
 
 html,
@@ -31,7 +37,7 @@ body,
 app-root {
   margin: 0;
   min-height: 100%;
-  background: #09090f;
+  background: var(--bg-main);
 }
 
 body {
@@ -40,21 +46,21 @@ body {
 
   background:
     radial-gradient(
-      circle at 15% 30%,
-      rgba(121, 82, 255, 0.45),
-      transparent 28%
+      circle at 18% 22%,
+      rgba(var(--accent-cyan-rgb), 0.16),
+      transparent 26%
     ),
     radial-gradient(
-      circle at 75% 70%,
-      rgba(118, 76, 255, 0.38),
-      transparent 30%
+      circle at 72% 82%,
+      rgba(var(--accent-purple-strong-rgb), 0.32),
+      transparent 32%
     ),
     radial-gradient(
-      circle at 90% 10%,
-      rgba(255, 190, 245, 0.16),
-      transparent 24%
+      circle at 88% 12%,
+      rgba(var(--accent-cyan-rgb), 0.09),
+      transparent 22%
     ),
-    linear-gradient(135deg, #09090f 0%, #11101a 45%, #171226 100%);
+    linear-gradient(135deg, #020711 0%, #071124 48%, #130d2c 100%);
 
   background-attachment: fixed;
 
@@ -96,8 +102,8 @@ main:has(.home-overview) {
   background:
     linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.11),
-      rgba(255, 255, 255, 0.025)
+      rgba(255, 255, 255, 0.09),
+      rgba(255, 255, 255, 0.02)
     ),
     var(--bg-panel);
 
@@ -116,15 +122,15 @@ main:has(.home-overview) {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.42),
-    rgba(106, 255, 222, 0.45),
-    rgba(183, 139, 255, 0.5),
+    rgba(255, 255, 255, 0.24),
+    rgba(var(--accent-cyan-rgb), 0.64),
+    rgba(var(--accent-purple-rgb), 0.5),
     transparent
   );
 
   box-shadow:
-    0 0 12px rgba(183, 139, 255, 0.25),
-    0 0 20px rgba(106, 255, 222, 0.08);
+    0 0 16px rgba(var(--accent-cyan-rgb), 0.18),
+    0 0 24px rgba(var(--accent-purple-rgb), 0.12);
 }
 
 /* Felles app-knapp */
@@ -146,10 +152,10 @@ main:has(.home-overview) {
   background:
     linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.11),
-      rgba(255, 255, 255, 0.025)
+      rgba(255, 255, 255, 0.09),
+      rgba(255, 255, 255, 0.02)
     ),
-    rgba(25, 24, 35, 0.82);
+    var(--bg-panel);
 
   color: #fff;
   box-shadow: var(--shadow-card);
@@ -187,10 +193,10 @@ textarea {
   width: 100%;
   padding: 0.85rem 1rem;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(var(--accent-cyan-rgb), 0.18);
   outline: none;
 
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.055);
   color: var(--text-main);
 
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -199,15 +205,59 @@ textarea {
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: rgba(106, 255, 222, 0.65);
+  border-color: rgba(var(--accent-cyan-rgb), 0.68);
 
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 0 0 3px rgba(106, 255, 222, 0.13);
+    0 0 0 3px rgba(var(--accent-cyan-rgb), 0.13);
 }
 
 input::placeholder {
-  color: rgba(247, 243, 255, 0.42);
+  color: rgba(221, 241, 255, 0.42);
+}
+
+.modal,
+.ul-modal,
+.wheel-modal-backdrop,
+.upload-modal-backdrop,
+.image-view-modal-backdrop {
+  background:
+    radial-gradient(
+      circle at 18% 18%,
+      rgba(var(--accent-cyan-rgb), 0.11),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 82% 78%,
+      rgba(var(--accent-purple-strong-rgb), 0.17),
+      transparent 34%
+    ),
+    rgba(0, 0, 0, 0.66) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.modal-content,
+.ul-modal-content,
+.wheel-modal,
+.upload-modal,
+.image-view-modal {
+  background:
+    radial-gradient(
+      circle at 8% 0%,
+      rgba(var(--accent-cyan-rgb), 0.09),
+      transparent 34%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.09),
+      rgba(255, 255, 255, 0.022)
+    ),
+    var(--bg-panel-strong) !important;
+  border: 1px solid var(--border-soft) !important;
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.58),
+    0 0 52px rgba(var(--accent-cyan-rgb), 0.12),
+    0 0 64px rgba(var(--accent-purple-rgb), 0.12) !important;
 }
 
 @keyframes fadeIn {

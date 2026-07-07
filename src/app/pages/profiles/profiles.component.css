@@ -20,10 +20,10 @@
   margin: 0;
   font-size: clamp(1.8rem, 8vw, 2.5rem);
   line-height: 1.05;
-  color: #fff7ff;
+  color: #f4fbff;
   text-shadow:
-    0 0 18px rgba(183, 139, 255, 0.2),
-    0 0 36px rgba(94, 240, 220, 0.2);
+    0 0 18px rgba(var(--accent-purple-rgb), 0.2),
+    0 0 36px rgba(var(--accent-cyan-rgb), 0.2);
 }
 
 .profile-list {
@@ -44,7 +44,7 @@
       rgba(255, 255, 255, 0.11),
       rgba(255, 255, 255, 0.025)
     ),
-    rgba(25, 24, 35, 0.82);
+    rgba(5, 13, 28, 0.82);
 
   border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-card);
@@ -57,10 +57,10 @@
   inset: auto -30% -70% 30%;
   height: 140px;
   background:
-    radial-gradient(circle, rgba(106, 255, 222, 0.45), transparent 56%),
+    radial-gradient(circle, rgba(var(--accent-cyan-rgb), 0.45), transparent 56%),
     radial-gradient(
       circle at 75% 45%,
-      rgba(183, 139, 255, 0.6),
+      rgba(var(--accent-purple-rgb), 0.6),
       transparent 64%
     );
   filter: blur(16px);
@@ -69,10 +69,10 @@
 }
 
 .own-profile-highlight {
-  border-color: rgba(106, 255, 222, 0.42);
+  border-color: rgba(var(--accent-cyan-rgb), 0.42);
   box-shadow:
     var(--shadow-card),
-    0 0 28px rgba(106, 255, 222, 0.13);
+    0 0 28px rgba(var(--accent-cyan-rgb), 0.13);
 }
 
 .profile-name {
@@ -94,8 +94,8 @@
   height: 76px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid rgba(106, 255, 222, 0.55);
-  box-shadow: 0 0 20px rgba(106, 255, 222, 0.14);
+  border: 2px solid rgba(var(--accent-cyan-rgb), 0.55);
+  box-shadow: 0 0 20px rgba(var(--accent-cyan-rgb), 0.14);
 }
 
 .preview-image-large {
@@ -119,7 +119,7 @@
   margin-top: 0.8rem;
   padding-right: 5.8rem;
 
-  color: rgba(255, 230, 143, 0.9);
+  color: rgba(var(--accent-cyan-rgb), 0.9);
   font-family: "Segoe UI", sans-serif;
   font-style: italic;
   position: relative;
@@ -207,12 +207,12 @@
       rgba(255, 255, 255, 0.11),
       rgba(255, 255, 255, 0.025)
     ),
-    rgba(18, 17, 27, 0.96);
+    rgba(3, 8, 18, 0.96);
 
   border: 1px solid var(--border-soft);
   box-shadow:
     0 24px 80px rgba(0, 0, 0, 0.55),
-    0 0 60px rgba(139, 92, 246, 0.2);
+    0 0 60px rgba(var(--accent-purple-strong-rgb), 0.2);
 
   text-align: center;
 }
@@ -252,8 +252,8 @@
 .modal-actions button:first-child {
   background: linear-gradient(
     135deg,
-    rgba(106, 255, 222, 0.35),
-    rgba(139, 92, 246, 0.35)
+    rgba(var(--accent-cyan-rgb), 0.35),
+    rgba(var(--accent-purple-strong-rgb), 0.35)
   );
 }
 
