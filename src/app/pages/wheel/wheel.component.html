@@ -22,7 +22,37 @@
     -
   </button>
 
-  <p class="rules-collapsed-text" *ngIf="!rulesExpanded">Trykk for regler</p>
+  <div class="rules-preview" *ngIf="!rulesExpanded">
+    <div class="rules-preview-header">
+      <span class="rules-preview-icon">?</span>
+      <div>
+        <p class="rules-preview-kicker">Kort fortalt</p>
+        <h3>Bogey-hjulet</h3>
+      </div>
+    </div>
+
+    <div class="rules-preview-grid">
+      <div class="rules-preview-item">
+        <strong>1 spinn</strong>
+        <span>per bane</span>
+      </div>
+
+      <div class="rules-preview-item">
+        <strong>Mulligan</strong>
+        <span>brukes med en gang</span>
+      </div>
+
+      <div class="rules-preview-item">
+        <strong>Challenge</strong>
+        <span>tas sa fort som mulig</span>
+      </div>
+    </div>
+
+    <div class="rules-preview-footer">
+      <span>Trykk for alle regler</span>
+      <span class="material-symbols-outlined">expand_more</span>
+    </div>
+  </div>
 
   <div class="rules-content" *ngIf="rulesExpanded">
     <p>
