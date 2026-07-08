@@ -1,17 +1,16 @@
 <div class="tournament-header">
   <h2 class="section-title">Turnering</h2>
-
-  <button
-    class="info-icon-button"
-    (click)="openInfoModal()"
-    aria-label="Informasjon"
-  >
-    <span class="material-symbols-outlined">info</span>
-  </button>
 </div>
 
 <div class="section-divider"></div>
-
+<button
+  *ngIf="isAdmin"
+  class="courses-admin-button"
+  type="button"
+  (click)="openCoursesModal()"
+>
+  Administrer baner
+</button>
 <div class="table-wrapper">
   <table class="tournament-table">
     <thead>
@@ -57,31 +56,14 @@
 </div>
 
 <section class="cards-container">
-  <button class="cards-button" (click)="openCardsModal()">
+  <button class="cards-button" type="button" (click)="openCardsModal()">
     🎲 Lag tilfeldige grupper!
   </button>
 </section>
 
 <!-- Edit score modal -->
 <div class="modal" *ngIf="selectedRow">
-  <div class="modal-content">
-    <label class="modal-menu-button" [class.loading]="isOcrRunning">
-      <ng-container *ngIf="!isOcrRunning; else loading">
-        📷 Importer UDisc-bilde
-      </ng-container>
-
-      <ng-template #loading>
-        <span class="spinner"></span> Laster...
-      </ng-template>
-
-      <input
-        type="file"
-        accept="image/*"
-        (change)="onOCRImageUpload($event)"
-        hidden
-      />
-    </label>
-
+  <div class="modal-content score-modal">
     <h2>
       {{ selectedProfile?.fornavn }}
 
@@ -93,6 +75,10 @@
       />
     </h2>
 
+    <p class="readonly-message" *ngIf="!canEditRow(selectedRow)">
+      Du kan se score for alle, men bare redigere din egen profil.
+    </p>
+
     <img
       *ngIf="selectedProfile?.bilde"
       [src]="selectedProfile.bilde"
@@ -100,29 +86,89 @@
       alt="Profilbilde"
     />
 
-    <div *ngFor="let field of editableFields" class="edit-field">
-      <div class="edit-label">
-        {{ field.replace("total_", "").toUpperCase() }}:
-        <strong>{{ selectedRow[field] + currentSelectedRow[field] }}</strong>
+    <ng-container *ngIf="hasCourses; else directTotalEditor">
+      <div class="course-score-list">
+        <div
+          *ngFor="let courseScore of selectedCourseScores"
+          class="course-score-row"
+        >
+          <button
+            type="button"
+            class="score-step-button"
+            (click)="adjustCourseScore(courseScore, -1)"
+            [disabled]="!canEditRow(selectedRow)"
+            aria-label="Trekk fra ett poeng"
+          >
+            −
+          </button>
+
+          <div class="course-score-info">
+            <span>{{ courseScore.courseName }}</span>
+            <strong>{{ courseScore.score }}</strong>
+          </div>
+
+          <button
+            type="button"
+            class="score-step-button"
+            (click)="adjustCourseScore(courseScore, 1)"
+            [disabled]="!canEditRow(selectedRow)"
+            aria-label="Legg til ett poeng"
+          >
+            +
+          </button>
+        </div>
       </div>
 
-      <div class="edit-controls">
-        <button type="button" (click)="adjust(field, -1)">➖</button>
-        <span class="edit-value">{{ currentSelectedRow[field] }}</span>
-        <button type="button" (click)="adjust(field, 1)">➕</button>
+      <div class="score-total">
+        <span>Total score</span>
+        <strong>{{ selectedTotalScore }}</strong>
       </div>
-    </div>
+    </ng-container>
+
+    <ng-template #directTotalEditor>
+      <div *ngFor="let field of editableFields" class="edit-field">
+        <div class="edit-label">
+          {{ field.replace("total_", "").toUpperCase() }}:
+          <strong>{{ selectedRow[field] + currentSelectedRow[field] }}</strong>
+        </div>
+
+        <div class="edit-controls">
+          <button
+            type="button"
+            (click)="adjust(field, -1)"
+            [disabled]="!canEditRow(selectedRow)"
+          >
+            −
+          </button>
+          <span class="edit-value">{{ currentSelectedRow[field] }}</span>
+          <button
+            type="button"
+            (click)="adjust(field, 1)"
+            [disabled]="!canEditRow(selectedRow)"
+          >
+            +
+          </button>
+        </div>
+      </div>
+    </ng-template>
 
     <div class="modal-actions">
-      <button class="primary" type="button" (click)="saveEdits()">
-        ✅ Ferdig
+      <button
+        *ngIf="canEditRow(selectedRow)"
+        class="primary"
+        type="button"
+        (click)="saveEdits()"
+        [disabled]="isSavingScore"
+      >
+        {{ isSavingScore ? "Lagrer..." : "Ferdig" }}
       </button>
       <button
+        *ngIf="isAdmin"
         class="danger"
         type="button"
         (click)="removeRow(selectedRow); $event.stopPropagation()"
       >
-        🗑️ Slett
+        Slett
       </button>
       <button class="cancel" type="button" (click)="closeEditModal()">
         Avbryt
@@ -131,70 +177,49 @@
   </div>
 </div>
 
-<!-- Info-modal for bildeopplasting fra UDisc -->
-<div class="modal" *ngIf="showInfoModal">
-  <div class="modal-content udisc-info-modal">
+<!-- Admin modal for baner -->
+<div class="modal" *ngIf="showCoursesModal">
+  <div class="modal-content courses-modal">
     <button
       class="modal-close-button"
-      (click)="closeInfoModal()"
+      type="button"
+      (click)="closeCoursesModal()"
       aria-label="Lukk"
     >
       <span class="material-symbols-outlined">close</span>
     </button>
 
-    <h2>Last opp bilde fra UDisc</h2>
+    <h2>Administrer baner</h2>
 
-    <p class="info-text">
-      Når du skal føre score kan du hente bildet fra UDisc istedenfor å telle og
-      trykke for hver birdie, par og bogey.
-    </p>
+    <div class="course-create-row">
+      <input
+        type="text"
+        [value]="newCourseName"
+        (input)="newCourseName = $any($event.target).value"
+        (keyup.enter)="addCourse()"
+        placeholder="Navn på bane"
+      />
 
-    <div class="udisc-scroll-wrapper">
-      <div class="udisc-step">
-        <p class="step-caption">
-          1. Åpne runden din i UDisc og vis scorekortet. Trykk deretter på
-          <span class="bold-text">share</span>-knappen markert på bildet.
-        </p>
-
-        <img
-          src="assets/udisc-instruction-1.jpeg"
-          alt="UDisc steg 1"
-          class="udisc-image"
-        />
-      </div>
-
-      <div class="udisc-step">
-        <p class="step-caption">
-          2. Velg deretter den som heter
-          <span class="bold-text">Scorekort med min statistikk</span>.
-        </p>
-
-        <img
-          src="assets/udisc-instruction-2.jpeg"
-          alt="UDisc steg 2"
-          class="udisc-image"
-        />
-      </div>
-
-      <div class="udisc-step">
-        <p class="step-caption">
-          3. Lagre bildet til telefonen og last det opp i appen når du skal
-          redigere score.
-        </p>
-
-        <img
-          src="assets/udisc-instruction-3.jpeg"
-          alt="UDisc steg 3"
-          class="udisc-image"
-        />
-      </div>
-    </div>
-
-    <div class="modal-actions">
-      <button class="primary" type="button" (click)="closeInfoModal()">
-        Ait..
+      <button
+        class="primary"
+        type="button"
+        (click)="addCourse()"
+        [disabled]="isSavingCourse || !newCourseName.trim()"
+      >
+        Legg til
       </button>
     </div>
+
+    <div class="course-admin-list" *ngIf="courses.length; else noCourses">
+      <div *ngFor="let course of courses" class="course-admin-row">
+        <span>{{ course.name }}</span>
+        <button type="button" (click)="deleteCourse(course)">Slett</button>
+      </div>
+    </div>
+
+    <ng-template #noCourses>
+      <p class="info-text">Ingen baner er lagt til enda.</p>
+    </ng-template>
   </div>
 </div>
 
@@ -206,6 +231,7 @@
 
       <button
         class="modal-close-button"
+        type="button"
         (click)="closeCardsModal()"
         aria-label="Lukk"
       >

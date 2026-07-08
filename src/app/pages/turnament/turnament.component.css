@@ -19,13 +19,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.75rem;
 
   width: 100%;
   margin: 0 auto 0.8rem;
   padding: 0.4rem 3rem 0.2rem;
 }
 
-.info-icon-button,
 .modal-close-button {
   display: flex;
   align-items: center;
@@ -46,20 +46,35 @@
     box-shadow 0.2s ease;
 }
 
-.info-icon-button {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+.courses-admin-button {
+  position: relativ;
+
+  min-height: 60px;
+  width: 100%;
+  padding: 0.58rem 0.8rem;
+  border: 1px solid rgba(var(--accent-cyan-rgb), 0.26);
+  border-radius: 999px;
+
+  color: var(--accent-cyan);
+  background: rgba(255, 255, 255, 0.075);
+
+  font-family: "Segoe UI", sans-serif;
+  font-size: clamp(0.68rem, 2.7vw, 0.82rem);
+  font-weight: 900;
+  white-space: nowrap;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 24px rgba(0, 0, 0, 0.24);
 }
 
-.info-icon-button .material-symbols-outlined,
 .modal-close-button .material-symbols-outlined {
   font-size: 2rem;
 }
 
-.info-icon-button:hover {
+.courses-admin-button:hover {
   transform: translateY(-50%) scale(1.08);
+  border-color: rgba(var(--accent-cyan-rgb), 0.45);
 }
 
 .modal-close-button:hover {
@@ -385,54 +400,19 @@ button {
   height: 38px;
 }
 
-.modal-menu-button {
-  display: block;
-  width: 100%;
-  max-width: 340px;
-  margin: 0 auto 1rem;
-  padding: 1rem;
-
-  border-radius: 22px;
-
-  color: #fff !important;
-  text-decoration: none !important;
-  font-size: 1rem;
-  font-weight: 800;
-
-  border: 1px solid rgba(255, 255, 255, 0.12);
-
-  background:
-    radial-gradient(
-      circle at 85% 80%,
-      rgba(var(--accent-cyan-rgb), 0.24),
-      transparent 34%
-    ),
-    radial-gradient(
-      circle at 75% 35%,
-      rgba(var(--accent-purple-rgb), 0.35),
-      transparent 38%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.11),
-      rgba(255, 255, 255, 0.025)
-    ),
-    rgba(5, 13, 28, 0.82);
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 14px 32px rgba(0, 0, 0, 0.34);
-}
-
-.modal-menu-button.loading {
-  opacity: 0.6;
-  pointer-events: none;
-}
-
 .modal-avatar {
   width: 82px;
   height: 82px;
   margin: 1rem auto;
+}
+
+.readonly-message {
+  margin: 0.1rem 0 0.65rem;
+  color: var(--text-muted);
+  font-family: "Segoe UI", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.35;
 }
 
 .edit-field {
@@ -487,6 +467,12 @@ button {
   font-weight: 900;
 }
 
+.edit-controls button:disabled,
+.score-step-button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
 .edit-value {
   width: 2rem;
   text-align: center;
@@ -509,6 +495,12 @@ button {
   color: #fff;
 }
 
+.modal-actions button:disabled,
+.course-create-row button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .modal-actions .primary {
   background: linear-gradient(
     135deg,
@@ -527,28 +519,6 @@ button {
   color: #fff;
 }
 
-.spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-
-  border: 2px solid rgba(255, 255, 255, 0.25);
-  border-top-color: var(--accent-cyan);
-  border-radius: 50%;
-
-  animation: spin 0.8s linear infinite;
-  vertical-align: middle;
-  margin-right: 8px;
-}
-
-/* UDISC INFO MODAL */
-
-.udisc-info-modal {
-  max-width: 430px;
-  max-height: 90dvh;
-  padding-top: 3.6rem;
-}
-
 .info-text {
   text-align: left;
   color: var(--text-muted);
@@ -558,47 +528,169 @@ button {
   margin-bottom: 1rem;
 }
 
-.udisc-scroll-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+/* GROUPS MODAL */
+
+.score-modal {
+  max-width: 430px;
 }
 
-.udisc-step {
-  padding: 0.85rem;
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(var(--accent-cyan-rgb), 0.22);
+.course-score-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+}
 
+.course-score-row {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 42px;
+  align-items: center;
+  gap: 0.55rem;
+
+  padding: 0.58rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.065);
+}
+
+.score-step-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+
+  color: var(--accent-cyan);
+  background: rgba(var(--accent-cyan-rgb), 0.14);
+
+  font-size: 1.45rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.course-score-info {
+  min-width: 0;
+  display: grid;
+  gap: 0.18rem;
+}
+
+.course-score-info span {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-family: "Segoe UI", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.course-score-info strong {
+  color: #fff;
+  font-family: "Segoe UI", sans-serif;
+  font-size: 1.35rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.score-total {
+  margin-top: 0.8rem;
+  padding: 0.8rem 0.9rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  border: 1px solid rgba(var(--accent-cyan-rgb), 0.2);
+  border-radius: 18px;
   background:
     linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.08),
-      rgba(255, 255, 255, 0.025)
+      rgba(var(--accent-cyan-rgb), 0.16),
+      rgba(var(--accent-purple-rgb), 0.12)
     ),
-    rgba(255, 255, 255, 0.04);
+    rgba(255, 255, 255, 0.055);
 }
 
-.step-caption {
-  margin: 0 0 0.7rem;
-  color: var(--accent-yellow);
+.score-total span,
+.score-total strong {
   font-family: "Segoe UI", sans-serif;
-  font-size: 0.92rem;
-  font-weight: 700;
-  text-align: left;
+  font-weight: 900;
 }
 
-.udisc-image {
-  width: 100%;
-  display: block;
-  border-radius: 14px;
+.score-total span {
+  color: var(--text-muted);
+  text-transform: uppercase;
 }
 
-.bold-text {
-  font-weight: 800;
+.score-total strong {
   color: #fff;
+  font-size: 1.35rem;
 }
 
-/* GROUPS MODAL */
+.courses-modal {
+  max-width: 430px;
+  padding-top: 3.4rem;
+}
+
+.course-create-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.6rem;
+  align-items: stretch;
+  margin: 0.9rem 0 1rem;
+}
+
+.course-create-row button,
+.course-admin-row button {
+  min-height: 42px;
+  padding: 0 0.8rem;
+  border-radius: 14px;
+  color: #fff;
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 900;
+}
+
+.course-create-row .primary {
+  background: linear-gradient(
+    135deg,
+    rgba(var(--accent-cyan-rgb), 0.35),
+    rgba(var(--accent-purple-strong-rgb), 0.35)
+  );
+}
+
+.course-admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.course-admin-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.course-admin-row span {
+  min-width: 0;
+  overflow: hidden;
+  color: #fff;
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 900;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.course-admin-row button {
+  flex: 0 0 auto;
+  background: rgba(255, 111, 145, 0.22);
+  color: #ffd1dc;
+}
 
 .groups-modal {
   max-width: 430px;
@@ -685,9 +777,10 @@ button {
     font-size: clamp(1.85rem, 8.5vw, 2.5rem);
   }
 
-  .info-icon-button {
-    width: 38px;
-    height: 38px;
+  .courses-admin-button {
+    min-height: 34px;
+    padding: 0.46rem 0.58rem;
+    font-size: 0.64rem;
   }
 
   .tournament-table {
