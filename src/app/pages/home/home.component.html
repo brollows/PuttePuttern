@@ -73,95 +73,97 @@
       </div>
     </a>
 
-    <a
-      class="overview-list-link tournament-card"
-      routerLink="/turnering"
-      aria-label="Aapne turnering"
-    >
-      <div class="list-heading">
-        <h2>Turnering</h2>
-        <span>Top 3</span>
-      </div>
-
-      <table
-        class="mini-table"
-        *ngIf="topTournamentRows.length; else noTournamentRows"
+    <div class="leaderboard-grid">
+      <a
+        class="overview-list-link tournament-card"
+        routerLink="/turnering"
+        aria-label="Aapne turnering"
       >
-        <tbody>
-          <tr *ngFor="let row of topTournamentRows">
-            <td class="placement-cell">
-              <span
-                class="placement-badge"
-                [ngClass]="getPlacementClass(getTournamentPlacement(row))"
-              >
-                {{ getPlacementLabel(getTournamentPlacement(row)) }}
-              </span>
-            </td>
-            <td>
-              <span class="player-cell">
-                <img
-                  *ngIf="getProfile(row['profile$id'])?.bilde"
-                  [src]="getProfile(row['profile$id'])?.bilde"
-                  class="mini-avatar"
-                  alt="Profilbilde"
-                />
-                <span>{{ getProfileFirstName(row["profile$id"]) }}</span>
-              </span>
-            </td>
-            <td>{{ row.total_score ?? 0 }}</td>
-          </tr>
-        </tbody>
-      </table>
+        <div class="list-heading">
+          <h2>Turnering</h2>
+          <span>Top 3</span>
+        </div>
 
-      <ng-template #noTournamentRows>
-        <p class="empty-text">Ingen turneringsscore enda.</p>
-      </ng-template>
-    </a>
+        <table
+          class="mini-table"
+          *ngIf="topTournamentRows.length; else noTournamentRows"
+        >
+          <tbody>
+            <tr *ngFor="let row of topTournamentRows">
+              <td class="placement-cell">
+                <span
+                  class="placement-badge"
+                  [ngClass]="getPlacementClass(getTournamentPlacement(row))"
+                >
+                  {{ getPlacementLabel(getTournamentPlacement(row)) }}
+                </span>
+              </td>
+              <td>
+                <span class="player-cell">
+                  <img
+                    *ngIf="getProfile(row['profile$id'])?.bilde"
+                    [src]="getProfile(row['profile$id'])?.bilde"
+                    class="mini-avatar"
+                    alt="Profilbilde"
+                  />
+                  <span>{{ getProfileFirstName(row["profile$id"]) }}</span>
+                </span>
+              </td>
+              <td>{{ row.total_score ?? 0 }}</td>
+            </tr>
+          </tbody>
+        </table>
 
-    <a
-      class="overview-list-link units-card"
-      routerLink="/units-league"
-      aria-label="Aapne drikke turnering"
-    >
-      <div class="list-heading">
-        <h2>Drikke turnering</h2>
-        <span>Top 3</span>
-      </div>
+        <ng-template #noTournamentRows>
+          <p class="empty-text">Ingen turneringsscore enda.</p>
+        </ng-template>
+      </a>
 
-      <table
-        class="mini-table"
-        *ngIf="topUnitsLeagueRows.length; else noUnitsRows"
+      <a
+        class="overview-list-link units-card"
+        routerLink="/units-league"
+        aria-label="Aapne drikke turnering"
       >
-        <tbody>
-          <tr *ngFor="let row of topUnitsLeagueRows">
-            <td class="placement-cell">
-              <span
-                class="placement-badge units-placement-badge"
-                [ngClass]="getUnitsLeaguePlacementClass(getUnitsLeaguePlacement(row))"
-              >
-                {{ getUnitsLeaguePlacementLabel(getUnitsLeaguePlacement(row)) }}
-              </span>
-            </td>
-            <td>
-              <span class="player-cell">
-                <img
-                  *ngIf="getProfile(row['profile$id'])?.bilde"
-                  [src]="getProfile(row['profile$id'])?.bilde"
-                  class="mini-avatar"
-                  alt="Profilbilde"
-                />
-                <span>{{ getProfileFirstName(row["profile$id"]) }}</span>
-              </span>
-            </td>
-            <td>{{ row.total_units ?? 0 }}</td>
-          </tr>
-        </tbody>
-      </table>
+        <div class="list-heading">
+          <h2>Drikke turnering</h2>
+          <span>Top 3</span>
+        </div>
 
-      <ng-template #noUnitsRows>
-        <p class="empty-text">Ingen enheter registrert enda.</p>
-      </ng-template>
-    </a>
+        <table
+          class="mini-table"
+          *ngIf="topUnitsLeagueRows.length; else noUnitsRows"
+        >
+          <tbody>
+            <tr *ngFor="let row of topUnitsLeagueRows">
+              <td class="placement-cell">
+                <span
+                  class="placement-badge units-placement-badge"
+                  [ngClass]="getUnitsLeaguePlacementClass(getUnitsLeaguePlacement(row))"
+                >
+                  {{ getUnitsLeaguePlacementLabel(getUnitsLeaguePlacement(row)) }}
+                </span>
+              </td>
+              <td>
+                <span class="player-cell">
+                  <img
+                    *ngIf="getProfile(row['profile$id'])?.bilde"
+                    [src]="getProfile(row['profile$id'])?.bilde"
+                    class="mini-avatar"
+                    alt="Profilbilde"
+                  />
+                  <span>{{ getProfileFirstName(row["profile$id"]) }}</span>
+                </span>
+              </td>
+              <td>{{ row.total_units ?? 0 }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #noUnitsRows>
+          <p class="empty-text">Ingen enheter registrert enda.</p>
+        </ng-template>
+      </a>
+    </div>
 
     <section
       class="gallery-panel"
