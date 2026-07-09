@@ -23,10 +23,15 @@
 
   color: #f4fbff;
   font-size: clamp(1.8rem, 8vw, 2.7rem);
+  line-height: 1;
 
   text-shadow:
     0 0 18px rgba(var(--accent-purple-rgb), 0.55),
     0 0 36px rgba(var(--accent-cyan-rgb), 0.18);
+}
+
+.challenges-title {
+  padding: 0.4rem 3rem 0.2rem;
 }
 
 .challenges-container hr,
@@ -701,6 +706,12 @@ hr {
 ========================= */
 
 @media (max-width: 480px) {
+  .challenges-title {
+    padding-left: 2.4rem;
+    padding-right: 2.7rem;
+    font-size: clamp(1.65rem, 7.6vw, 2.25rem);
+  }
+
   .rules-preview-grid {
     grid-template-columns: 1fr;
   }

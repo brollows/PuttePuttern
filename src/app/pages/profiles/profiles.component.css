@@ -7,15 +7,16 @@
 }
 
 .profiles-header {
+  position: relative;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
   margin-bottom: 0;
+  padding: 0.4rem 3rem 0.2rem;
 }
 
 .profiles-header h1 {
-  width: 100%;
   text-align: center;
   margin: 0;
   font-size: clamp(1.8rem, 8vw, 2.5rem);
@@ -297,5 +298,16 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 390px) {
+  .profiles-header {
+    padding-left: 2.4rem;
+    padding-right: 2.7rem;
+  }
+
+  .profiles-header h1 {
+    font-size: clamp(1.65rem, 7.6vw, 2.25rem);
   }
 }
