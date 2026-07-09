@@ -1,6 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { getSupabaseClient } from '../../../supabase-client';
+import { UiFeedbackService } from '../../services/ui-feedback.service';
 
 interface GalleryImage {
   id: number;
@@ -18,6 +19,7 @@ interface GalleryImage {
 })
 export class ImagesComponent implements OnInit, OnDestroy {
   supabase = getSupabaseClient();
+  private readonly uiFeedback = inject(UiFeedbackService);
 
   private readonly STORAGE_KEY = 'putteputtern_logged_in_user';
   private readonly MAX_IMAGES_PER_PROFILE = 40;
@@ -133,7 +135,6 @@ export class ImagesComponent implements OnInit, OnDestroy {
     }
 
     this.profiles = data || [];
-    console.log(`Loaded ${this.profiles.length} profiles`);
   }
 
   async uploadImage() {
@@ -431,7 +432,13 @@ export class ImagesComponent implements OnInit, OnDestroy {
 
     if (!this.canDeleteImage(image)) return;
 
-    const confirmed = confirm('Er du sikker på at du vil slette dette bildet?');
+    const confirmed = await this.uiFeedback.confirm(
+      'Er du sikker på at du vil slette dette bildet?',
+      {
+        title: 'Slett bilde',
+        confirmText: 'Slett',
+      },
+    );
 
     if (!confirmed) return;
 
@@ -463,7 +470,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error('Error deleting image:', error);
-      alert('Kunne ikke slette bildet.');
+      this.uiFeedback.notify('Kunne ikke slette bildet.', 'error');
     }
   }
 
@@ -488,7 +495,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
       URL.revokeObjectURL(objectUrl);
     } catch (error) {
       console.error('Error downloading image:', error);
-      alert('Kunne ikke laste ned bildet.');
+      this.uiFeedback.notify('Kunne ikke laste ned bildet.', 'error');
     }
   }
 }

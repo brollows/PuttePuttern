@@ -65,7 +65,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "putte-puttern5:build:production"
+              "buildTarget": "putte-puttern:build:production"
             },
             "development": {
               "buildTarget": "putte-puttern:build:development"

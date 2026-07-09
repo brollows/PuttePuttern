@@ -28,6 +28,7 @@
       <tr
         *ngFor="let row of rows; let i = index"
         (click)="openEditModal(row, i)"
+        [class.ul-my-profile]="canEditRow(row)"
       >
         <td class="ul-placement">{{ getPlacement(i) }}</td>
 
@@ -64,6 +65,10 @@
       alt="Profilbilde"
     />
 
+    <p class="ul-readonly-message" *ngIf="!canEditRow(selectedRow)">
+      Du kan se enheter for alle, men bare redigere din egen profil.
+    </p>
+
     <div *ngFor="let field of editableFields" class="ul-edit-field">
       <div class="ul-edit-label">
         <span class="material-symbols-outlined ul-smaller-icon-and-spacing"
@@ -72,14 +77,33 @@
       </div>
 
       <div class="ul-edit-controls">
-        <button type="button" (click)="adjust(field, -1)">➖</button>
+        <button
+          type="button"
+          (click)="adjust(field, -1)"
+          [disabled]="!canEditRow(selectedRow)"
+          aria-label="Trekk fra én enhet"
+        >
+          remove
+        </button>
         <strong>{{ selectedRow[field] + currentSelectedRow[field] }}</strong>
-        <button type="button" (click)="adjust(field, 1)">➕</button>
+        <button
+          type="button"
+          (click)="adjust(field, 1)"
+          [disabled]="!canEditRow(selectedRow)"
+          aria-label="Legg til én enhet"
+        >
+          add
+        </button>
       </div>
     </div>
 
     <div class="ul-modal-actions">
-      <button class="ul-primary" type="button" (click)="saveEdits()">
+      <button
+        *ngIf="canEditRow(selectedRow)"
+        class="ul-primary"
+        type="button"
+        (click)="saveEdits()"
+      >
         Lagre enheter
       </button>
       <button class="ul-cancel" type="button" (click)="closeEditModal()">

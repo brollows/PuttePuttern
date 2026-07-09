@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it } from 'vitest';
 import { WheelComponent } from './wheel.component';
 
 describe('WheelComponent', () => {

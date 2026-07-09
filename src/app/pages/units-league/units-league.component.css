@@ -179,6 +179,20 @@
   transform: scale(0.995);
 }
 
+.ul-table tbody tr.ul-my-profile {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(var(--accent-cyan-rgb), 0.14),
+      rgba(255, 255, 255, 0.055)
+    ),
+    rgba(255, 255, 255, 0.045);
+}
+
+.ul-table tbody tr.ul-my-profile .ul-player-name {
+  color: var(--accent-cyan);
+}
+
 .ul-table tbody tr:last-child td {
   border-bottom: 0;
 }
@@ -374,8 +388,16 @@
   background: rgba(var(--accent-cyan-rgb), 0.14);
   color: var(--accent-cyan);
 
+  font-family: "Material Symbols Outlined";
+  font-size: 1.35rem;
   font-weight: 900;
+  line-height: 1;
   cursor: pointer;
+}
+
+.ul-edit-controls button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
 }
 
 .ul-edit-controls strong {
@@ -414,6 +436,15 @@
 .ul-modal-actions .ul-cancel {
   background: rgba(255, 255, 255, 0.11);
   color: #fff;
+}
+
+.ul-readonly-message {
+  margin: 0.1rem 0 0.65rem;
+  color: var(--text-muted);
+  font-family: "Segoe UI", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.35;
 }
 
 /* INFO MODAL */

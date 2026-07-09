@@ -1,143 +1,191 @@
-<nav class="navbar">
-  <div class="navbar-content">
+<ng-container *ngIf="showAppNavigation">
+  <nav class="navbar" aria-label="Hovednavigasjon">
+    <div class="navbar-content">
+      <a
+        class="home-icon material-symbols-outlined"
+        routerLink="/"
+        aria-label="Hjem"
+        >home</a
+      >
+
+      <a
+        class="home-icon material-symbols-outlined"
+        routerLink="/turnering"
+        aria-label="Turnering"
+        >emoji_events</a
+      >
+
+      <a
+        class="home-icon material-symbols-outlined"
+        routerLink="/units-league"
+        aria-label="Units League"
+        >sports_bar
+      </a>
+
+      <a
+        class="home-icon material-symbols-outlined"
+        routerLink="/challenges"
+        aria-label="Challenges"
+        >target</a
+      >
+
+      <a
+        class="home-icon material-symbols-outlined"
+        routerLink="/images"
+        aria-label="Images"
+        >image</a
+      >
+    </div>
+  </nav>
+
+  <button
+    class="side-menu-toggle material-symbols-outlined"
+    type="button"
+    aria-label="Åpne meny"
+    aria-controls="side-menu"
+    [attr.aria-expanded]="menuOpen"
+    (click)="menuOpen = true"
+    *ngIf="!menuOpen"
+  >
+    menu
+  </button>
+
+  <div
+    class="side-menu-backdrop"
+    *ngIf="menuOpen"
+    (click)="closeMenu()"
+  ></div>
+
+  <nav
+    id="side-menu"
+    class="side-menu"
+    [class.open]="menuOpen"
+    aria-label="Sidemeny"
+    [attr.aria-hidden]="!menuOpen"
+    [attr.inert]="menuOpen ? null : ''"
+  >
+    <div class="side-menu-brand">
+      <img
+        class="side-menu-brand-logo"
+        src="assets/app_logo.png"
+        alt="PuttePuttern logo"
+      />
+      <div class="side-menu-brand-text">
+        <span>PUTTE</span>
+        <span>PUTTERN</span>
+      </div>
+    </div>
+
+    <div class="side-menu-divider"></div>
+
     <a
-      class="home-icon material-symbols-outlined"
+      class="side-menu-icon material-symbols-outlined"
       routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
       aria-label="Hjem"
+      (click)="closeMenu()"
       >home</a
     >
 
     <a
-      class="home-icon material-symbols-outlined"
-      routerLink="/turnering"
-      aria-label="Turnering"
-      >emoji_events</a
+      class="side-menu-icon material-symbols-outlined"
+      routerLink="/info"
+      routerLinkActive="active"
+      aria-label="Informasjon"
+      (click)="closeMenu()"
     >
-
-    <a
-      class="home-icon material-symbols-outlined"
-      routerLink="/units-league"
-      aria-label="Units League"
-      >sports_bar
+      info
     </a>
 
     <a
-      class="home-icon material-symbols-outlined"
-      routerLink="/challenges"
-      aria-label="Challenges"
-      >target</a
+      class="side-menu-icon material-symbols-outlined"
+      routerLink="/turnering"
+      routerLinkActive="active"
+      aria-label="Turnering"
+      (click)="closeMenu()"
     >
+      emoji_events
+    </a>
 
     <a
-      class="home-icon material-symbols-outlined"
-      routerLink="/images"
-      aria-label="Images"
-      >image</a
+      class="side-menu-icon material-symbols-outlined"
+      routerLink="/units-league"
+      routerLinkActive="active"
+      aria-label="Drikke turnering"
+      (click)="closeMenu()"
     >
-  </div>
-</nav>
+      sports_bar
+    </a>
 
-<button
-  class="side-menu-toggle material-symbols-outlined"
-  type="button"
-  aria-label="Åpne meny"
-  (click)="menuOpen = true"
-  *ngIf="!menuOpen"
->
-  menu
-</button>
+    <a
+      class="side-menu-icon material-symbols-outlined"
+      routerLink="/challenges"
+      routerLinkActive="active"
+      aria-label="Bogey-hjulet"
+      (click)="closeMenu()"
+    >
+      target
+    </a>
 
-<div
-  class="side-menu-backdrop"
-  *ngIf="menuOpen"
-  (click)="menuOpen = false"
-></div>
+    <a
+      class="side-menu-icon material-symbols-outlined"
+      routerLink="/images"
+      routerLinkActive="active"
+      aria-label="Bilder"
+      (click)="closeMenu()"
+    >
+      image
+    </a>
 
-<nav class="side-menu" [class.open]="menuOpen">
-  <div class="side-menu-brand">
-    <img
-      class="side-menu-brand-logo"
-      src="assets/app_logo.png"
-      alt="PuttePuttern logo"
-    />
-    <div class="side-menu-brand-text">
-      <span>PUTTE</span>
-      <span>PUTTERN</span>
-    </div>
-  </div>
-
-  <div class="side-menu-divider"></div>
-
-  <a
-    class="side-menu-icon material-symbols-outlined"
-    routerLink="/"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-    aria-label="Hjem"
-    (click)="menuOpen = false"
-    >home</a
-  >
-  <a
-    class="side-menu-icon material-symbols-outlined"
-    routerLink="/info"
-    routerLinkActive="active"
-    aria-label="Informasjon"
-    (click)="menuOpen = false"
-  >
-    info
-  </a>
-
-  <a
-    class="side-menu-icon material-symbols-outlined"
-    routerLink="/turnering"
-    routerLinkActive="active"
-    aria-label="Turnering"
-    (click)="menuOpen = false"
-  >
-    emoji_events
-  </a>
-
-  <a
-    class="side-menu-icon material-symbols-outlined"
-    routerLink="/units-league"
-    routerLinkActive="active"
-    aria-label="Drikke turnering"
-    (click)="menuOpen = false"
-  >
-    sports_bar
-  </a>
-
-  <a
-    class="side-menu-icon material-symbols-outlined"
-    routerLink="/challenges"
-    routerLinkActive="active"
-    aria-label="Bogey-hjulet"
-    (click)="menuOpen = false"
-  >
-    target
-  </a>
-
-  <a
-    class="side-menu-icon material-symbols-outlined"
-    routerLink="/images"
-    routerLinkActive="active"
-    aria-label="Bilder"
-    (click)="menuOpen = false"
-  >
-    image
-  </a>
-
-  <a
-    class="side-menu-icon material-symbols-outlined"
-    routerLink="/profiler"
-    routerLinkActive="active"
-    aria-label="Profiler"
-    (click)="menuOpen = false"
-  >
-    person
-  </a>
-</nav>
+    <a
+      class="side-menu-icon material-symbols-outlined"
+      routerLink="/profiler"
+      routerLinkActive="active"
+      aria-label="Profiler"
+      (click)="closeMenu()"
+    >
+      person
+    </a>
+  </nav>
+</ng-container>
 
 <main>
   <router-outlet></router-outlet>
 </main>
+
+<div class="toast-stack" *ngIf="uiFeedback.messages().length">
+  <button
+    *ngFor="let message of uiFeedback.messages()"
+    type="button"
+    class="toast-message"
+    [class.toast-success]="message.tone === 'success'"
+    [class.toast-error]="message.tone === 'error'"
+    (click)="uiFeedback.dismiss(message.id)"
+  >
+    {{ message.text }}
+  </button>
+</div>
+
+<div
+  class="confirm-backdrop"
+  *ngIf="uiFeedback.confirmState() as confirmRequest"
+>
+  <section class="confirm-dialog" role="dialog" aria-modal="true">
+    <h2>{{ confirmRequest.title }}</h2>
+    <p>{{ confirmRequest.message }}</p>
+
+    <div class="confirm-actions">
+      <button type="button" (click)="uiFeedback.resolveConfirm(false)">
+        {{ confirmRequest.cancelText }}
+      </button>
+      <button
+        type="button"
+        class="confirm-primary"
+        (click)="uiFeedback.resolveConfirm(true)"
+      >
+        {{ confirmRequest.confirmText }}
+      </button>
+    </div>
+  </section>
+</div>

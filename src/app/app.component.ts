@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet, RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SwUpdate } from '@angular/service-worker';
+import { UiFeedbackService } from './services/ui-feedback.service';
 
 @Component({
   selector: 'app-root',
@@ -12,8 +13,18 @@ import { SwUpdate } from '@angular/service-worker';
 })
 export class AppComponent {
   menuOpen: boolean = false;
+
+  get showAppNavigation(): boolean {
+    return this.router.url !== '/login';
+  }
+
+  closeMenu(): void {
+    this.menuOpen = false;
+  }
+
   constructor(
     public router: Router,
+    public uiFeedback: UiFeedbackService,
     private swUpdate: SwUpdate,
   ) {
     if (this.swUpdate.isEnabled) {

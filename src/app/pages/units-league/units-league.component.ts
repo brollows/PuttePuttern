@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { getSupabaseClient } from '../../../supabase-client';
 import { CommonModule } from '@angular/common';
+import { UiFeedbackService } from '../../services/ui-feedback.service';
 
 @Component({
   selector: 'app-units-league',
@@ -11,6 +12,7 @@ import { CommonModule } from '@angular/common';
 })
 export class UnitsLeagueComponent {
   supabase = getSupabaseClient();
+  private readonly uiFeedback = inject(UiFeedbackService);
 
   profiles: any[] = [];
   rows: any[] = [];
@@ -25,6 +27,10 @@ export class UnitsLeagueComponent {
   currentUser: any = null;
 
   readonly editableFields = ['total_units'];
+
+  get isAdmin(): boolean {
+    return this.currentUser?.role === 'admin';
+  }
 
   async ngOnInit() {
     const storedUser = localStorage.getItem('putteputtern_logged_in_user');
@@ -88,6 +94,11 @@ export class UnitsLeagueComponent {
   }
 
   async removeRow(row: any) {
+    if (!this.isAdmin) {
+      this.uiFeedback.notify('Bare admin kan slette score-rader.', 'error');
+      return;
+    }
+
     const rowProfile = this.getProfile(row['profile$id']);
     if (rowProfile == undefined || row.total_units == 0) {
       const { error } = await this.supabase
@@ -102,7 +113,10 @@ export class UnitsLeagueComponent {
         console.error('error when deleting:', error);
       }
     } else {
-      alert('Du må slette brukeren eller nulle ut scoren før du kan slette');
+      this.uiFeedback.notify(
+        'Du må slette brukeren eller nulle ut scoren før du kan slette.',
+        'error',
+      );
       return;
     }
   }
@@ -134,12 +148,24 @@ export class UnitsLeagueComponent {
   }
 
   adjust(field: string, delta: number) {
+    if (!this.canEditRow(this.selectedRow)) {
+      return;
+    }
+
     if (this.currentSelectedRow && ['total_units'].includes(field)) {
       this.currentSelectedRow[field] += delta;
     }
   }
 
   async saveEdits() {
+    if (!this.canEditRow(this.selectedRow)) {
+      this.uiFeedback.notify(
+        'Du kan bare lagre enheter på din egen profil.',
+        'error',
+      );
+      return;
+    }
+
     const updated = {
       total_units:
         this.selectedRow.total_units + this.currentSelectedRow.total_units,
@@ -159,7 +185,7 @@ export class UnitsLeagueComponent {
       this.closeEditModal();
     } else {
       console.error('Error updating:', error);
-      alert('Kunne ikke lagre endringer.');
+      this.uiFeedback.notify('Kunne ikke lagre endringer.', 'error');
     }
   }
 
@@ -197,5 +223,14 @@ export class UnitsLeagueComponent {
 
   closeInfoModal() {
     this.showInfoModal = false;
+  }
+
+  canEditRow(row: any): boolean {
+    if (!this.currentUser || !row) return false;
+
+    return (
+      this.currentUser.role === 'admin' ||
+      row['profile$id'] === this.currentUser.id
+    );
   }
 }

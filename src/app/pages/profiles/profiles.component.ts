@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { getSupabaseClient } from '../../../supabase-client';
+import { UiFeedbackService } from '../../services/ui-feedback.service';
 
 @Component({
   selector: 'app-profiles',
@@ -13,6 +14,7 @@ import { getSupabaseClient } from '../../../supabase-client';
 })
 export class ProfilesComponent implements OnInit {
   supabase = getSupabaseClient();
+  private readonly uiFeedback = inject(UiFeedbackService);
 
   private readonly STORAGE_KEY = 'putteputtern_logged_in_user';
 
@@ -126,7 +128,7 @@ export class ProfilesComponent implements OnInit {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
 
     if (!allowedTypes.includes(file.type)) {
-      alert('Kun JPG, JPEG, PNG og GIF er tillatt.');
+      this.uiFeedback.notify('Kun JPG, JPEG, PNG og GIF er tillatt.', 'error');
       input.value = '';
       return;
     }
@@ -167,7 +169,10 @@ export class ProfilesComponent implements OnInit {
     }
 
     if (!this.canRemoveProfile(profile)) {
-      alert('Du har ikke tilgang til å slette denne brukeren.');
+      this.uiFeedback.notify(
+        'Du har ikke tilgang til å slette denne brukeren.',
+        'error',
+      );
       this.removeProfileId = null;
       return;
     }
@@ -187,7 +192,6 @@ export class ProfilesComponent implements OnInit {
             deleteError,
           );
         } else {
-          console.log(`🧹 Bildet ${filename} ble slettet fra storage`);
         }
       } catch (e) {
         console.warn('⚠️ Feil ved bilde-sletting:', e);
@@ -201,7 +205,10 @@ export class ProfilesComponent implements OnInit {
 
     if (error) {
       console.error('❌ Feil ved sletting fra database:', error);
-      alert('Kunne ikke slette brukeren fra databasen.');
+      this.uiFeedback.notify(
+        'Kunne ikke slette brukeren fra databasen.',
+        'error',
+      );
       this.removeProfileId = null;
       return;
     }
@@ -216,7 +223,7 @@ export class ProfilesComponent implements OnInit {
     this.removeProfileId = null;
     this.clearValues();
 
-    console.log(`✅ Bruker med ID ${profile.id} slettet`);
+    this.uiFeedback.notify('Brukeren ble slettet.', 'success');
   }
 
   clearValues() {
@@ -225,7 +232,10 @@ export class ProfilesComponent implements OnInit {
 
   confirmRemove(profile: any) {
     if (!this.canRemoveProfile(profile)) {
-      alert('Du har ikke tilgang til å slette denne brukeren.');
+      this.uiFeedback.notify(
+        'Du har ikke tilgang til å slette denne brukeren.',
+        'error',
+      );
       return;
     }
 
@@ -242,7 +252,6 @@ export class ProfilesComponent implements OnInit {
       console.error('❌ Klarte ikke hente profiler:', error);
     } else {
       this.profiles = data || [];
-      console.log(`📥 Lastet inn ${this.profiles.length} profiler`);
     }
   }
 
@@ -253,7 +262,10 @@ export class ProfilesComponent implements OnInit {
 
   editProfile(profile: any) {
     if (!this.canEditProfile(profile)) {
-      alert('Du har ikke tilgang til å redigere denne brukeren.');
+      this.uiFeedback.notify(
+        'Du har ikke tilgang til å redigere denne brukeren.',
+        'error',
+      );
       return;
     }
 
@@ -277,7 +289,7 @@ export class ProfilesComponent implements OnInit {
     this.validatePersonalbest();
 
     if (!this.personalbestValid) {
-      alert('Personlig beste må være et tall');
+      this.uiFeedback.notify('Personlig beste må være et tall.', 'error');
       return;
     }
 
@@ -290,7 +302,10 @@ export class ProfilesComponent implements OnInit {
     if (!originalProfile) return;
 
     if (!this.canEditProfile(originalProfile)) {
-      alert('Du har ikke tilgang til å redigere denne brukeren.');
+      this.uiFeedback.notify(
+        'Du har ikke tilgang til å redigere denne brukeren.',
+        'error',
+      );
       return;
     }
 
@@ -334,7 +349,7 @@ export class ProfilesComponent implements OnInit {
 
     if (error) {
       console.error('❌ Feil ved oppdatering:', error);
-      alert('Kunne ikke oppdatere profilen.');
+      this.uiFeedback.notify('Kunne ikke oppdatere profilen.', 'error');
       return;
     }
 
@@ -358,5 +373,6 @@ export class ProfilesComponent implements OnInit {
     }
 
     this.closeModal();
+    this.uiFeedback.notify('Profilen ble oppdatert.', 'success');
   }
 }

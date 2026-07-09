@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { getSupabaseClient } from '../../../supabase-client';
+import { UiFeedbackService } from '../../services/ui-feedback.service';
 
 interface TurnamentCourse {
   id: number;
@@ -30,6 +31,7 @@ interface EditableCourseScore {
 })
 export class TurnamentComponent implements OnInit {
   supabase = getSupabaseClient();
+  private readonly uiFeedback = inject(UiFeedbackService);
 
   profiles: any[] = [];
   rows: any[] = [];
@@ -191,7 +193,7 @@ export class TurnamentComponent implements OnInit {
 
   async removeRow(row: any) {
     if (!this.isAdmin) {
-      alert('Bare admin kan slette score-rader.');
+      this.uiFeedback.notify('Bare admin kan slette score-rader.', 'error');
       return;
     }
 
@@ -209,7 +211,10 @@ export class TurnamentComponent implements OnInit {
         console.error('Feil ved sletting:', error);
       }
     } else {
-      alert('Du må slette brukeren eller nulle ut scoren før du kan slette');
+      this.uiFeedback.notify(
+        'Du må slette brukeren eller nulle ut scoren før du kan slette.',
+        'error',
+      );
       return;
     }
   }
@@ -274,7 +279,10 @@ export class TurnamentComponent implements OnInit {
 
   async saveEdits() {
     if (!this.canEditRow(this.selectedRow)) {
-      alert('Du kan bare lagre score på din egen profil.');
+      this.uiFeedback.notify(
+        'Du kan bare lagre score på din egen profil.',
+        'error',
+      );
       return;
     }
 
@@ -309,7 +317,7 @@ export class TurnamentComponent implements OnInit {
       this.closeEditModal();
     } else {
       console.error('Feil ved oppdatering:', error);
-      alert('Kunne ikke lagre endringer.');
+      this.uiFeedback.notify('Kunne ikke lagre endringer.', 'error');
     }
   }
 
@@ -334,7 +342,7 @@ export class TurnamentComponent implements OnInit {
     if (error) {
       this.isSavingScore = false;
       console.error('Feil ved lagring av banescore:', error);
-      alert('Kunne ikke lagre banescore.');
+      this.uiFeedback.notify('Kunne ikke lagre banescore.', 'error');
       return;
     }
 
@@ -347,7 +355,10 @@ export class TurnamentComponent implements OnInit {
 
     if (turnamentError) {
       console.error('Feil ved oppdatering av total score:', turnamentError);
-      alert('Banescore ble lagret, men total score kunne ikke oppdateres.');
+      this.uiFeedback.notify(
+        'Banescore ble lagret, men total score kunne ikke oppdateres.',
+        'error',
+      );
       return;
     }
 
@@ -417,7 +428,7 @@ export class TurnamentComponent implements OnInit {
 
     if (error) {
       console.error('Feil ved oppretting av bane:', error);
-      alert('Kunne ikke legge til bane.');
+      this.uiFeedback.notify('Kunne ikke legge til bane.', 'error');
       return;
     }
 
@@ -438,7 +449,13 @@ export class TurnamentComponent implements OnInit {
       return;
     }
 
-    const shouldDelete = window.confirm(`Slette banen "${course.name}"?`);
+    const shouldDelete = await this.uiFeedback.confirm(
+      `Slette banen "${course.name}"?`,
+      {
+        title: 'Slett bane',
+        confirmText: 'Slett',
+      },
+    );
     if (!shouldDelete) {
       return;
     }
@@ -450,7 +467,7 @@ export class TurnamentComponent implements OnInit {
 
     if (error) {
       console.error('Feil ved sletting av bane:', error);
-      alert('Kunne ikke slette bane.');
+      this.uiFeedback.notify('Kunne ikke slette bane.', 'error');
       return;
     }
 
@@ -507,8 +524,6 @@ export class TurnamentComponent implements OnInit {
       if (moduloPlayers >= 2) {
         amountOfCards += 1;
       }
-      console.log('Players: ' + amount + '| amountOfCards: ' + amountOfCards);
-
       let tempRows = this.rows.slice();
       let newRandomCards: any = [];
 
@@ -528,7 +543,6 @@ export class TurnamentComponent implements OnInit {
 
       this.randomCards = newRandomCards;
     }
-    console.log(this.randomCards);
   }
 
   openCardsModal() {
